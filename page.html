@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+  <!-- vi:set ft=html fdm=marker fmr=[[[,]]]: -->
+<head> <!-- [[[ -->
+  <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+  <title>Mapiphany Framework</title>
+
+  <script type='text/javascript' src=
+    'jquery-1.4.4.js'></script>
+
+  <script type="text/javascript"> $.scriptPath = "/"; </script>
+  <script type='text/javascript' src=
+    'jquery.require.js'></script>
+
+  <script type='text/javascript'> $.require(
+    'mapiphany.js');
+  </script>
+
+  <link rel="stylesheet" type="text/css" href=
+    'reset.css' />
+  <link rel="stylesheet" type="text/css" href=
+    'font/stylesheet.css' />
+  <link rel="stylesheet" type="text/css" href=
+    'mapiphany.css' />
+  <link rel="stylesheet" type="text/css" href=
+    'jquery-svg/jquery.svg.css' />
+</head> <!-- ]]] -->
+<body>
+
+<script type="text/x-jquery-tmpl" id=
+    "map-edit"> <!-- [[[ -->
+
+  <div class="toolbar">
+    <input type="button" value="undo" name="undo" /> <input type="button" value="redo" name="redo" />
+    Name: <input type="text" name="mapName" />
+  </div>
+
+  <div class="map-combined">
+
+    <div class="map" />
+
+    <div class="drawbar" />
+
+  </div>
+
+  <div class="hex-detail">
+    $coord $graphic $name
+    <div>
+      <textarea name="hexDescription"></textarea>
+    </div>
+  </div>
+
+</script> <!-- ]]] -->
+
+<script type="text/x-jquery-tmpl" id=
+    "my-maps"> <!-- [[[ -->
+
+  <div class="snapshot">
+    <div class="indicators" />
+    <div class="thumbnail" />
+      *new*
+    </div>
+    <div class="details" />
+  </div>
+
+  {{each maps}}
+  <div class="snapshot">
+    <!-- highlight .snapshot if it has a window open -->
+    <div class="indicators">
+      * <!-- show a window icon if it has a window open -->
+    </div>
+    
+    <div class="thumbnail">
+      <img style="width:100px; height: 100px" />
+    </div>
+
+    <div class="details">
+      ${name}
+    </div>
+  </div>
+  {{/each}}
+
+</script> <!-- ]]] -->
+
+<script type="text/x-jquery-tmpl" id=
+  "user-edit"> <!-- [[[ -->
+
+  $user's account
+  <form name="account" action="#">
+    <label for="old-password">Change password:</label>
+    <input id="old-password" type="password" name="old-password" />
+    <input type="password" name="password1" />
+    <input type="password" name="password2" />
+
+    <label for="email">Change email:</label>
+    <input type="text" name="email" id="email" />
+
+    <input type="submit" name="save-account" />
+  </form>
+
+</script> <!-- ]]] -->
+
+
+<script type="text/x-jquery-tmpl" id=
+    "map-tab"> <!-- [[[ -->
+  <li data-id="${id}" class="map-tab tab"><a href="#editMap">{{if modified}}*{{/if}}${name}</a></li>
+</script> <!-- ]]] -->
+
+
+<script type="text/x-jquery-tmpl" id=
+    "top-control-tmpl"> <!-- [[[ -->
+
+  <ul id="top-control">
+    <li><div id="logo">Mapiphany</div></li>
+
+    <li class="horizontal-list-item">
+      <ul>
+        {{each(i, mapID) openMaps}}
+          {{tmpl(maps[mapID]) "#map-tab"}}
+        {{/each}}
+        <li class="tab"><a href="#myMaps">My Maps</a></li>
+      </ul>
+    </li>
+    <li class="righty horizontal-list-item">
+      <ul>
+        <li class="horizontal-list-item"><a href="#user">${username}</a></li>
+        <li class="horizontal-list-item"><a href="#logout">Logout</a></li>
+      </ul>
+    </li>
+  </ul>
+
+</script> <!-- ]]] -->
+
+<script type="text/x-jquery-tmpl" id=
+    "workspace-tmpl"> <!-- [[[ -->
+
+  <div id="workspace">
+    {{if $data.getVisibleScreen()[0] == "map-edit"}}
+      {{tmpl($data) "#map-edit"}}
+    {{else $data.getScreen()[0] == "my-maps"}}
+      {{tmpl($data) "#my-maps"}}
+    {{else $data.getScreen()[0] == "user-edit"}}
+      {{tmpl($data) "#user-edit"}}
+    {{else}}
+      <h1>!?</h1>
+    {{/if}}
+  </div>
+
+</script> <!-- ]]] -->
+
+<div id="cursor" />
+
+</body>
+</html>
