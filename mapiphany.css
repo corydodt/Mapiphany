@@ -1,0 +1,103 @@
+/* vim:set fdm=marker: */
+/* framework {{{ */
+
+#logo {
+    font: 40px/44px 'FFFTusjBold', Georgia, serif;
+    color: #147dff;
+    margin: 8px;
+}
+
+body {
+    font-family: sans-serif;
+    font-size: 10pt;
+}
+
+.map-tab {
+}
+
+.tab {
+    display: inline-block;
+    border: thin solid #ddd;
+    border-bottom: none;
+    margin: 1px;
+    margin-bottom: 0px;
+    background-color: white;
+}
+
+.horizontal-list-item {
+    display: inline-block;
+    border: thin solid transparent;
+    border-bottom: none;
+    margin: 1px;
+    margin-bottom: 0px;
+}
+
+.horizontal-list-item a, .tab a {
+    display: block;
+    padding: 2px;
+}
+
+.tab a {
+    text-decoration: none;
+    color: black;
+    font: 10px Georgia, serif;
+}
+
+a {
+    color: #147dff;
+}
+
+#top-control {
+    border-bottom: thin solid #ddd;
+    margin-bottom: 0px;
+    padding: 2px;
+    padding-bottom: 0px;
+    background-color: #fff;
+    background-image: url("bluegrad.png");
+    background-repeat: repeat-x;
+    background-position: bottom;
+}
+
+#workspace {
+    padding: 6px;
+    background-image: url("shadow.png");
+    background-position: top;
+    background-repeat: repeat-x;
+}
+
+/* }}} */
+
+
+/* #map-edit {{{ */
+.righty {
+    text-align: right;
+    float:right;
+}
+
+.toolbar {
+    height: 40px; 
+    width: 720px;
+}
+
+.map {
+    display: inline-block;
+    height: 540px;
+    width: 720px;
+    border: thin solid black;
+}
+
+.drawbar {
+    display: inline-block;
+    height: 540px;
+    width: 200px;
+    border: thin solid black;
+    margin-left: 4px;
+}
+
+.hex-detail {
+    height: 200px;
+    width: 720px;
+}
+
+/* }}} */
+
