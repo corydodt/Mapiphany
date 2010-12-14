@@ -3,7 +3,7 @@
   <!-- vi:set ft=html fdm=marker fmr=[[[,]]]: -->
 <head> <!-- [[[ -->
   <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
-  <title>Mapiphany Framework</title>
+  <title>Mapiphany</title>
 
   <script type='text/javascript' src=
     'jquery-1.4.4.js'></script>
@@ -85,17 +85,21 @@
 <script type="text/x-jquery-tmpl" id=
   "user-edit"> <!-- [[[ -->
 
-  $user's account
+  ${username}'s account
   <form name="account" action="#">
-    <label for="old-password">Change password:</label>
-    <input id="old-password" type="password" name="old-password" />
-    <input type="password" name="password1" />
-    <input type="password" name="password2" />
+    <div>
+      <label for="old-password">Change password:</label>
+      <input id="old-password" type="password" name="old-password" />
+    </div>
+    <div><input type="password" name="password1" /></div>
+    <div><input type="password" name="password2" /></div>
 
-    <label for="email">Change email:</label>
-    <input type="text" name="email" id="email" />
+    <div>
+      <label for="email">Change email:</label>
+      <input type="text" name="email" id="email" value="${email}" />
+    </div>
 
-    <input type="submit" name="save-account" />
+    <div><input type="submit" name="save-account" /></div>
   </form>
 
 </script> <!-- ]]] -->
@@ -103,7 +107,9 @@
 
 <script type="text/x-jquery-tmpl" id=
     "map-tab"> <!-- [[[ -->
-  <li data-id="${id}" class="map-tab tab"><a href="#editMap">{{if modified}}*{{/if}}${name}</a></li>
+  <li data-id="${id}" class=
+    "map-tab tab {{if VIEW_MAP_EDIT+"#"+id == appState.visibleScreen}}active-map{{/if}}"><a href=
+    "#mapEdit">{{if modified}}*{{/if}}${name}</a></li>
 </script> <!-- ]]] -->
 
 
@@ -123,7 +129,8 @@
     </li>
     <li class="righty horizontal-list-item">
       <ul>
-        <li class="horizontal-list-item"><a href="#user">${username}</a></li>
+        <li class="horizontal-list-item"><a href="#clear">!clear!</a></li>
+        <li class="horizontal-list-item"><a href="#userEdit">${username}</a></li>
         <li class="horizontal-list-item"><a href="#logout">Logout</a></li>
       </ul>
     </li>
@@ -135,11 +142,12 @@
     "workspace-tmpl"> <!-- [[[ -->
 
   <div id="workspace">
-    {{if $data.getVisibleScreen()[0] == "map-edit"}}
+    <!-- FIXME - only calc getVisibleScreen once not 3 times -->
+    {{if $data.getVisibleScreen()[0] == VIEW_MAP_EDIT}}
       {{tmpl($data) "#map-edit"}}
-    {{else $data.getScreen()[0] == "my-maps"}}
+    {{else $data.getVisibleScreen()[0] == VIEW_MY_MAPS}}
       {{tmpl($data) "#my-maps"}}
-    {{else $data.getScreen()[0] == "user-edit"}}
+    {{else $data.getVisibleScreen()[0] == VIEW_USER_EDIT}}
       {{tmpl($data) "#user-edit"}}
     {{else}}
       <h1>!?</h1>
