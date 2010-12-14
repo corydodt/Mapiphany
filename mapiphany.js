@@ -93,7 +93,7 @@ var Framework = Base.extend({
 var MapTab = PageArea.extend({
     constructor: function (appState, name) {
         // FIXME - use regex split, and unescape ## into # 
-        _split = name.split('#');
+        var _split = name.split('#');
         this.name = _split[0];
         this.id = _split[1];
         this.$template = $('#map-tab');
@@ -146,7 +146,7 @@ var AppState = Base.extend({
         //
         var _maps = $.evalJSON(localStorage.maps);
         var me = this;
-        me.maps= {};
+        me.maps = {};
         $.map(_maps, function (m) { 
             var mt = MapTab.restore(m, me); 
             me.maps[mt.id] = mt;
@@ -157,6 +157,11 @@ var AppState = Base.extend({
 
         this.username = localStorage.username;
         this.email = localStorage.email;
+
+        var vs = this.getVisibleScreen();
+        if (vs[0] == VIEW_MAP_EDIT) {
+            this.currentMap = this.maps[vs[1]];
+        }
     },
 
     getVisibleScreen: function () {
@@ -174,7 +179,7 @@ var AppState = Base.extend({
         // get the <title> content
         var vs = this.getVisibleScreen();
         if (vs[0] == VIEW_MAP_EDIT) {
-            return this.maps[vs[1]].name + ' (editing) - ' + APP_NAME;
+            return this.currentMap.name + ' (editing) - ' + APP_NAME;
         } else if (vs[0] == VIEW_USER_EDIT) {
             return "editing " + this.username + " - " + APP_NAME;
         } else if (vs[0] == VIEW_MY_MAPS) {

@@ -16,16 +16,17 @@ body {
     color: #147dff;
 }
 
-.tab.active-map {
+.tab.active-tab {
     background-color: #147dff;
 }
 
-.tab.active-map a {
+.tab.active-tab a {
     color: white;
     font-weight: bold;
 }
 
 .tab {
+    cursor: pointer;
     display: inline-block;
     border: thin solid #ddd;
     border-bottom: none;
