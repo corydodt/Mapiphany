@@ -12,7 +12,17 @@ body {
     font-size: 10pt;
 }
 
-.map-tab {
+.tab.map-tab a {
+    color: #147dff;
+}
+
+.tab.active-map {
+    background-color: #147dff;
+}
+
+.tab.active-map a {
+    color: white;
+    font-weight: bold;
 }
 
 .tab {
