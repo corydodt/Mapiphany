@@ -27,15 +27,16 @@
 </head> <!-- ]]] -->
 <body>
 
+
 <script type="text/x-jquery-tmpl" id=
     "map-edit"> <!-- [[[ -->
 
   <div class="toolbar">
     <input type="button" value="undo" name="undo" /> <input type="button" value="redo" name="redo" />
-    Name: <input type="text" name="mapName" value="${$data.currentMap.name}" />
+    Name: <input type="text" name="mapName" value="${name}" />
   </div>
 
-  <div class="map-combined">
+  <div id="map-combined">
 
     <div class="map" />
 
@@ -140,25 +141,12 @@
 
 </script> <!-- ]]] -->
 
-<script type="text/x-jquery-tmpl" id=
-    "workspace-tmpl"> <!-- [[[ -->
-
-  <div id="workspace">
-    <!-- FIXME - only calc getVisibleScreen once not 3 times -->
-    {{if $data.getVisibleScreen()[0] == VIEW_MAP_EDIT}}
-      {{tmpl($data) "#map-edit"}}
-    {{else $data.getVisibleScreen()[0] == VIEW_MY_MAPS}}
-      {{tmpl($data) "#my-maps"}}
-    {{else $data.getVisibleScreen()[0] == VIEW_USER_EDIT}}
-      {{tmpl($data) "#user-edit"}}
-    {{else}}
-      <h1>!?</h1>
-    {{/if}}
-  </div>
-
-</script> <!-- ]]] -->
-
 <div id="cursor" />
+
+<div id="workspace">
+  <h1>!?</h1>
+</div>
+
 
 </body>
 </html>
