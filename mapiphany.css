@@ -1,4 +1,15 @@
 /* vim:set fdm=marker: */
+/* colors {{{ 
+ *
+#147DFF
+#0E58B3
+#96c5ff - lightest
+#0049a2 - darkest
+
+#FFE414
+#B3840E
+}}} */
+
 /* framework {{{ */
 
 #logo {
@@ -100,7 +111,7 @@ a {
 .drawbar {
     display: inline-block;
     height: 540px;
-    width: 200px;
+    width: 270px;
     border: thin solid black;
     margin-left: 4px;
 }

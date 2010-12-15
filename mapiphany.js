@@ -175,9 +175,11 @@ var Map = PageArea.extend({
         }
         $('polygon', svg.root()
             ).mouseover(function () {
-                $(this).attr('stroke', 'cyan');
+                $(this).attr('stroke', '#147dff');
+                $(this).attr('stroke-width', 3);
             }).mouseout(function () {
                 $(this).attr('stroke', '#888');
+                $(this).attr('stroke-width', 1);
         });
     },
 }, {
