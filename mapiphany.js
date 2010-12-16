@@ -12,6 +12,19 @@ APP_NAME = 'Mapiphany';
 EVENT_TEMPLATE_DONE = 'template-done';
 
 
+function dir(o) {
+    if (console) {
+        return console.dir(o);
+    }
+}
+
+function log(m) {
+    if (console) {
+        return console.log(m);
+    }
+}
+
+
 function stripHash(uri) { // remove the hash (if any) from uri
     var rx = /#[^#]*$/;
     return uri.replace(rx, '');
@@ -121,7 +134,7 @@ var Map = PageArea.extend({
 
     save: function (forTemplate) { // serialize this map instance to dict data
         if (forTemplate) {
-            console.log("save");
+            log("save");
         }
         return {name:this.name, id:this.id, modified:this.modified};
     },
