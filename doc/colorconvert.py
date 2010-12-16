@@ -1,63 +1,13 @@
-s="""Volcanos -1405184
-Heavy_Forest -8737469
-Forested_Hills -7422638
-Empty -16777216
-Cathedral null
-Cultivated_Farmland -6236309
-Farmland -6236309
-Dungeon null
-Ruins null
-Whaling null
-Full_Mountains -5079040
-Swamp -5382491
-Capital null
-Pyramid null
-Shrine null
-Temple null
-Deep_Sea -10053172
-Port null
-Good_Magic_Source null
-Dead_Forest -5197648
-Heavy_Cactus -5066240
-Village null
-Castle null
-Battle null
-Sand_Dunes -103
-Rocky_Desert -990863
-Tower null
-Monolith null
-Full_Forest -6961565
-Shipwreck null
-Dead_Forest_Hills -6250336
-Grassy_Hills -3943837
-Light_Evergreen -13004499
-Cave null
-City null
-Shoals -3348993
-Lighthouse null
-Camp null
-Star null
-Winery null
-Dead_Forest_Mountains -8355712
-Reefs -6697729
-Crater null
-Border_Only -16777216
-Dormant_Volcano -3502336
-Forested_Mountain -7953869
-Mountains -5079040
-Marsh -8073580
-Statue null
-Sea -6697729
-Badlands -26368
-Oasis null
-Jungle_Hills -10383526
-Volcano -2453760
-Mountain -3764480
-Hills -1585574"""
-for line in s.splitlines():
-    splits = line.split()
-    print splits[0],
-    if splits[1] == 'null':
-        print None
+from ConfigParser import ConfigParser
+
+cp = ConfigParser()
+cp.read('tileset.ini')
+
+for sect in cp.sections():
+    col = cp.get(sect, 'backgroundrgb')
+    if col == 'null':
+        col = None
     else:
-        print '#%06x' % (int(splits[1])+0x1000000,)
+        col = '#%06x' % (int(col) + 0x1000000,)
+    print sect, col
+

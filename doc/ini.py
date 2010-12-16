@@ -1,16 +1,12 @@
 from ConfigParser import ConfigParser
 
 cp = ConfigParser()
-cp.read('calligraphy.ini')
-
-s1 = '<div style="background-color:%(col)s"><img style="width:40px;height:40px" src="tiles/rkterrain-finalopt/%(fn)s" />%(name)s</div>'
-s2 = '<div style="background-color:%(col)s"><div style="width:40px;height:40px">%(name)s</div></div>'
+cp.read('tileset.ini')
 
 for sect in cp.sections():
-    d = {}
-    d['col'] = cp.get(sect, 'backgroundrgb')
-    if d['col'] == 'None':
-        d['col'] = '#808080'
+    col = = cp.get(sect, 'backgroundrgb')
+    if d['col'] == 'null':
+        d['col'] = None
     fn = cp.get(sect, 'iconfilename')
     d['name'] = sect
     if fn:
@@ -20,3 +16,10 @@ for sect in cp.sections():
         print s2 % d
 
       
+for line in s.splitlines():
+    splits = line.split()
+    print splits[0],
+    if splits[1] == 'null':
+        print None
+    else:
+        print '#%06x' % (int(splits[1])+0x1000000,)
