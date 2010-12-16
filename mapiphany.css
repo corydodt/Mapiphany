@@ -114,6 +114,7 @@ a {
     width: 270px;
     border: thin solid black;
     margin-left: 4px;
+    overflow-y: scroll;
 }
 
 .hex-detail {
