@@ -116,6 +116,7 @@ var Map = PageArea.extend({
         this.$template = $('#map-tab');
         this.modified = false;
         this.appState = appState;
+        this.grid = {};
     },
 
     save: function (forTemplate) { // serialize this map instance to dict data
@@ -141,6 +142,8 @@ var Map = PageArea.extend({
     svg2: function (svg) {
         var ptn, sin60, mult, rw, rh, THIN;
         var _05, _15, _2, _3, _SMALL, _MED, _BIG; 
+        var grid;
+        grid = this.grid;
 
         // for convenience define a lot of constants
         sin60 = Math.sin(60*Math.PI/180);
@@ -161,18 +164,30 @@ var Map = PageArea.extend({
         for (var x=0; x<rw; x = x + _3) {
             var xx = Math.floor(x*2/_3+0.5);
             for (var y=0; y<rh; y = y + _MED) {
-                var yy = Math.floor(y/_MED+0.5);
-                var $p1 = $(svg.polygon(null, [[x+_05, y+0], [x+_15, y+0], [x+_2, y+_SMALL],
-                    [x+_15, y+_MED], [x+_05, y+_MED], [x+0, y+_SMALL], [x+_05, y+0]],
+                var yS, yM, yB, yy, x05, x15, x2, x3, x35;
+                yy = Math.floor(y/_MED+0.5);
+                yS = y+_SMALL; yM = y+_MED; yB=y+_BIG;
+                x05 = x+_05; x15=x+_15; x2=x+_2; x3=x+_3; x35=x+_35;
+                var $p1 = $(svg.polygon(null, [[x05, y], [x15, y], [x2, yS],
+                    [x15, yM], [x05, yM], [x, yS], [x05, y]],
                     THIN));
                 $p1.attr('title', xx+','+yy).data({x:xx,y:yy});
+                if (! grid[xx]) {
+                    grid[xx] = {};
+                }
+                grid[xx][yy] = $p1;
 
-                var $p2 = $(svg.polygon(null, [[x+_2, y+_SMALL], [x+_3, y+_SMALL], [x+_35, y+_MED],
-                    [x+_3, y+_BIG], [x+_2, y+_BIG], [x+_15, y+_MED], [x+_2, y+_SMALL]],
+                var $p2 = $(svg.polygon(null, [[x2, yS], [x3, yS], [x35, yM],
+                    [x3, yB], [x2, yB], [x15, yM], [x2, yS]],
                     THIN));
                 $p2.attr('title', (xx+1)+','+yy).data({x:xx+1,y:yy});
+                if (! grid[xx+1]) {
+                    grid[xx+1] = {};
+                }
+                grid[xx+1][yy] = $p1;
             }
         }
+        console.log(grid);
         $('polygon', svg.root()
             ).mouseover(function () {
                 $(this).attr('stroke', '#147dff');
