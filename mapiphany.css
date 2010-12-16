@@ -10,6 +10,7 @@
 #B3840E
 }}} */
 
+
 /* framework {{{ */
 
 #logo {
@@ -115,6 +116,23 @@ a {
     border: thin solid black;
     margin-left: 4px;
     overflow-y: scroll;
+}
+
+.drawbar-category {
+    margin-top: 20px;
+    margin-left: 20px;
+    margin-bottom: 7px;
+}
+
+.drawbar-tile-x1 {
+    display: table-cell;
+    width: 40px;
+    height: 40px;
+}
+
+.drawbar-tile-x2 {
+    display: table-cell;
+    vertical-align: middle;
 }
 
 .hex-detail {

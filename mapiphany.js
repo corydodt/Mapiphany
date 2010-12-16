@@ -5,6 +5,9 @@ $.require('jquery.json-2.2.js');
 $.require('jquery-svg/jquery.svg.js');
 $.require('jquery-svg/jquery.svgdom.js');
 
+$.require('tileset.js');
+
+
 VIEW_MAP_EDIT = 'map-edit';
 VIEW_USER_EDIT = 'user-edit';
 VIEW_MY_MAPS = 'my-maps';
@@ -36,6 +39,17 @@ function reloadTo(uri) { // send us to the uri for sure
     // browsers will already be reloading by this point.
     window.location.reload();
 }
+
+function sortObject(obj) { // return an array of the key/value pairs in obj, sorted by key
+    arr = [];
+    $.each(obj, function (item) {
+            if (obj.hasOwnProperty(item)) {
+                arr.push([item, obj[item]]);
+            }
+        });
+    arr.sort();
+    return arr;
+};
 
 
 var PageArea = Base.extend({
@@ -140,6 +154,8 @@ var Map = PageArea.extend({
     },
 
     renderMap: function ($mapTemplate) { // turn on svg mode for the div
+        this.categories = sortObject(TilesetCategories);
+        this.tileset = Tileset;
         var $mapEdit = $mapTemplate.tmpl(this);
         var me = this;
         // this must happen after templates have finished rendering so the
@@ -200,7 +216,6 @@ var Map = PageArea.extend({
                 grid[xx+1][yy] = $p1;
             }
         }
-        console.log(grid);
         $('polygon', svg.root()
             ).mouseover(function () {
                 $(this).attr('stroke', '#147dff');
