@@ -52,8 +52,19 @@ function sortObject(obj) { // return an array of the key/value pairs in obj, sor
 };
 
 
-var PageArea = Base.extend({
-    constructor: function (appState, $template) {
+// a hex tile background
+var Fill = Base.extend({
+    constructor: function (svg, parent, label, width, height) {
+        var pat = svg.pattern(parent, label, 0, 0, width, height, 0, 0, 
+            width, height, {'patternUnits': 'userSpaceOnUse'});
+        var img = svg.image(pat, 0, 0, width, height, Tileset[label].iconfilename);
+        this.id = label;
+    }
+});
+
+
+// any defined region of the page space that requires rendering with a template
+var PageArea = Base.extend({    constructor: function (appState, $template) {
         this.appState = appState;
         this.$template = $template;
     },
@@ -64,6 +75,7 @@ var PageArea = Base.extend({
 });
 
 
+// the navigation and controls at the top of the page
 var Top = PageArea.extend({
     render: function (data) {
         var ret = this.$template.tmpl(this.appState);
@@ -101,6 +113,7 @@ var Top = PageArea.extend({
 });
 
 
+// the main workspace below the Top, which may contain different sub-apps
 var Workspace = PageArea.extend({
     render: function (data) {
         var $n;
@@ -116,6 +129,7 @@ var Workspace = PageArea.extend({
 });
 
 
+// the layout of the top and bottom of the page
 var Framework = Base.extend({
     constructor: function(appState) {
         this.appState = appState;
@@ -134,6 +148,7 @@ var Framework = Base.extend({
 });
 
 
+// the drawable map grid inside the workspace
 var Map = PageArea.extend({
     constructor: function (appState, name) {
         // FIXME - use regex split, and unescape ## into # 
@@ -169,51 +184,68 @@ var Map = PageArea.extend({
     },
 
     svg2: function (svg) {
-        var ptn, sin60, mult, rw, rh, THIN;
-        var _05, _15, _2, _3, _SMALL, _MED, _BIG; 
-        var grid;
-        grid = this.grid;
+        var grid = this.grid;
+        var defs = svg.defs();
+
+        var t1 = new Date();
 
         // for convenience define a lot of constants
-        sin60 = Math.sin(60*Math.PI/180);
-        mult = 20;
-        _05 = 0.5*mult;
-        _15 = 1.5*mult;
-        _2 = 2*mult;
-        _3 = 3*mult;
-        _35 = 3.5*mult;
-        _SMALL = 1*mult*sin60;
-        _MED = 2*mult*sin60;
-        _BIG = 3*mult*sin60;
-        rw = $(svg.root()).parent().width();
-        rh = $(svg.root()).parent().height();
+        var rw = $(svg.root()).parent().width();
+        var rh = $(svg.root()).parent().height();
 
-        THIN = {fill: 'transparent', stroke: '#888', strokeWidth: 0.60};
+        var mult = 20; // how big to make the hex
 
-        for (var x=0; x<rw; x = x + _3) {
-            var xx = Math.floor(x*2/_3+0.5);
-            for (var y=0; y<rh; y = y + _MED) {
-                var yS, yM, yB, yy, x05, x15, x2, x3, x35;
-                yy = Math.floor(y/_MED+0.5);
-                yS = y+_SMALL; yM = y+_MED; yB=y+_BIG;
-                x05 = x+_05; x15=x+_15; x2=x+_2; x3=x+_3; x35=x+_35;
-                var $p1 = $(svg.polygon(null, [[x05, y], [x15, y], [x2, yS],
-                    [x15, yM], [x05, yM], [x, yS], [x05, y]],
-                    THIN));
-                $p1.attr('title', xx+','+yy).data({x:xx,y:yy});
+        var sin60 = Math.sin(60 * Math.PI / 180);
+
+        // x-dimension constants
+        var _05 = 0.5 * mult;
+        var _15 = 1.5 * mult;
+        var _2 = 2 * mult;
+        var _3 = 3 * mult;
+        var _35 = 3.5 * mult;
+
+        // y-dimension constants
+        var _SMALL = 1 * mult * sin60;
+        var _MED = 2 * mult * sin60;
+        var _BIG = 3 * mult * sin60;
+
+        var grassland = new Fill(svg, defs, 'Grassland', _2, _MED);
+
+        var THIN = {fill: 'transparent', stroke: '#888', strokeWidth: 0.60};
+
+        var GRASSY = {fill: 'url(#' + grassland.id + ')', stroke: '#888', strokeWidth: 0.60};
+
+        for (var x = 0; x < rw; x = x + _3) {
+            var xx, x05, x15, x2, x3, x35;
+            xx = Math.floor(x * 2/_3 + 0.5);
+            x05 = x + _05; x15 = x + _15; x2 = x + _2; x3 = x + _3; x35 = x + _35;
+
+            for (var y = 0; y < rh; y = y + _MED) {
+                var yS, yM, yB, yy;
+                yy = Math.floor(y / _MED + 0.5);
+                yS = y + _SMALL; yM = y + _MED; yB = y + _BIG;
+
+                // up hex
+                var $p1 = $(svg.polygon(null, [
+                        [x05, y], [x15, y], [x2, yS],
+                        [x15, yM], [x05, yM], [x, yS], [x05, y]
+                    ], GRASSY));
+                $p1.attr('title', xx + ',' + yy).data({x: xx, y: yy});
                 if (! grid[xx]) {
                     grid[xx] = {};
                 }
                 grid[xx][yy] = $p1;
 
-                var $p2 = $(svg.polygon(null, [[x2, yS], [x3, yS], [x35, yM],
-                    [x3, yB], [x2, yB], [x15, yM], [x2, yS]],
-                    THIN));
-                $p2.attr('title', (xx+1)+','+yy).data({x:xx+1,y:yy});
-                if (! grid[xx+1]) {
-                    grid[xx+1] = {};
+                // down hex
+                var $p2 = $(svg.polygon(null, [
+                        [x2, yS], [x3, yS], [x35, yM],
+                        [x3, yB], [x2, yB], [x15, yM], [x2, yS]
+                    ], GRASSY));
+                $p2.attr('title', (xx + 1) + ',' + yy).data({x: xx + 1, y: yy});
+                if (! grid[xx + 1]) {
+                    grid[xx + 1] = {};
                 }
-                grid[xx+1][yy] = $p1;
+                grid[xx + 1][yy] = $p2;
             }
         }
         $('polygon', svg.root()
@@ -222,8 +254,11 @@ var Map = PageArea.extend({
                 $(this).attr('stroke-width', 3);
             }).mouseout(function () {
                 $(this).attr('stroke', '#888');
-                $(this).attr('stroke-width', 1);
+                $(this).attr('stroke-width', 1
+            );
         });
+        var t2 = new Date();
+        console.log(t2-t1);
     },
 }, {
     restore: function (data, appState) {
@@ -237,6 +272,7 @@ var Map = PageArea.extend({
 });
 
 
+// I remember what you were looking at in the app
 var AppState = Base.extend({
     constructor: function () {
         if (!localStorage.maps) {
