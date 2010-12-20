@@ -64,7 +64,6 @@ def run(argv=None):
     jsFile.write('var Tileset = ')
 
     cssFile = open('tileset.css', 'w')
-    cssFile.write('.hex { stroke: #888; stroke-width: 0.60px; }\n')
 
     tileset = {}
     categories = {}

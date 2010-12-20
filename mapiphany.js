@@ -63,14 +63,16 @@ var Fill = Base.extend({
             4*xUnit, 2*yUnit, {'patternUnits': 'userSpaceOnUse'});
         svg.rect(pat, 0, 0, 4*xUnit, 2*yUnit, {fill: this.tile.backgroundrgb});
 
+        var href = 'tiles/' + this.tile.set + '/' + this.tile.iconfilename;
+        svg.image(parent, 0, 0, 4*this.xUnit, 2*this.yUnit, href, {id: label + '-icon'});
+
         this.id = label;
     },
 
     iconAt: function (parent, x, y) { // place an icon image for this Fill at the coordinates x,y
-        var href = 'tiles/' + this.tile.set + '/' + this.tile.iconfilename;
-        var img = this.svg.image(parent, x, y, 4*this.xUnit, 2*this.yUnit, href);
-        $(img).attr('pointer-events', 'none');
-        return img;
+        var use = this.svg.use(parent, x, y, this.xUnit, this.yUnit, '#' + this.id + '-icon');
+        $(use).attr('pointer-events', 'none');
+        return use;
     }
 });
 
@@ -258,15 +260,18 @@ var Map = PageArea.extend({
                 grid[xx + 1][yy] = $p2;
             }
         }
-        $('polygon', svg.root()
+        $('polygon.hex', svg.root()
             ).mouseover(function () {
-                $(this).attr('stroke', '#147dff');
-                $(this).attr('stroke-width', 3);
+                // instead of altering the base hex, we clone it.  the clone
+                // always goes to the end, meaning it's on top, meaning we can
+                // see the entire outline.  Otherwise the outline is partially
+                // overlapped by hexes down and to the right.
+                var $clone = $(this).clone();
+                $clone.addClass('selected');
+                svg.root().appendChild($clone[0]);
             }).mouseout(function () {
-                $(this).attr('stroke', '#888');
-                $(this).attr('stroke-width', 1
-            );
-        });
+                $('.selected.hex').remove();
+            });
         var t2 = new Date();
         console.log(t2-t1);
     },

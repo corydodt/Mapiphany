@@ -140,5 +140,18 @@ a {
     width: 720px;
 }
 
+.hex { 
+    stroke: #888; 
+    stroke-width: 0.60px; 
+    fill: transparent;
+}
+
+.selected.hex {
+    stroke: #147dff;
+    stroke-width: 3;
+    pointer-events: none;
+    fill: transparent;
+}
+
 /* }}} */
 
