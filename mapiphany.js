@@ -222,10 +222,8 @@ var Map = PageArea.extend({
         var _MED = 2 * mult * sin60;
         var _BIG = 3 * mult * sin60;
 
-        // var THIN = {fill: 'transparent', stroke: '#888', strokeWidth: 0.60};
-
         var grassland = new Fill(svg, defs, 'Grassland', _05, _SMALL);
-        var GRASSY = {fill: 'url(#' + grassland.id + ')', stroke: '#888', strokeWidth: 0.60};
+        var GRASSY = {'class': 'hex Grassland'};
 
         var x, xx, x05, x15, x2, x3, x35;
         var y, yy, yS, yM, yB;

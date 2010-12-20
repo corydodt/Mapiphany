@@ -1,7 +1,7 @@
 """
 Manage tilesets and load the default tileset
 """
-
+import sys
 from ConfigParser import ConfigParser
 
 from twisted.python.filepath import FilePath
@@ -55,18 +55,30 @@ class TileSet(FilePath):
 defaultSet = TileSet('tiles')
 
 
-if __name__ == '__main__':
+def run(argv=None):
+    if argv is None:
+        argv = sys.argv
+
     import simplejson
-    fl = open('tileset.js', 'w')
-    fl.write('var Tileset = ')
+    jsFile = open('tileset.js', 'w')
+    jsFile.write('var Tileset = ')
+
+    cssFile = open('tileset.css', 'w')
+    cssFile.write('.hex { stroke: #888; stroke-width: 0.60px; }\n')
+
     tileset = {}
     categories = {}
     for name, tile in defaultSet:
         tileset[name] = tile
         categories.setdefault(tile['category'], []).append(name)
-    simplejson.dump(tileset, fl, sort_keys=True, indent=4 * ' ')
-    fl.write(';\nvar TilesetCategories = ')
+        cssFile.write('.%s { fill: %s; }\n' % (
+            name, tile['backgroundrgb'].lower()))
+    simplejson.dump(tileset, jsFile, sort_keys=True, indent=4 * ' ')
+    jsFile.write(';\nvar TilesetCategories = ')
     categories = dict(map(lambda x: (x[0], sorted(x[1])), categories.items()))
-    simplejson.dump(categories, fl, sort_keys=True, indent=4 * ' ')
-    fl.write(';\n')
+    simplejson.dump(categories, jsFile, sort_keys=True, indent=4 * ' ')
+    jsFile.write(';\n')
 
+
+if __name__ == '__main__':
+    run()
