@@ -52,8 +52,32 @@ function sortObject(obj) { // return an array of the key/value pairs in obj, sor
 };
 
 
+// a hex tile background
+var Fill = Base.extend({
+    constructor: function (svg, parent, label, xUnit, yUnit) {
+        this.svg = svg;
+        this.tile = Tileset[label];
+        this.xUnit = xUnit;
+        this.yUnit = yUnit;
+        var pat = svg.pattern(parent, label, 0, 0, 4*xUnit, 2*yUnit, 0, 0, 
+            4*xUnit, 2*yUnit, {'patternUnits': 'userSpaceOnUse'});
+        svg.rect(pat, 0, 0, 4*xUnit, 2*yUnit, {fill: this.tile.backgroundrgb});
+
+        this.id = label;
+    },
+
+    iconAt: function (parent, x, y) { // place an icon image for this Fill at the coordinates x,y
+        var href = 'tiles/' + this.tile.set + '/' + this.tile.iconfilename;
+        var img = this.svg.image(parent, x, y, 4*this.xUnit, 2*this.yUnit, href);
+        $(img).attr('pointer-events', 'none');
+        return img;
+    }
+});
+
+
 // any defined region of the page space that requires rendering with a template
-var PageArea = Base.extend({    constructor: function (appState, $template) {
+var PageArea = Base.extend({
+    constructor: function (appState, $template) {
         this.appState = appState;
         this.$template = $template;
     },
@@ -198,31 +222,25 @@ var Map = PageArea.extend({
         var _MED = 2 * mult * sin60;
         var _BIG = 3 * mult * sin60;
 
-        var THIN = {fill: 'transparent', stroke: '#888', strokeWidth: 0.60};
+        // var THIN = {fill: 'transparent', stroke: '#888', strokeWidth: 0.60};
 
-        var GRASSLAND = svg.group(defs, 'Grassland');
-        svg.rect(GRASSLAND, 0, 0, _2, _MED, {fill: "#e7f79c"});
-        svg.image(GRASSLAND, 0, 0, _2, _MED, 'tiles/rkterrain-finalopt/grassland.png');
+        var grassland = new Fill(svg, defs, 'Grassland', _05, _SMALL);
+        var GRASSY = {fill: 'url(#' + grassland.id + ')', stroke: '#888', strokeWidth: 0.60};
 
-        var hex = svg.group(defs, "hex");
-        svg.use(hex, 0, 0, _2, _MED, "#Grassland");
-        var poly = svg.polygon(hex, [
-                    [_05, 0], [_15, 0], [_2, _SMALL],
-                    [_15, _MED], [_05, _MED], [0, _SMALL], [_05, 0]
-                ], THIN)
-        
-        for (var x = 0; x < rw; x = x + _3) {
-            var xx, x15;
-            xx = Math.round(x * 2/_3)
-            x15 = x + _15;
+        var x, xx, x05, x15, x2, x3, x35;
+        var y, yy, yS, yM, yB;
+        for (var x = 0, xx = 0; x < rw; x = x + _3, xx = xx + 1) {
+            x05 = x + _05; x15 = x + _15; x2 = x + _2; x3 = x + _3; x35 = x + _35;
 
-            for (var y = 0; y < rh; y = y + _MED) {
-                var yy, yS;
-                yy = Math.round(y / _MED);
-                yS = y + _SMALL;
+            for (y = 0, yy = 0; y < rh; y = y + _MED, yy = yy + 1) {
+                yS = y + _SMALL; yM = y + _MED; yB = y + _BIG;
 
                 // up hex
-                var $p1 = $(svg.use(null, x, y, _2, _MED, "#hex"));
+                var $p1 = $(svg.polygon(null, [
+                        [x05, y], [x15, y], [x2, yS],
+                        [x15, yM], [x05, yM], [x, yS], [x05, y]
+                    ], GRASSY));
+                grassland.iconAt(null, x, y);
                 $p1.attr('title', xx + ',' + yy).data({x: xx, y: yy});
                 if (! grid[xx]) {
                     grid[xx] = {};
@@ -230,7 +248,11 @@ var Map = PageArea.extend({
                 grid[xx][yy] = $p1;
 
                 // down hex
-                var $p2 = $(svg.use(null, x15, yS, _2, _MED, "#hex"));
+                var $p2 = $(svg.polygon(null, [
+                        [x2, yS], [x3, yS], [x35, yM],
+                        [x3, yB], [x2, yB], [x15, yM], [x2, yS]
+                    ], GRASSY));
+                grassland.iconAt(null, x15, yS);
                 $p2.attr('title', (xx + 1) + ',' + yy).data({x: xx + 1, y: yy});
                 if (! grid[xx + 1]) {
                     grid[xx + 1] = {};
