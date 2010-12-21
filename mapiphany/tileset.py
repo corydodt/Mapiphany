@@ -70,8 +70,9 @@ def run(argv=None):
     for name, tile in defaultSet:
         tileset[name] = tile
         categories.setdefault(tile['category'], []).append(name)
-        cssFile.write('.%s { fill: %s; }\n' % (
-            name, tile['backgroundrgb'].lower()))
+        color = tile['backgroundrgb'].lower();
+        cssFile.write('.%s { fill: %s; background-color: %s; }\n' % (
+            name, color, color))
     simplejson.dump(tileset, jsFile, sort_keys=True, indent=4 * ' ')
     jsFile.write(';\nvar TilesetCategories = ')
     categories = dict(map(lambda x: (x[0], sorted(x[1])), categories.items()))
