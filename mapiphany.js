@@ -191,10 +191,22 @@ var Map = PageArea.extend({
         return {name:this.name, id:this.id, modified:this.modified};
     },
 
+    setCurrent: function (newTile) {
+        var tile = this.tileset[newTile];
+        console.dir(tile);
+        var $cur = $('#current');
+        $cur.attr('src', 'tiles/' + tile.set + '/' + tile.iconfilename);
+        $cur.attr('class', newTile);
+    },
+
     renderMap: function ($mapTemplate) { // turn on svg mode for the div
         this.categories = sortObject(TilesetCategories);
         this.tileset = Tileset;
         var $mapEdit = $mapTemplate.tmpl(this);
+        var $me = this;
+        $mapEdit.find('.drawbar-tile').click(function () { 
+                return $me.setCurrent($(this).data('tile'));
+            });
         var me = this;
         // this must happen after templates have finished rendering so the
         // node really exists. svg events can't trigger unless the node is
