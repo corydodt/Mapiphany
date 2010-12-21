@@ -153,5 +153,9 @@ a {
     fill: transparent;
 }
 
+.drawbar-tile:hover {
+    font-weight: bold;
+}
+
 /* }}} */
 
