@@ -59,9 +59,6 @@ var Fill = Base.extend({
         this.tile = Tileset[label];
         this.xUnit = xUnit;
         this.yUnit = yUnit;
-        var pat = svg.pattern(parent, label, 0, 0, 4*xUnit, 2*yUnit, 0, 0, 
-            4*xUnit, 2*yUnit, {'patternUnits': 'userSpaceOnUse'});
-        svg.rect(pat, 0, 0, 4*xUnit, 2*yUnit, {fill: this.tile.backgroundrgb});
 
         this.href = 'tiles/' + this.tile.set + '/' + this.tile.iconfilename;
         svg.image(parent, 0, 0, 4*this.xUnit, 2*this.yUnit, this.href, {id: label + '-icon', 
