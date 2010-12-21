@@ -63,16 +63,27 @@ var Fill = Base.extend({
             4*xUnit, 2*yUnit, {'patternUnits': 'userSpaceOnUse'});
         svg.rect(pat, 0, 0, 4*xUnit, 2*yUnit, {fill: this.tile.backgroundrgb});
 
-        var href = 'tiles/' + this.tile.set + '/' + this.tile.iconfilename;
-        svg.image(parent, 0, 0, 4*this.xUnit, 2*this.yUnit, href, {id: label + '-icon'});
+        this.href = 'tiles/' + this.tile.set + '/' + this.tile.iconfilename;
+        svg.image(parent, 0, 0, 4*this.xUnit, 2*this.yUnit, this.href, {id: label + '-icon', 
+            'pointer-events': 'none'});
 
         this.id = label;
     },
 
     iconAt: function (parent, x, y) { // place an icon image for this Fill at the coordinates x,y
-        var use = this.svg.use(parent, x, y, this.xUnit, this.yUnit, '#' + this.id + '-icon');
-        $(use).attr('pointer-events', 'none');
-        return use;
+        // It's a shame there is no $.support for svg features.  who knows
+        // what the support grid is like for all these features?
+        //
+        // This is based on: http://www.codedread.com/svg-support-table.html
+        //
+        if ($.browser.mozilla || $.browser.opera) {
+            // use has the best performance by far, when it is available
+            var use = this.svg.use(parent, x, y, 4*this.xUnit, 2*this.yUnit, '#' + this.id + '-icon', {'pointer-events': 'none'});
+            return use;
+        } else {
+            var img = this.svg.image(parent, x, y, 4*this.xUnit, 2*this.yUnit, this.href, {'pointer-events': 'none'});
+            return img;
+        }
     }
 });
 
