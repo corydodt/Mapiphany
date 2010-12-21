@@ -69,7 +69,7 @@ var Fill = Base.extend({
 
     iconAt: function (parent, x, y) { // place an icon image for this Fill at the coordinates x,y
         // It's a shame there is no $.support for svg features.  who knows
-        // what the support grid is like for all these features?
+        // what the current support grid is like for all these features?
         //
         // This is based on: http://www.codedread.com/svg-support-table.html
         //
