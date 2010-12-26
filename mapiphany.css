@@ -99,7 +99,8 @@ a {
 
 .toolbar {
     height: 40px; 
-    width: 720px;
+    width: 996px;
+    margin-bottom: 8px;
 }
 
 .map {
