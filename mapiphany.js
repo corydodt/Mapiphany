@@ -293,7 +293,7 @@ var Map = PageArea.extend({
                 $('.selected.hex').remove();
             });
         var t2 = new Date();
-        console.log(t2-t1);
+        log(t2-t1);
     },
 }, {
     restore: function (data, appState) {
