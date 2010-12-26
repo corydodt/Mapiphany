@@ -140,7 +140,7 @@ var Top = PageArea.extend({
 // the controls at the top of the map-edit area
 var Toolbar = PageArea.extend({
     render: function (data) {
-        var ret = this.$template.tmpl(this.appState);
+        var ret = this.$template.tmpl(this.appState.currentMap);
 
         ret.find('a[href$=#zoom]').click(function () {
             var $me = $(this);
