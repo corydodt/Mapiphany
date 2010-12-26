@@ -31,16 +31,25 @@
 
 
 <script type="text/x-jquery-tmpl" id=
-    "map-edit"> <!-- [[[ -->
+    "toolbar"> <!-- [[[ -->
 
   <div class="toolbar">
     <input type="button" value="undo" name="undo" /> <input type="button" value="redo" name="redo" />
     Name: <input type="text" name="mapName" value="${name}" />
     Current: <img id="current" style="width:30px; height: 34.4px" src="tiles/rkterrain-finalopt/grassland.png" class=
       "Grassland" />
+    Zoom: <a data-zoom="200" href="#zoom">200%</a> <a data-zoom="100" href="#zoom">100%</a> <a
+      data-zoom="50" href="#zoom">50%</a>
+    Units: <input type="text" name="mapUnits" value="1 mile" />
   </div>
+</script> <!-- ]]] -->
+
+<script type="text/x-jquery-tmpl" id=
+    "map-edit"> <!-- [[[ -->
 
   <div id="map-combined">
+
+    <div class="toolbar" />
 
     <div class="map" />
 

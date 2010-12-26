@@ -13,6 +13,7 @@ VIEW_USER_EDIT = 'user-edit';
 VIEW_MY_MAPS = 'my-maps';
 APP_NAME = 'Mapiphany';
 EVENT_TEMPLATE_DONE = 'template-done';
+EVENT_MAP_ZOOM = 'map-zoom';
 
 
 function dir(o) {
@@ -136,6 +137,21 @@ var Top = PageArea.extend({
 });
 
 
+// the controls at the top of the map-edit area
+var Toolbar = PageArea.extend({
+    render: function (data) {
+        var ret = this.$template.tmpl(this.appState);
+
+        ret.find('a[href$=#zoom]').click(function () {
+            var $me = $(this);
+            $(document).trigger(EVENT_MAP_ZOOM, [$me.data('zoom')]);
+            return false;
+        });
+        return ret;
+    }
+});
+
+
 // the main workspace below the Top, which may contain different sub-apps
 var Workspace = PageArea.extend({
     render: function (data) {
@@ -182,6 +198,7 @@ var Map = PageArea.extend({
         this.modified = false;
         this.appState = appState;
         this.grid = {};
+        this.$node = null;
     },
 
     save: function (forTemplate) { // serialize this map instance to dict data
@@ -193,7 +210,6 @@ var Map = PageArea.extend({
 
     setCurrent: function (newTile) {
         var tile = this.tileset[newTile];
-        console.dir(tile);
         var $cur = $('#current');
         $cur.attr('src', 'tiles/' + tile.set + '/' + tile.iconfilename);
         $cur.attr('class', newTile);
@@ -202,20 +218,40 @@ var Map = PageArea.extend({
     renderMap: function ($mapTemplate) { // turn on svg mode for the div
         this.categories = sortObject(TilesetCategories);
         this.tileset = Tileset;
-        var $mapEdit = $mapTemplate.tmpl(this);
-        var $me = this;
-        $mapEdit.find('.drawbar-tile').click(function () { 
-                return $me.setCurrent($(this).data('tile'));
-            });
+        var $mapEditNodes = $mapTemplate.tmpl(this);
+        this.$node = $mapEditNodes.filter('#map-combined');
         var me = this;
+        this.$node.find('.drawbar-tile').click(function () { 
+            return me.setCurrent($(this).data('tile'));
+        });
+
+        var $toolbar = (new Toolbar(this.appState, $('#toolbar'))).render();
+        this.$node.find('.toolbar').replaceWith($toolbar);
+
         // this must happen after templates have finished rendering so the
         // node really exists. svg events can't trigger unless the node is
         // visible in the DOM.
         $(document).bind(EVENT_TEMPLATE_DONE, function (ev) {
-            var $map = $mapEdit.filter('#map-combined').find('.map');
-            $map.svg(function (svg) { me.svg2(svg) });
+            var $mapNode = me.$node.find('.map');
+            $mapNode.svg(function (svg) { me.svg2(svg) });
+            me.svg = $mapNode.svg('get');
         });
-        return $mapEdit;
+        $(document).bind(EVENT_MAP_ZOOM, function (ev, zoom) {
+            me.zoom(zoom);
+        });
+        return $mapEditNodes;
+    },
+
+    // rescale the map to the specified zoom
+    zoom: function (scale) {
+        // to get bigger hexes (larger zoom), use a smaller w/h in the
+        // viewbox.  to get smaller hexes (smaller zoom), use larger viewBox
+        // w/h.
+        var factor = 100.0 / scale;
+        var $root = $(this.svg.root());
+        var rw = $root.parent().width();
+        var rh = $root.parent().height();
+        $root.attr('viewBox', '0 0 ' + rw * factor + ' ' + rh * factor);
     },
 
     svg2: function (svg) {
