@@ -61,7 +61,7 @@ def run(argv=None):
 
     import simplejson
     jsFile = open('tileset.js', 'w')
-    jsFile.write('var Tileset = ')
+    jsFile.write('var gTileset = ')
 
     cssFile = open('tileset.css', 'w')
 
@@ -74,7 +74,7 @@ def run(argv=None):
         cssFile.write('.%s { fill: %s; background-color: %s; }\n' % (
             name, color, color))
     simplejson.dump(tileset, jsFile, sort_keys=True, indent=4 * ' ')
-    jsFile.write(';\nvar TilesetCategories = ')
+    jsFile.write(';\nvar gTilesetCategories = ')
     categories = dict(map(lambda x: (x[0], sorted(x[1])), categories.items()))
     simplejson.dump(categories, jsFile, sort_keys=True, indent=4 * ' ')
     jsFile.write(';\n')

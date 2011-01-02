@@ -37,7 +37,7 @@
     <input type="button" value="undo" name="undo" /> <input type="button" value="redo" name="redo" />
     Name: <input type="text" name="mapName" value="${name}" />
     Current: <img id="current" style="width:30px; height: 34.4px" src="tiles/rkterrain-finalopt/grassland.png" class=
-      "Grassland" />
+      "Grassland" title="Grassland" />
     Zoom: <a data-zoom="200" href="#zoom">200%</a> <a data-zoom="100" href="#zoom">100%</a> <a
       data-zoom="50" href="#zoom">50%</a>
     Units: <input type="text" name="mapUnits" value="1 mile" />
@@ -59,9 +59,9 @@
       {{each($i, tile) category[1]}}
       <div class="drawbar-tile" data-tile="${tile}">
         <div class="drawbar-tile-x1" style=
-        "background-color:{{if tileset[tile].backgroundrgb=='None'}}#c0c0c0{{else}}${tileset[tile].backgroundrgb}{{/if}}">
-        {{if tileset[tile].iconfilename}}
-        <img class="drawbar-tile-x1" src="tiles/${tileset[tile].set}/${tileset[tile].iconfilename}" />
+        "background-color:{{if gTileset[tile].backgroundrgb=='None'}}#c0c0c0{{else}}${gTileset[tile].backgroundrgb}{{/if}}">
+        {{if gTileset[tile].iconfilename}}
+        <img class="drawbar-tile-x1" src="tiles/${gTileset[tile].set}/${gTileset[tile].iconfilename}" />
         {{/if}}
         </div>
 

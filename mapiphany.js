@@ -286,7 +286,7 @@ var Map = PageArea.extend({
 
         var x, xx, x05, x15, x2, x3, x35;
         var y, yy, yS, yM, yB;
-        for (var x = 0, xx = 0; x < rw; x = x + _3, xx = xx + 1) {
+        for (var x = 0, xx = 0; x < rw; x = x + _3, xx = xx + 2) {
             x05 = x + _05; x15 = x + _15; x2 = x + _2; x3 = x + _3; x35 = x + _35;
 
             for (y = 0, yy = 0; y < rh; y = y + _MED, yy = yy + 1) {
