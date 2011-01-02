@@ -208,6 +208,7 @@ var Map = PageArea.extend({
         return {name:this.name, id:this.id, modified:this.modified};
     },
 
+    // set the current pen and display the new setting
     setCurrent: function (newTile) {
         var tile = this.tileset[newTile];
         var $cur = $('#current');
