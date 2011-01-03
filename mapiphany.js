@@ -268,23 +268,37 @@ var Map = PageArea.extend({
         return itm;
     },
     // rescale the map to the specified zoom
-    zoom: function (scale) {
+    zoom: function (scale, xAbs, yAbs) {
         // to get bigger hexes (larger zoom), use a smaller w/h in the
         // viewbox.  to get smaller hexes (smaller zoom), use larger viewBox
         // w/h.
         var factor = 100.0 / scale;
+
         var $root = $(this.svg.root());
         var rw = $root.parent().width();
         var rh = $root.parent().height();
-        $root.attr('viewBox', '0 0 ' + rw * factor + ' ' + rh * factor);
+
+        var vb = this.svg.root().viewBox;
+        if (xAbs === undefined) {
+            xAbs = vb.baseVal.x;
+        }
+        if (yAbs === undefined) {
+            yAbs = vb.baseVal.y;
+        }
+
+        $root.attr('viewBox', xAbs + ' ' + yAbs + ' ' + rw * factor + ' ' + rh * factor);
     },
 
     _renderSVG: function (svg) {
         this.svg = svg;
+
         var grid = this.grid;
         var defs = this.defs = svg.defs();
 
         var t1 = new Date();
+
+        // position the viewbox so that no whitespace is visible at the edges
+        this.zoom(100, X_UNIT, Y_UNIT);
 
         // for convenience define a lot of constants
         var rw = $(svg.root()).parent().width();
@@ -308,10 +322,10 @@ var Map = PageArea.extend({
 
         var xAbs, xx, x05, x15, x2, x3, x35;
         var yAbs, yy, yS, yM, yT;
-        for (var xAbs = 0, xx = 0; xAbs < rw; xAbs = xAbs + _3, xx = xx + 2) {
+        for (var xAbs = 0, xx = 0; xAbs < rw + _05; xAbs = xAbs + _3, xx = xx + 2) {
             x05 = xAbs + _05; x15 = xAbs + _15; x2 = xAbs + _2; x3 = xAbs + _3; x35 = xAbs + _35;
 
-            for (yAbs = 0, yy = 0; yAbs < rh; yAbs = yAbs + _MED, yy = yy + 1) {
+            for (yAbs = 0, yy = 0; yAbs < rh + _SHORT; yAbs = yAbs + _MED, yy = yy + 1) {
                 yS = yAbs + _SHORT; yM = yAbs + _MED; yT = yAbs + _TALL;
 
                 // up hex
