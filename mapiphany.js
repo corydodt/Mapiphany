@@ -14,6 +14,15 @@ VIEW_MY_MAPS = 'my-maps';
 APP_NAME = 'Mapiphany';
 EVENT_TEMPLATE_DONE = 'template-done';
 EVENT_MAP_ZOOM = 'map-zoom';
+PEN_SMALL = 'small';
+PEN_LARGE = 'large';
+MULT = 20; // baseline multiplier to get a decent-sized hex
+SIN60 = Math.sin(60 * Math.PI / 180);
+Y_UNIT = MULT * SIN60;
+X_UNIT = MULT * 0.5;
+DEFAULT_FILL = 'Grassland';
+CLASS_FG_FILL = 'fgFill1';
+
 
 
 function dir(o) {
@@ -51,39 +60,6 @@ function sortObject(obj) { // return an array of the key/value pairs in obj, sor
     arr.sort();
     return arr;
 };
-
-
-// a hex tile background
-var Fill = Base.extend({
-    constructor: function (svg, parent, label, xUnit, yUnit) {
-        this.svg = svg;
-        this.tile = Tileset[label];
-        this.xUnit = xUnit;
-        this.yUnit = yUnit;
-
-        this.href = 'tiles/' + this.tile.set + '/' + this.tile.iconfilename;
-        svg.image(parent, 0, 0, 4*this.xUnit, 2*this.yUnit, this.href, {id: label + '-icon', 
-            'pointer-events': 'none'});
-
-        this.id = label;
-    },
-
-    iconAt: function (parent, x, y) { // place an icon image for this Fill at the coordinates x,y
-        // It's a shame there is no $.support for svg features.  who knows
-        // what the current support grid is like for all these features?
-        //
-        // This is based on: http://www.codedread.com/svg-support-table.html
-        //
-        if ($.browser.mozilla || $.browser.opera) {
-            // use has the best performance by far, when it is available
-            var use = this.svg.use(parent, x, y, 4*this.xUnit, 2*this.yUnit, '#' + this.id + '-icon', {'pointer-events': 'none'});
-            return use;
-        } else {
-            var img = this.svg.image(parent, x, y, 4*this.xUnit, 2*this.yUnit, this.href, {'pointer-events': 'none'});
-            return img;
-        }
-    }
-});
 
 
 // any defined region of the page space that requires rendering with a template
@@ -187,6 +163,33 @@ var Framework = Base.extend({
 });
 
 
+// the current drawing settings
+var Pen = Base.extend({
+    constructor: function ($node) {
+        this.$node = $node;
+        // this.fgFill = null;
+        // this.bgFill = null;
+        // this.fillSize = PEN_SMALL;
+        // this.pathWidth = null;
+        // this.pathColor = null;
+        // this.pathStyle = null;
+        this.fillName = null;
+    },
+
+    // set the current pen and display the new setting
+    setCurrent: function (newTile) {
+        var tile = gTileset[newTile];
+        var $disp = $('#current');
+        $disp.attr('src', 'tiles/' + tile.set + '/' + tile.iconfilename);
+        $disp.attr('class', newTile);
+        $disp.attr('title', newTile);
+
+        // this.fgFill = tile.iconfilename;
+        this.fillName = newTile;
+    },
+});
+
+
 // the drawable map grid inside the workspace
 var Map = PageArea.extend({
     constructor: function (appState, name) {
@@ -199,6 +202,8 @@ var Map = PageArea.extend({
         this.appState = appState;
         this.grid = {};
         this.$node = null;
+        this.pen = null;
+        this.svg = null;
     },
 
     save: function (forTemplate) { // serialize this map instance to dict data
@@ -208,22 +213,13 @@ var Map = PageArea.extend({
         return {name:this.name, id:this.id, modified:this.modified};
     },
 
-    // set the current pen and display the new setting
-    setCurrent: function (newTile) {
-        var tile = this.tileset[newTile];
-        var $cur = $('#current');
-        $cur.attr('src', 'tiles/' + tile.set + '/' + tile.iconfilename);
-        $cur.attr('class', newTile);
-    },
-
     renderMap: function ($mapTemplate) { // turn on svg mode for the div
-        this.categories = sortObject(TilesetCategories);
-        this.tileset = Tileset;
+        this.categories = sortObject(gTilesetCategories);
         var $mapEditNodes = $mapTemplate.tmpl(this);
         this.$node = $mapEditNodes.filter('#map-combined');
         var me = this;
         this.$node.find('.drawbar-tile').click(function () { 
-            return me.setCurrent($(this).data('tile'));
+            return me.pen.setCurrent($(this).data('tile'));
         });
 
         var $toolbar = (new Toolbar(this.appState, $('#toolbar'))).render();
@@ -234,8 +230,9 @@ var Map = PageArea.extend({
         // visible in the DOM.
         $(document).bind(EVENT_TEMPLATE_DONE, function (ev) {
             var $mapNode = me.$node.find('.map');
-            $mapNode.svg(function (svg) { me.svg2(svg) });
-            me.svg = $mapNode.svg('get');
+            $mapNode.svg(function (svg) { me._renderSVG(svg) });
+            me.pen = new Pen($('#current'));
+            me.pen.setCurrent(DEFAULT_FILL);
         });
         $(document).bind(EVENT_MAP_ZOOM, function (ev, zoom) {
             me.zoom(zoom);
@@ -243,6 +240,33 @@ var Map = PageArea.extend({
         return $mapEditNodes;
     },
 
+    iconAt: function (label, x, y) { // place an icon image for this Fill at the coordinates x,y
+        var $def = $('#' + label + '-icon');
+
+        // create the <defs><image> when missing.
+        if ($def.length == 0) {
+            var tile = gTileset[label];
+
+            var href = 'tiles/' + tile.set + '/' + tile.iconfilename;
+            $def = $(this.svg.image(this.defs, 0, 0, 4*X_UNIT, 2*Y_UNIT, href, { id: label + '-icon' }));
+        }
+
+        // It's a shame there is no $.support for svg features.  who knows
+        // what the current support grid is like for all these features?
+        //
+        // This is based on: http://www.codedread.com/svg-support-table.html
+        //
+        var itm, _g = this.grid[x][y];
+        if ($.browser.mozilla || $.browser.opera) {
+            // use has the best performance by far, when it is available
+            itm = this.svg.use(null, _g.x, _g.y, 4*X_UNIT, 2*Y_UNIT, '#' + $def.attr('id'), {'pointer-events': 'none'});
+        } else {
+            itm = this.svg.image(null, _g.x, _g.y, 4*X_UNIT, 2*Y_UNIT, $def.attr('href'), {'pointer-events': 'none'});
+        }
+        $(itm).addClass(CLASS_FG_FILL);
+        $(itm).data({x:x, y:y, xy: x + ',' + y});
+        return itm;
+    },
     // rescale the map to the specified zoom
     zoom: function (scale) {
         // to get bigger hexes (larger zoom), use a smaller w/h in the
@@ -255,9 +279,10 @@ var Map = PageArea.extend({
         $root.attr('viewBox', '0 0 ' + rw * factor + ' ' + rh * factor);
     },
 
-    svg2: function (svg) {
+    _renderSVG: function (svg) {
+        this.svg = svg;
         var grid = this.grid;
-        var defs = svg.defs();
+        var defs = this.defs = svg.defs();
 
         var t1 = new Date();
 
@@ -265,58 +290,60 @@ var Map = PageArea.extend({
         var rw = $(svg.root()).parent().width();
         var rh = $(svg.root()).parent().height();
 
-        var mult = 20; // how big to make the hex
-
-        var sin60 = Math.sin(60 * Math.PI / 180);
-
         // x-dimension constants
-        var _05 = 0.5 * mult;
-        var _15 = 1.5 * mult;
-        var _2 = 2 * mult;
-        var _3 = 3 * mult;
-        var _35 = 3.5 * mult;
+        var _05, _15, _2, _3, _35;
+        _05 = X_UNIT;
+        _15 = 3 * _05;
+        _2 = 4 * _05;
+        _3 = 6 * _05;
+        _35 = 7 * _05;
 
         // y-dimension constants
-        var _SMALL = 1 * mult * sin60;
-        var _MED = 2 * mult * sin60;
-        var _BIG = 3 * mult * sin60;
+        var _SHORT, _MED, _TALL;
+        _SHORT = Y_UNIT;
+        _MED = 2 * _SHORT;
+        _TALL = 3 * _SHORT;
 
-        var grassland = new Fill(svg, defs, 'Grassland', _05, _SMALL);
-        var GRASSY = {'class': 'hex Grassland'};
+        var defaultClass = {'class': 'hex ' + DEFAULT_FILL};
 
-        var x, xx, x05, x15, x2, x3, x35;
-        var y, yy, yS, yM, yB;
-        for (var x = 0, xx = 0; x < rw; x = x + _3, xx = xx + 2) {
-            x05 = x + _05; x15 = x + _15; x2 = x + _2; x3 = x + _3; x35 = x + _35;
+        var xAbs, xx, x05, x15, x2, x3, x35;
+        var yAbs, yy, yS, yM, yT;
+        for (var xAbs = 0, xx = 0; xAbs < rw; xAbs = xAbs + _3, xx = xx + 2) {
+            x05 = xAbs + _05; x15 = xAbs + _15; x2 = xAbs + _2; x3 = xAbs + _3; x35 = xAbs + _35;
 
-            for (y = 0, yy = 0; y < rh; y = y + _MED, yy = yy + 1) {
-                yS = y + _SMALL; yM = y + _MED; yB = y + _BIG;
+            for (yAbs = 0, yy = 0; yAbs < rh; yAbs = yAbs + _MED, yy = yy + 1) {
+                yS = yAbs + _SHORT; yM = yAbs + _MED; yT = yAbs + _TALL;
 
                 // up hex
                 var $p1 = $(svg.polygon(null, [
-                        [x05, y], [x15, y], [x2, yS],
-                        [x15, yM], [x05, yM], [x, yS], [x05, y]
-                    ], GRASSY));
-                grassland.iconAt(null, x, y);
-                $p1.attr('title', xx + ',' + yy).data({x: xx, y: yy});
+                        [x05, yAbs], [x15, yAbs], [x2, yS],
+                        [x15, yM], [x05, yM], [xAbs, yS], [x05, yAbs]
+                    ], defaultClass));
+                // store the coordinates
                 if (! grid[xx]) {
                     grid[xx] = {};
                 }
-                grid[xx][yy] = $p1;
+                grid[xx][yy] = {x:xAbs, y:yAbs};
+                $p1.attr('title', xx + ',' + yy).data({x: xx, y: yy});
+
+                this.iconAt(DEFAULT_FILL, xx, yy);
 
                 // down hex
                 var $p2 = $(svg.polygon(null, [
                         [x2, yS], [x3, yS], [x35, yM],
-                        [x3, yB], [x2, yB], [x15, yM], [x2, yS]
-                    ], GRASSY));
-                grassland.iconAt(null, x15, yS);
-                $p2.attr('title', (xx + 1) + ',' + yy).data({x: xx + 1, y: yy});
+                        [x3, yT], [x2, yT], [x15, yM], [x2, yS]
+                    ], defaultClass));
+                // store the coordinates
                 if (! grid[xx + 1]) {
                     grid[xx + 1] = {};
                 }
-                grid[xx + 1][yy] = $p2;
+                grid[xx + 1][yy] = {x:x15, y:yS};
+                $p2.attr('title', (xx + 1) + ',' + yy).data({x: xx + 1, y: yy});
+
+                this.iconAt(DEFAULT_FILL, xx + 1, yy);
             }
         }
+        var me = this;
         $('polygon.hex', svg.root()
             ).mouseover(function () {
                 // instead of altering the base hex, we clone it.  the clone
@@ -327,11 +354,30 @@ var Map = PageArea.extend({
                 $clone.addClass('selected');
                 svg.root().appendChild($clone[0]);
             }).mouseout(function () {
-                $('.selected.hex').remove();
+                me.$node.find('.selected.hex').remove();
+            }).click(function () { 
+                me.onHexClick(this);
             });
         var t2 = new Date();
         log(t2-t1);
     },
+
+    onHexClick: function (hex) {
+        var $h = $(hex);
+        $h.attr('class', 'hex ' + this.pen.fillName);
+
+        var _dat = $h.data();
+        var fg = this._findFGByXY(_dat.x, _dat.y);
+        $(fg).remove();
+        this.iconAt(this.pen.fillName, _dat.x, _dat.y);
+    },
+
+    // find the fg tile (<use> or <image>) with the same x,y
+    _findFGByXY: function (x, y) {
+        var fgs = this.$node.find("." + CLASS_FG_FILL);
+        var _xy = x + ',' + y;
+        return $.grep(fgs, function (x) { return $(x).data('xy') == _xy });
+    }
 }, {
     restore: function (data, appState) {
         // restore: return a new instance of Map from the given dict data
