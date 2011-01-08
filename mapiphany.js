@@ -281,8 +281,8 @@ var Map = PageArea.extend({
         $(itm).data({x:x, y:y, xy: x + ',' + y});
         return itm;
     },
-    // rescale the map to the specified zoom
-    zoom: function (scale, xAbs, yAbs) {
+
+    zoom: function (scale, xAbs, yAbs) {    // rescale the map to the specified zoom
         // to get bigger hexes (larger zoom), use a smaller w/h in the
         // viewbox.  to get smaller hexes (smaller zoom), use larger viewBox
         // w/h.
@@ -400,8 +400,7 @@ var Map = PageArea.extend({
         this.iconAt(this.pen.fillName, _dat.x, _dat.y);
     },
 
-    // find the fg tile (<use> or <image>) with the same x,y
-    _findFGByXY: function (x, y) {
+    _findFGByXY: function (x, y) {    // find the fg tile (<use> or <image>) with the same x,y
         var fgs = this.$node.find("." + CLASS_FG_FILL);
         var _xy = x + ',' + y;
         return $.grep(fgs, function (x) { return $(x).data('xy') == _xy });
