@@ -23,6 +23,8 @@ X_UNIT = MULT * 0.5;
 DEFAULT_FILL = 'Grassland';
 CLASS_FG_FILL = 'fgFill1';
 
+CATEGORY_ORDER = ['Other Land', 'Forests', 'Rough Land', 'Water', 'Settlement', 'Symbol', 'Hex Fill', 'Other'];
+
 
 
 function dir(o) {
@@ -52,14 +54,24 @@ function reloadTo(uri) { // send us to the uri for sure
     window.location.reload();
 }
 
-function sortObject(obj) { // return an array of the key/value pairs in obj, sorted by key
-    arr = [];
-    $.each(obj, function (item) {
-            if (obj.hasOwnProperty(item)) {
-                arr.push([item, obj[item]]);
-            }
-        });
-    arr.sort();
+function sortObject(obj, order) { // return an array of the key/value pairs in obj, sorted by key
+    // if 'order' is given, it is an array that specifies the order by names
+    // of keys, instead of using the natural sort order
+    var arr = [], loop = obj;
+    if (order !== undefined) {
+        loop = order;
+    }
+    $.each(loop, function (item) {
+        if (order) {
+            item = loop[item];
+        }
+        if (obj.hasOwnProperty(item)) {
+            arr.push([item, obj[item]]);
+        }
+    });
+    if (order === undefined) {
+        arr.sort();
+    }
     return arr;
 };
 
@@ -216,7 +228,7 @@ var Map = PageArea.extend({
     },
 
     renderMap: function ($mapTemplate) { // turn on svg mode for the div
-        this.categories = sortObject(gTilesetCategories);
+        this.categories = sortObject(gTilesetCategories, CATEGORY_ORDER);
         var $mapEditNodes = $mapTemplate.tmpl(this);
         this.$node = $mapEditNodes.filter('#map-combined');
         var me = this;

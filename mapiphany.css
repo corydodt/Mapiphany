@@ -125,6 +125,11 @@ a {
     margin-bottom: 7px;
 }
 
+.drawbar-tile {
+    display: inline-block;
+    margin: 0px 1px 0px 0px;
+}
+
 .drawbar-tile-x1 {
     display: table-cell;
     width: 40px;
@@ -152,10 +157,6 @@ a {
     stroke-width: 3;
     pointer-events: none;
     fill: transparent;
-}
-
-.drawbar-tile:hover {
-    font-weight: bold;
 }
 
 /* }}} */
