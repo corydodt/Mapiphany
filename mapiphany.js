@@ -452,9 +452,8 @@ var UndoHistory = Base.extend({
         this.future = []; // for redo, remember commands that were undone
     },
 
-    isDirty: function (map) { // dirty/modified if any recent commands have been entered.
-        return !!this.history.length;
-    },
+    // TODO - isDirty. Not as simple as checking history.length, must take
+    // into account where the current map state is wrt future and history.
 
     do: function (cmd, args, previous) { // apply an action to the managedObject and remember it
         this.managedObject['do_' + cmd].apply(this.managedObject, args);
