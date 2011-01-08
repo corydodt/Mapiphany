@@ -26,14 +26,16 @@ CLASS_FG_FILL = 'fgFill1';
 
 
 function dir(o) {
-    if (console) {
+    try {
         return console.dir(o);
+    } catch (e) {
     }
 }
 
 function log(m) {
-    if (console) {
+    try {
         return console.log(m);
+    } catch (e) {
     }
 }
 
