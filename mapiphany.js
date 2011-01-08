@@ -14,6 +14,8 @@ VIEW_MY_MAPS = 'my-maps';
 APP_NAME = 'Mapiphany';
 EVENT_TEMPLATE_DONE = 'template-done';
 EVENT_MAP_ZOOM = 'map-zoom';
+EVENT_MAP_UNDO = 'map-undo';
+EVENT_MAP_REDO = 'map-redo';
 PEN_SMALL = 'small';
 PEN_LARGE = 'large';
 MULT = 20; // baseline multiplier to get a decent-sized hex
@@ -137,6 +139,15 @@ var Toolbar = PageArea.extend({
             $(document).trigger(EVENT_MAP_ZOOM, [$me.data('zoom')]);
             return false;
         });
+
+        ret.find('input[value=undo]').click(function () {
+            $(document).trigger(EVENT_MAP_UNDO, []);
+        });
+
+        ret.find('input[value=redo]').click(function () {
+            $(document).trigger(EVENT_MAP_REDO, []);
+        });
+
         return ret;
     }
 });
@@ -218,6 +229,7 @@ var Map = PageArea.extend({
         this.$node = null;
         this.pen = null;
         this.svg = null;
+        this.history = new UndoHistory(this);
     },
 
     save: function (forTemplate) { // serialize this map instance to dict data
@@ -247,6 +259,14 @@ var Map = PageArea.extend({
             $mapNode.svg(function (svg) { me._renderSVG(svg) });
             me.pen = new Pen($('#current'));
             me.pen.setCurrent(DEFAULT_FILL);
+        });
+        $(document).bind(EVENT_MAP_UNDO, function (ev) {
+            log('undo');
+            me.history.undo();
+        });
+        $(document).bind(EVENT_MAP_REDO, function (ev) {
+            log('redo');
+            me.history.redo();
         });
         $(document).bind(EVENT_MAP_ZOOM, function (ev, zoom) {
             me.zoom(zoom);
@@ -352,7 +372,7 @@ var Map = PageArea.extend({
                     grid[xx] = {};
                 }
                 grid[xx][yy] = {x:xAbs, y:yAbs};
-                $p1.attr('title', xx + ',' + yy).data({x: xx, y: yy});
+                $p1.attr('title', xx + ',' + yy).data({x: xx, y: yy, fgbg: DEFAULT_FILL});
 
                 this.iconAt(DEFAULT_FILL, xx, yy);
 
@@ -366,7 +386,7 @@ var Map = PageArea.extend({
                     grid[xx + 1] = {};
                 }
                 grid[xx + 1][yy] = {x:x15, y:yS};
-                $p2.attr('title', (xx + 1) + ',' + yy).data({x: xx + 1, y: yy});
+                $p2.attr('title', (xx + 1) + ',' + yy).data({x: xx + 1, y: yy, fgbg: DEFAULT_FILL});
 
                 this.iconAt(DEFAULT_FILL, xx + 1, yy);
             }
@@ -391,13 +411,19 @@ var Map = PageArea.extend({
     },
 
     onHexClick: function (hex) {
+        this.history.do('setFGBG', [hex, this.pen.fillName], [hex, $(hex).data('fgbg')]); 
+    },
+
+    do_setFGBG: function (hex, fillName) {
         var $h = $(hex);
-        $h.attr('class', 'hex ' + this.pen.fillName);
+        $h.attr('class', 'hex ' + fillName);
+        dir($h.data());
+        $h.data('fgbg', fillName);
 
         var _dat = $h.data();
         var fg = this._findFGByXY(_dat.x, _dat.y);
         $(fg).remove();
-        this.iconAt(this.pen.fillName, _dat.x, _dat.y);
+        this.iconAt(fillName, _dat.x, _dat.y);
     },
 
     _findFGByXY: function (x, y) {    // find the fg tile (<use> or <image>) with the same x,y
@@ -413,6 +439,45 @@ var Map = PageArea.extend({
         ret.id = data.id;
         ret.modified = data.modified;
         return ret;
+    }
+});
+
+
+// implement command-based undo, managing the actions that can be applied to
+// the object
+var UndoHistory = Base.extend({
+    constructor: function (managedObject) {
+        this.managedObject = managedObject;
+        this.history = [];
+        this.future = []; // for redo, remember commands that were undone
+    },
+
+    isDirty: function (map) { // dirty/modified if any recent commands have been entered.
+        return !!this.history.length;
+    },
+
+    do: function (cmd, args, previous) { // apply an action to the managedObject and remember it
+        this.managedObject['do_' + cmd].apply(this.managedObject, args);
+        this.history.push([cmd, args, previous]);
+        this.future = [];
+    },
+
+    undo: function () { // un-apply whatever the last action was
+        if (this.history.length == 0) {
+            return;
+        }
+        var last = this.history.pop();
+        this.managedObject['do_' + last[0]].apply(this.managedObject, last[2]);
+        this.future.push(last);
+    },
+
+    redo: function () { // distinguished from "do" because it doesn't clear the "future" list
+        if (this.future.length == 0) {
+            return;
+        }
+        var future = this.future.pop();
+        this.managedObject['do_' + future[0]].apply(this.managedObject, future[1]);
+        this.history.push(future);
     }
 });
 
