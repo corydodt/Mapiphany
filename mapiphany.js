@@ -229,6 +229,7 @@ var Map = PageArea.extend({
         this.pen = null;
         this.svg = null;
         this.history = new UndoHistory(this);
+        this.defaultFill = DEFAULT_FILL;
     },
 
     save: function (forTemplate) { // serialize this map instance to dict data
@@ -257,7 +258,7 @@ var Map = PageArea.extend({
             var $mapNode = me.$node.find('.map');
             $mapNode.svg(function (svg) { me._renderSVG(svg) });
             me.pen = new Pen($('#current'));
-            me.pen.setCurrent(DEFAULT_FILL);
+            me.pen.setCurrent(me.defaultFill);
         });
         $(document).bind(EVENT_MAP_UNDO, function (ev) {
             log('undo');
@@ -351,7 +352,7 @@ var Map = PageArea.extend({
         _MED = 2 * _SHORT;
         _TALL = 3 * _SHORT;
 
-        var defaultClass = {'class': 'hex ' + DEFAULT_FILL};
+        var defaultClass = {'class': 'hex ' + this.defaultFill};
 
         var xAbs, xx, x05, x15, x2, x3, x35;
         var yAbs, yy, yS, yM, yT;
@@ -373,7 +374,7 @@ var Map = PageArea.extend({
                 grid[xx][yy] = {x:xAbs, y:yAbs};
                 $p1.attr('title', xx + ',' + yy).data({x: xx, y: yy, fgbg: DEFAULT_FILL});
 
-                this.iconAt(DEFAULT_FILL, xx, yy);
+                this.iconAt(this.defaultFill, xx, yy);
 
                 // down hex
                 var $p2 = $(svg.polygon(null, [
@@ -387,7 +388,7 @@ var Map = PageArea.extend({
                 grid[xx + 1][yy] = {x:x15, y:yS};
                 $p2.attr('title', (xx + 1) + ',' + yy).data({x: xx + 1, y: yy, fgbg: DEFAULT_FILL});
 
-                this.iconAt(DEFAULT_FILL, xx + 1, yy);
+                this.iconAt(this.defaultFill, xx + 1, yy);
             }
         }
         var me = this;
