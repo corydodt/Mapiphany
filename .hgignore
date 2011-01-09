@@ -3,3 +3,4 @@
 .*\.orig$
 ^twistd.pid$
 ^twistd.log.*
+.*\.txt\.html$
