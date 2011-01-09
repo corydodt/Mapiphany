@@ -209,7 +209,6 @@ var Pen = Base.extend({
         $disp.attr('class', newTile);
         $disp.attr('title', newTile);
 
-        // this.fgFill = tile.iconfilename;
         this.fillName = newTile;
     },
 });
@@ -406,8 +405,8 @@ var Map = PageArea.extend({
             }).click(function () { 
                 me.onHexClick(this);
             });
-        var t2 = new Date();
-        log(t2-t1);
+        var t2 = new Date() - t1;
+        log("_renderSVG: " + t2.toString() + "ms (" + Math.floor(10000/t2)/10 + " fps)");
     },
 
     onHexClick: function (hex) {
@@ -417,8 +416,7 @@ var Map = PageArea.extend({
     do_setFGBG: function (hex, fillName) {
         var $h = $(hex);
         $h.attr('class', 'hex ' + fillName);
-        dir($h.data());
-        $h.data('fgbg', fillName);
+        $h.data({fgbg: fillName, dirty: true});
 
         var _dat = $h.data();
         var fg = this._findFGByXY(_dat.x, _dat.y);
