@@ -239,7 +239,7 @@ var Map = PageArea.extend({
     },
 
     renderMap: function ($mapTemplate) { // turn on svg mode for the div
-        this.categories = sortObject(gTilesetCategories, CATEGORY_ORDER);
+        this.categories = sortObject(gTileCategories, CATEGORY_ORDER);
         var $mapEditNodes = $mapTemplate.tmpl(this);
         this.$node = $mapEditNodes.filter('#map-combined');
         var me = this;

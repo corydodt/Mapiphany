@@ -74,7 +74,7 @@ def run(argv=None):
         cssFile.write('.%s { fill: %s; background-color: %s; }\n' % (
             name, color, color))
     simplejson.dump(tileset, jsFile, sort_keys=True, indent=4 * ' ')
-    jsFile.write(';\nvar gTilesetCategories = ')
+    jsFile.write(';\nvar gTileCategories = ')
     categories = dict(map(lambda x: (x[0], sorted(x[1])), categories.items()))
     simplejson.dump(categories, jsFile, sort_keys=True, indent=4 * ' ')
     jsFile.write(';\n')
