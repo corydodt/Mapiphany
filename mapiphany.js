@@ -229,23 +229,30 @@ var Map = PageArea.extend({
         this.$template = $('#map-tab');
         this.modified = false;
         this.appState = appState;
-        this.grid = {};
+        this.grid = null;
         this.$node = null;
         this.pen = null;
         this.svg = null;
         this.history = new UndoHistory(this);
         this.defaultFill = DEFAULT_FILL;
+        this._restoredExtents = null;
+        this._restoredHexes = null;
     },
 
     save: function () { // serialize this map instance to dict data
-        var hexes = this._saveGridArea(0, 0, 19, 12);
         var _r = {name: this.name,
              id: this.id,
              modified: this.modified,
              defaultFill: this.defaultFill,
-             hexes: hexes,
-             extents: [0, 0, 19, 12]
+             hexes: null,
+             extents: null
         };
+        if (this.grid) {
+            var _fixmeExtents = [0, 0, 19, 12];
+            var hexes = this._saveGridArea.apply(this, _fixmeExtents);
+            _r.hexes = hexes;
+            _r.extents = _fixmeExtents;
+        }
         return _r;
     },
 
@@ -260,6 +267,24 @@ var Map = PageArea.extend({
             }
         }
         return ret;
+    },
+
+    _restoreGridArea: function () { // rebuild the map drawing from whatever we restored
+        var extents = this._restoredExtents;
+        var hexes = this._restoredHexes;
+        var unshiftX, unshiftY, cell;
+        for (x = extents[0]; x <= extents[2]; x++) {
+            unshiftX = x - extents[0];
+            for (y = extents[1]; y <= extents[3]; y++) {
+                unshiftY = y - extents[1];
+                // set the hex properties, skipping the history layer
+                cell = hexes[unshiftX][unshiftY];
+                // FIXME this is probably VERY SLOW .. better to apply these
+                // changes all at once instead of one hex at a time.
+                this.do_setFGBG(this.grid[x][y].n, cell[0], cell[1]);
+            }
+        }
+        this._restoredExtents = this._restoredHexes = undefined;
     },
 
     renderMap: function ($mapTemplate) { // turn on svg mode for the div
@@ -279,7 +304,12 @@ var Map = PageArea.extend({
         // visible in the DOM.
         $(document).bind(EVENT_TEMPLATE_DONE, function (ev) {
             var $mapNode = me.$node.find('.map');
-            $mapNode.svg(function (svg) { me._renderSVG(svg) });
+            $mapNode.svg(function (svg) { 
+                me._renderSVG(svg);
+                if (me._restoredExtents) {
+                    me._restoreGridArea();
+                }
+            });
             me.pen = new Pen($('#current'));
             me.pen.setCurrent(me.defaultFill);
         });
@@ -290,10 +320,6 @@ var Map = PageArea.extend({
         $(document).bind(EVENT_MAP_REDO, function (ev) {
             log('redo');
             me.history.redo();
-        });
-        $(document).bind(EVENT_MAP_SAVE, function (ev) {
-            log('save');
-            me.save();
         });
         $(document).bind(EVENT_MAP_ZOOM, function (ev, zoom) {
             me.zoom(zoom);
@@ -350,10 +376,10 @@ var Map = PageArea.extend({
         $root.attr('viewBox', xAbs + ' ' + yAbs + ' ' + rw * factor + ' ' + rh * factor);
     },
 
-    _renderSVG: function (svg) {
+    _renderSVG: function (svg) { // create a new hex canvas using defaults
         this.svg = svg;
 
-        var grid = this.grid;
+        var grid = this.grid = {};
         var defs = this.defs = svg.defs();
 
         var t1 = new Date();
@@ -443,12 +469,12 @@ var Map = PageArea.extend({
                 / 10 + " fps]");
     },
 
-    onHexClick: function (hex) {
+    onHexClick: function (hex) { // change a map hex, and remember it in the undo history
         var dat = $(hex).data();
         this.history.do('setFGBG', [hex, this.pen.fillName, this.pen.fillName], [hex, dat.fg, dat.bg]); 
     },
 
-    do_setFGBG: function (hex, fgFill, bgFill) {
+    do_setFGBG: function (hex, fgFill, bgFill) { // apply a change to both fg and bg to the map DOM
         var $h = $(hex);
         $h.attr('class', 'hex ' + bgFill);
         $h.data({fg: fgFill, bg: bgFill});
@@ -471,6 +497,12 @@ var Map = PageArea.extend({
         ret.name = data.name;
         ret.id = data.id;
         ret.modified = data.modified;
+
+        // extents and hexes are not intended to be looked at after the map is
+        // painted for the first time, so these attributes are private
+        ret._restoredExtents = data.extents;
+        ret._restoredHexes = data.hexes;
+
         return ret;
     }
 });
@@ -519,10 +551,14 @@ var UndoHistory = Base.extend({
 var AppState = Base.extend({
     constructor: function () {
         if (!localStorage.maps) {
-            localStorage.maps = $.toJSON([
-                (new Map(this, 'your map#1')).save(),
-                (new Map(this, 'your map 2#2')).save()
-            ]);
+            _m1 = (new Map(this, 'your map#1')).save();
+            _m2 = (new Map(this, 'your map 2#2')).save();
+            _m1.extents = [1, 1, 2, 2];
+            _m1.hexes = [
+                [ ["Mountain", "Mountain"], ["Mountain", "Mountain"] ],
+                [ ["Grassland", "Grassland"], ["Mountain", "Mountain"] ]
+            ];
+            localStorage.maps = $.toJSON([_m1, _m2]);
             localStorage.visibleScreen = VIEW_MAP_EDIT + '#1';
             localStorage.openMaps = $.toJSON(['1', '2']);
             localStorage.username = 'corydodt';
@@ -550,7 +586,23 @@ var AppState = Base.extend({
         if (vs[0] == VIEW_MAP_EDIT) {
             this.currentMap = this.maps[vs[1]];
         }
+
+        // save event - write to localStorage
+        $(document).bind(EVENT_MAP_SAVE, function (ev) {
+            me._mapSave();
+        });
     },
+
+    _mapSave: function () { // write all map states to localStorage
+        log('AppState map save');
+        var out = [];
+        for (id in me.maps) {
+            if (me.maps.hasOwnProperty(id)) {
+                out.push(me.maps[id].save());
+            }
+        }
+        localStorage.maps = $.toJSON(out);
+    }
 
     getVisibleScreen: function () {
         return this.visibleScreen.split('#');
