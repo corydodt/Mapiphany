@@ -16,6 +16,7 @@ EVENT_TEMPLATE_DONE = 'template-done';
 EVENT_MAP_ZOOM = 'map-zoom';
 EVENT_MAP_UNDO = 'map-undo';
 EVENT_MAP_REDO = 'map-redo';
+EVENT_MAP_SAVE = 'map-save';
 PEN_SMALL = 'small';
 PEN_LARGE = 'large';
 MULT = 25; // baseline multiplier to get a decent-sized hex
@@ -140,12 +141,16 @@ var Toolbar = PageArea.extend({
             return false;
         });
 
-        ret.find('input[value=undo]').click(function () {
+        ret.find('input[name=undo]').click(function () {
             $(document).trigger(EVENT_MAP_UNDO, []);
         });
 
-        ret.find('input[value=redo]').click(function () {
+        ret.find('input[name=redo]').click(function () {
             $(document).trigger(EVENT_MAP_REDO, []);
+        });
+
+        ret.find('input[name=save]').click(function () {
+            $(document).trigger(EVENT_MAP_SAVE, []);
         });
 
         return ret;
@@ -232,11 +237,29 @@ var Map = PageArea.extend({
         this.defaultFill = DEFAULT_FILL;
     },
 
-    save: function (forTemplate) { // serialize this map instance to dict data
-        if (forTemplate) {
-            log("save");
+    save: function () { // serialize this map instance to dict data
+        var hexes = this._saveGridArea(0, 0, 19, 12);
+        var _r = {name: this.name,
+             id: this.id,
+             modified: this.modified,
+             defaultFill: this.defaultFill,
+             hexes: hexes,
+             extents: [0, 0, 19, 12]
+        };
+        return _r;
+    },
+
+    _saveGridArea: function (minX, minY, maxX, maxY) { // serialize a grid of squares from minx/Y to maxX/Y
+        var ret = [], n;
+        for (x=minX; x<maxX + 1; x++) {
+            var col = [], dat;
+            ret.push(col);
+            for (y=minY; y<maxY + 1; y++) {
+                dat = this.grid[x][y].n.data();
+                col.push([dat.fg, dat.bg]);
+            }
         }
-        return {name:this.name, id:this.id, modified:this.modified};
+        return ret;
     },
 
     renderMap: function ($mapTemplate) { // turn on svg mode for the div
@@ -267,6 +290,10 @@ var Map = PageArea.extend({
         $(document).bind(EVENT_MAP_REDO, function (ev) {
             log('redo');
             me.history.redo();
+        });
+        $(document).bind(EVENT_MAP_SAVE, function (ev) {
+            log('save');
+            me.save();
         });
         $(document).bind(EVENT_MAP_ZOOM, function (ev, zoom) {
             me.zoom(zoom);
@@ -371,8 +398,8 @@ var Map = PageArea.extend({
                 if (! grid[xx]) {
                     grid[xx] = {};
                 }
-                grid[xx][yy] = {x:xAbs, y:yAbs};
-                $p1.attr('title', xx + ',' + yy).data({x: xx, y: yy, fgbg: DEFAULT_FILL});
+                grid[xx][yy] = {x: xAbs, y: yAbs, n: $p1};
+                $p1.attr('title', xx + ',' + yy).data({x: xx, y: yy, fg: this.defaultFill, bg: this.defaultFill});
 
                 this.iconAt(this.defaultFill, xx, yy);
 
@@ -385,13 +412,14 @@ var Map = PageArea.extend({
                 if (! grid[xx + 1]) {
                     grid[xx + 1] = {};
                 }
-                grid[xx + 1][yy] = {x:x15, y:yS};
-                $p2.attr('title', (xx + 1) + ',' + yy).data({x: xx + 1, y: yy, fgbg: DEFAULT_FILL});
+                grid[xx + 1][yy] = {x: x15, y: yS, n: $p2};
+                $p2.attr('title', (xx + 1) + ',' + yy).data({x: xx + 1, y: yy, fg: this.defaultFill, bg: this.defaultFill});
 
                 this.iconAt(this.defaultFill, xx + 1, yy);
             }
         }
         var me = this;
+
         $('polygon.hex', svg.root()
             ).mouseover(function () {
                 // instead of altering the base hex, we clone it.  the clone
@@ -401,28 +429,34 @@ var Map = PageArea.extend({
                 var $clone = $(this).clone();
                 $clone.addClass('selected');
                 svg.root().appendChild($clone[0]);
+
             }).mouseout(function () {
                 me.$node.find('.selected.hex').remove();
+
             }).click(function () { 
                 me.onHexClick(this);
+
             });
+
         var t2 = new Date() - t1;
-        log("_renderSVG: " + t2.toString() + "ms (" + Math.floor(10000/t2)/10 + " fps)");
+        log("_renderSVG: " + t2.toString() + "ms [" + Math.floor(10000.0 / t2) 
+                / 10 + " fps]");
     },
 
     onHexClick: function (hex) {
-        this.history.do('setFGBG', [hex, this.pen.fillName], [hex, $(hex).data('fgbg')]); 
+        var dat = $(hex).data();
+        this.history.do('setFGBG', [hex, this.pen.fillName, this.pen.fillName], [hex, dat.fg, dat.bg]); 
     },
 
-    do_setFGBG: function (hex, fillName) {
+    do_setFGBG: function (hex, fgFill, bgFill) {
         var $h = $(hex);
-        $h.attr('class', 'hex ' + fillName);
-        $h.data({fgbg: fillName, dirty: true});
+        $h.attr('class', 'hex ' + bgFill);
+        $h.data({fg: fgFill, bg: bgFill});
 
         var _dat = $h.data();
         var fg = this._findFGByXY(_dat.x, _dat.y);
         $(fg).remove();
-        this.iconAt(fillName, _dat.x, _dat.y);
+        this.iconAt(fgFill, _dat.x, _dat.y);
     },
 
     _findFGByXY: function (x, y) {    // find the fg tile (<use> or <image>) with the same x,y
@@ -480,7 +514,8 @@ var UndoHistory = Base.extend({
 });
 
 
-// I remember what you were looking at in the app
+// I remember what you were looking at in the app and I am responsible for all
+// localStorage interaction
 var AppState = Base.extend({
     constructor: function () {
         if (!localStorage.maps) {
