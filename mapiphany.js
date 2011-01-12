@@ -602,7 +602,7 @@ var AppState = Base.extend({
             }
         }
         localStorage.maps = $.toJSON(out);
-    }
+    },
 
     getVisibleScreen: function () {
         return this.visibleScreen.split('#');
