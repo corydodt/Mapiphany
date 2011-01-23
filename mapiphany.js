@@ -596,9 +596,9 @@ var AppState = Base.extend({
     _mapSave: function () { // write all map states to localStorage
         log('AppState map save');
         var out = [];
-        for (id in me.maps) {
-            if (me.maps.hasOwnProperty(id)) {
-                out.push(me.maps[id].save());
+        for (id in this.maps) {
+            if (this.maps.hasOwnProperty(id)) {
+                out.push(this.maps[id].save());
             }
         }
         localStorage.maps = $.toJSON(out);
