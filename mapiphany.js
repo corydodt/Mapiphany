@@ -270,6 +270,7 @@ var Map = PageArea.extend({
     },
 
     _restoreGridArea: function () { // rebuild the map drawing from whatever we restored
+        var t1 = new Date();
         var extents = this._restoredExtents;
         var hexes = this._restoredHexes;
         var unshiftX, unshiftY, cell;
@@ -285,6 +286,8 @@ var Map = PageArea.extend({
             }
         }
         this._restoredExtents = this._restoredHexes = undefined;
+        var t2 = new Date() - t1;
+        log("_restoreGridArea: " + t2.toString() + "ms");
     },
 
     renderMap: function ($mapTemplate) { // turn on svg mode for the div
@@ -351,7 +354,7 @@ var Map = PageArea.extend({
             itm = this.svg.image(null, _g.x, _g.y, 4*X_UNIT, 2*Y_UNIT, $def.attr('href'), {'pointer-events': 'none'});
         }
         $(itm).addClass(CLASS_FG_FILL);
-        $(itm).data({x:x, y:y, xy: x + ',' + y});
+        $(itm).attr('id', 'fg-' + x + '-' + y);
         return itm;
     },
 
@@ -425,7 +428,8 @@ var Map = PageArea.extend({
                     grid[xx] = {};
                 }
                 grid[xx][yy] = {x: xAbs, y: yAbs, n: $p1};
-                $p1.attr('title', xx + ',' + yy).data({x: xx, y: yy, fg: this.defaultFill, bg: this.defaultFill});
+                _p1ID = xx + '-' + yy;
+                $p1.attr({id: _p1ID, title: _p1ID}).data({x: xx, y: yy, fg: this.defaultFill, bg: this.defaultFill});
 
                 this.iconAt(this.defaultFill, xx, yy);
 
@@ -439,7 +443,8 @@ var Map = PageArea.extend({
                     grid[xx + 1] = {};
                 }
                 grid[xx + 1][yy] = {x: x15, y: yS, n: $p2};
-                $p2.attr('title', (xx + 1) + ',' + yy).data({x: xx + 1, y: yy, fg: this.defaultFill, bg: this.defaultFill});
+                _p2ID = (xx + 1) + '-' + yy;
+                $p2.attr({id: _p2ID, title: _p2ID}).data({x: xx + 1, y: yy, fg: this.defaultFill, bg: this.defaultFill});
 
                 this.iconAt(this.defaultFill, xx + 1, yy);
             }
@@ -480,15 +485,9 @@ var Map = PageArea.extend({
         $h.data({fg: fgFill, bg: bgFill});
 
         var _dat = $h.data();
-        var fg = this._findFGByXY(_dat.x, _dat.y);
-        $(fg).remove();
+        var $fg = $('#icon-' + $h.attr('id'));
+        $fg.remove();
         this.iconAt(fgFill, _dat.x, _dat.y);
-    },
-
-    _findFGByXY: function (x, y) {    // find the fg tile (<use> or <image>) with the same x,y
-        var fgs = this.$node.find("." + CLASS_FG_FILL);
-        var _xy = x + ',' + y;
-        return $.grep(fgs, function (x) { return $(x).data('xy') == _xy });
     }
 }, {
     restore: function (data, appState) {
