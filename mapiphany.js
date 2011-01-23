@@ -280,8 +280,6 @@ var Map = PageArea.extend({
                 unshiftY = y - extents[1];
                 // set the hex properties, skipping the history layer
                 cell = hexes[unshiftX][unshiftY];
-                // FIXME this is probably VERY SLOW .. better to apply these
-                // changes all at once instead of one hex at a time.
                 this.do_setFGBG(this.grid[x][y].n, cell[0], cell[1]);
             }
         }
