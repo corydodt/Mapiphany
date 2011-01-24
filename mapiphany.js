@@ -483,7 +483,7 @@ var Map = PageArea.extend({
         $h.data({fg: fgFill, bg: bgFill});
 
         var _dat = $h.data();
-        var $fg = $('#icon-' + $h.attr('id'));
+        var $fg = $('#fg-' + $h.attr('id'));
         $fg.remove();
         this.iconAt(fgFill, _dat.x, _dat.y);
     }
