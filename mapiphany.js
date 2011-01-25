@@ -18,6 +18,7 @@ EVENT_MAP_ZOOM = 'map-zoom';
 EVENT_MAP_UNDO = 'map-undo';
 EVENT_MAP_REDO = 'map-redo';
 EVENT_MAP_SAVE = 'map-save';
+EVENT_MAP_RENAME = 'map-rename';
 PEN_SMALL = 'small';
 PEN_LARGE = 'large';
 MULT = 25; // baseline multiplier to get a decent-sized hex
@@ -96,37 +97,43 @@ var PageArea = Base.extend({
 // the navigation and controls at the top of the page
 var Top = PageArea.extend({
     render: function (data) {
-        var ret = this.$template.tmpl(this.appState);
+        var $ret = this.$template.tmpl(this.appState);
         var me = this;
-        ret.find('a[href$=#clear]').click(function () { 
+        me.$node = $ret;
+
+        $ret.find('a[href$=#clear]').click(function () { 
             var page = stripHash(window.location.href);
             reloadTo(page + '#clear');
             return false;
         });
 
-        ret.find('a[href$=#userEdit]').click(function () {
+        $ret.find('a[href$=#userEdit]').click(function () {
             me.appState.view(VIEW_USER_EDIT);
             return false;
         });
 
-        ret.find('a[href$=#logout]').click(function () {
+        $ret.find('a[href$=#logout]').click(function () {
             alert('not implemented');
             return false;
         });
 
-        ret.find('.map-tab').click(function () {
+        $ret.find('.map-tab').click(function () {
             var tab = $(this);
             var newVis = VIEW_MAP_EDIT + '#' + tab.data('id');
             me.appState.view(newVis);
             return false;
         });
 
-        ret.find('a[href$=#myMaps]').parents('.tab').click(function () {
+        $(document).bind(EVENT_MAP_RENAME, function (ev, name) {
+            me.$node.find('.active-tab a').text(name);
+        });
+
+        $ret.find('a[href$=#myMaps]').parents('.tab').click(function () {
             me.appState.view(VIEW_MY_MAPS);
             return false;
         });
 
-        return ret;
+        return $ret;
     }
 });
 
@@ -148,6 +155,10 @@ var Toolbar = PageArea.extend({
 
         ret.find('input[name=redo]').click(function () {
             $(document).trigger(EVENT_MAP_REDO, []);
+        });
+
+        ret.find('input[name=mapName]').change(function () {
+            $(document).trigger(EVENT_MAP_RENAME, [$(this).val()]);
         });
 
         ret.find('input[name=save]').click(function () {
@@ -325,6 +336,9 @@ var Map = PageArea.extend({
         });
         $(document).bind(EVENT_MAP_ZOOM, function (ev, zoom) {
             me.zoom(zoom);
+        });
+        $(document).bind(EVENT_MAP_RENAME, function (ev, name) {
+            me.name = name;
         });
         return $mapEditNodes;
     },
