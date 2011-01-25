@@ -1,0 +1,18 @@
+Widget I can click to get a print dialog.  Options:
+
+- dimensions
+    - x
+    - y
+    - default to edited areas, plus enough surrounding space to fill a
+      rectangle
+- border hexes dropdown: 
+    - default tile background (e.g. grassland), or
+    - black
+- mode
+    - map and notes [as HTML+SVG]
+    - map and notes, numbered
+    - PNG
+    - PNG, numbered
+    - SVG
+    - SVG, numbered
+
