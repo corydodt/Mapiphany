@@ -4,6 +4,7 @@ $.require('jquery.tmpl.js');
 $.require('jquery.json-2.2.js');
 $.require('jquery-svg/jquery.svg.js');
 $.require('jquery-svg/jquery.svgdom.js');
+$.require('jquery-svg/jquery.svganim.js');
 
 $.require('tileset.js');
 
@@ -374,7 +375,7 @@ var Map = PageArea.extend({
             yAbs = vb.baseVal.y;
         }
 
-        $root.attr('viewBox', xAbs + ' ' + yAbs + ' ' + rw * factor + ' ' + rh * factor);
+        $root.animate({svgViewBox: xAbs + ' ' + yAbs + ' ' + rw * factor + ' ' + rh * factor}, 500);
     },
 
     _renderSVG: function (svg) { // create a new hex canvas using defaults
