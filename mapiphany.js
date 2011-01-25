@@ -124,8 +124,8 @@ var Top = PageArea.extend({
             return false;
         });
 
-        $(document).bind(EVENT_MAP_RENAME, function (ev, name) {
-            me.$node.find('.active-tab a').text(name);
+        $(document).bind(EVENT_MAP_RENAME, function (ev, id, name) {
+            me.$node.find('[data-id=' + id + '] a').text(name);
         });
 
         $ret.find('a[href$=#myMaps]').parents('.tab').click(function () {
@@ -142,6 +142,7 @@ var Top = PageArea.extend({
 var Toolbar = PageArea.extend({
     render: function (data) {
         var ret = this.$template.tmpl(this.appState.currentMap);
+        var me = this;
 
         ret.find('a[href$=#zoom]').click(function () {
             var $me = $(this);
@@ -158,7 +159,10 @@ var Toolbar = PageArea.extend({
         });
 
         ret.find('input[name=mapName]').change(function () {
-            $(document).trigger(EVENT_MAP_RENAME, [$(this).val()]);
+            $(document).trigger(EVENT_MAP_RENAME, [
+                me.appState.currentMap.id, 
+                $(this).val()
+            ]);
         });
 
         ret.find('input[name=save]').click(function () {
@@ -337,7 +341,7 @@ var Map = PageArea.extend({
         $(document).bind(EVENT_MAP_ZOOM, function (ev, zoom) {
             me.zoom(zoom);
         });
-        $(document).bind(EVENT_MAP_RENAME, function (ev, name) {
+        $(document).bind(EVENT_MAP_RENAME, function (ev, id, name) {
             me.name = name;
         });
         return $mapEditNodes;
