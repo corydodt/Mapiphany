@@ -263,6 +263,7 @@ var Map = PageArea.extend({
         this.defaultFill = DEFAULT_FILL;
         this._restoredExtents = null;
         this._restoredHexes = null;
+        this._toSymbol = null;
     },
 
     save: function () { // serialize this map instance to dict data
@@ -277,6 +278,7 @@ var Map = PageArea.extend({
         if (this.grid) {
             var _fixmeExtents = [0, 0, 19, 12];
             var hexes = this._saveGridArea.apply(this, _fixmeExtents);
+            _r.lookup = this._toSymbol;
             _r.hexes = hexes;
             _r.extents = _fixmeExtents;
         }
@@ -285,15 +287,39 @@ var Map = PageArea.extend({
 
     _saveGridArea: function (minX, minY, maxX, maxY) { // serialize a grid of squares from minx/Y to maxX/Y
         var ret = [], n;
+        var toAbbrev = {};
+
+        this._toSymbol = {};
+
         for (x=minX; x<maxX + 1; x++) {
             var col = [], dat;
             ret.push(col);
             for (y=minY; y<maxY + 1; y++) {
                 dat = this.grid[x][y].n.data();
-                col.push([dat.fg, dat.bg]);
+                a0 = this.setLookup(dat.fg, toAbbrev);
+                a1 = this.setLookup(dat.bg, toAbbrev);
+                col.push(a0 + a1);
             }
         }
         return ret;
+    },
+
+    setLookup: function (symbol, abbrevMap) { // add entries to my fill lookup tables
+        if (abbrevMap[symbol] !== undefined) {
+            return abbrevMap[symbol];
+        }
+        var n = 0, suffixes = '123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        var c0 = symbol[0];
+        var abbrev = c0 + '0';
+        // find a free suffix to use with this symbol
+        while (this._toSymbol[abbrev] !== undefined) {
+            n++;
+            abbrev = c0 + suffixes[n]; 
+        }
+
+        this._toSymbol[abbrev] = symbol;
+        abbrevMap[symbol] = abbrev;
+        return abbrev;
     },
 
     _restoreGridArea: function () { // rebuild the map drawing from whatever we restored
@@ -307,12 +333,20 @@ var Map = PageArea.extend({
                 unshiftY = y - extents[1];
                 // set the hex properties, skipping the history layer
                 cell = hexes[unshiftX][unshiftY];
-                this.do_setFGBG(this.grid[x][y].n, cell[0], cell[1]);
+                this.do_setFGBG(this.grid[x][y].n, 
+                        this._toSymbol[cell.substr(0, 2)], 
+                        this._toSymbol[cell.substr(2, 2)]
+                        );
             }
         }
         this._restoredExtents = this._restoredHexes = undefined;
         var t2 = new Date() - t1;
         log("_restoreGridArea: " + t2.toString() + "ms");
+
+        // clean up
+        this._restoredExtents = null;
+        this._restoredHexes = null;
+        this._toSymbol = null;
     },
 
     render: function ($mapTemplate) { // turn on svg mode for the div
@@ -534,6 +568,7 @@ var Map = PageArea.extend({
         // painted for the first time, so these attributes are private
         ret._restoredExtents = data.extents;
         ret._restoredHexes = data.hexes;
+        ret._toSymbol = data.lookup;
 
         return ret;
     }
@@ -621,10 +656,11 @@ var AppState = Base.extend({
     _generateSampleData: function () {
         _m1 = (new Map(this, 'your map#1')).save();
         _m2 = (new Map(this, 'your map 2#2')).save();
+        _m1.lookup = {M0: 'Mountain', G0: 'Grassland'};
         _m1.extents = [1, 1, 2, 2];
         _m1.hexes = [
-            [ ["Mountain", "Mountain"], ["Mountain", "Mountain"] ],
-            [ ["Grassland", "Grassland"], ["Mountain", "Mountain"] ]
+            [ "M0M0", "M0M0" ],
+            [ "G0G0", "M0M0" ],
         ];
         localStorage.maps = $.toJSON([_m1, _m2]);
         localStorage.username = 'corydodt';
