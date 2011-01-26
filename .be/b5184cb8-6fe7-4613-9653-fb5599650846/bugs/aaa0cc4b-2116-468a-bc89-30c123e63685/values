@@ -7,7 +7,7 @@ reporter: Cory Dodt <corymercurial@spam.goonmill.org>
 severity: minor
 
 
-status: open
+status: closed
 
 
 summary: hitting save erases the map that isn't showing
