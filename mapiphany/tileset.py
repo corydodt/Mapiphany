@@ -15,9 +15,11 @@ def discoverTilesets(path):
     Walk path and look for directories containing tileset.ini; return tilesets
     for them.
     """
+    ret = []
     for fp in path.walk():
         if fp.child('tileset.ini').exists():
-            yield TileSet(fp.path)
+            ret.append(TileSet(fp.path))
+    return ret
 
 
 class TileSet(FilePath):
@@ -112,8 +114,15 @@ def run(argv=None):
     if argv is None:
         argv = sys.argv
 
-    for ts in discoverTilesets(FilePath('tiles')):
+    sets = discoverTilesets(FilePath('tiles'))
+    for ts in sets:
         ts.writeResources()
+
+    f = open('tiles/tilesets.js', 'w')
+
+    segs = [x.segmentsFrom(x.parent())[-1] for x in sets]
+    paths = ','.join(['"%s"' % seg for seg in segs])
+    f.write('var gTilesets = [%s];\n' % (paths,))
 
 
 if __name__ == '__main__':
