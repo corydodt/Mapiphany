@@ -6,12 +6,13 @@ $.require('jquery-svg/jquery.svg.js');
 $.require('jquery-svg/jquery.svgdom.js');
 $.require('jquery-svg/jquery.svganim.js');
 
-$.require('tileset.js');
+$.require('tiles/tilesets.js');
 
 
 VIEW_MAP_EDIT = 'map-edit';
 VIEW_USER_EDIT = 'user-edit';
 VIEW_MY_MAPS = 'my-maps';
+VIEW_CLEAR = 'clear';
 APP_NAME = 'Mapiphany';
 EVENT_TEMPLATE_DONE = 'template-done';
 EVENT_MAP_ZOOM = 'map-zoom';
@@ -27,6 +28,7 @@ Y_UNIT = MULT * SIN60;
 X_UNIT = MULT * 0.5;
 DEFAULT_FILL = 'Grassland';
 CLASS_FG_FILL = 'fgFill1';
+DEFAULT_TILESET = 'rkterrain-finalopt';
 
 CATEGORY_ORDER = ['Other Land', 'Forests', 'Rough Land', 'Water', 'Settlement', 'Symbol', 'Hex Fill', 'Other'];
 
@@ -95,7 +97,7 @@ var Top = PageArea.extend({
 
         $ret.find('a[href$=#clear]').click(function () { 
             var page = stripHash(window.location.href);
-            me.appState.redirect('clear');
+            me.appState.redirect(VIEW_CLEAR);
             return false;
         });
 
@@ -256,6 +258,7 @@ var Map = PageArea.extend({
         this.$node = null;
         this.pen = null;
         this.svg = null;
+        this.tileset = DEFAULT_TILESET;
         this.history = new UndoHistory(this);
         this.defaultFill = DEFAULT_FILL;
         this._restoredExtents = null;
@@ -268,7 +271,8 @@ var Map = PageArea.extend({
              modified: this.modified,
              defaultFill: this.defaultFill,
              hexes: null,
-             extents: null
+             extents: null,
+             tileset: this.tileset
         };
         if (this.grid) {
             var _fixmeExtents = [0, 0, 19, 12];
@@ -312,6 +316,10 @@ var Map = PageArea.extend({
     },
 
     render: function ($mapTemplate) { // turn on svg mode for the div
+        $.require('tiles/' + this.tileset + '/tileset.js');
+
+        $('head').append('<link rel="stylesheet" type="text/css" href="tiles/' + this.tileset + '/tileset.css" />');
+
         this.categories = sortObject(gTileCategories, CATEGORY_ORDER);
         var $mapEditNodes = $mapTemplate.tmpl(this);
         this.$node = $mapEditNodes.filter('#map-combined');
@@ -520,6 +528,7 @@ var Map = PageArea.extend({
         ret.name = data.name;
         ret.id = data.id;
         ret.modified = data.modified;
+        ret.tileset = data.tileset;
 
         // extents and hexes are not intended to be looked at after the map is
         // painted for the first time, so these attributes are private
@@ -677,7 +686,7 @@ $(function () {
     if (window.location.href.search(/#clear$/) >= 0) {
         localStorage.clear();
         // redirect
-        window.location = window.location.href.replace(/#clear$/, '#clearedLocalStorage');
+        window.location = window.location.href.replace(/#clear$/, '#my-maps');
     }
     var appState = new AppState();
 
