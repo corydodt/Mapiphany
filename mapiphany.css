@@ -161,3 +161,61 @@ a {
 
 /* }}} */
 
+
+/* #my-maps {{{ */
+.snapshot {
+    border-bottom: thin dotted black;
+}
+
+.box {
+    display: -moz-box;
+    display: -webkit-box;
+    display: box;
+    box-orient: horizontal;
+    -webkit-box-orient: horizontal;
+    -moz-box-orient: horizontal;
+    box-align: stretch;
+    -webkit-box-align: stretch;
+    -moz-box-align: stretch;
+    box-pack: center;
+    -webkit-box-pack: center;
+    -moz-box-pack: center;
+}
+
+.snapshot-box {
+    height: 100px;
+}
+
+.snapshot .indicators {
+    line-height: 100px;
+    text-align: center;
+    width: 30px;
+    box-flex: 0;
+    -webkit-box-flex: 0;
+    -moz-box-flex: 0;
+}
+
+.snapshot .thumbnail {
+    width: 100px;
+    text-align: center;
+    box-flex: 0;
+    -webkit-box-flex: 0;
+    -moz-box-flex: 0;
+    box-align: center;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+}
+
+.thumbnail-inner {
+    box-flex: 1.0;
+    -webkit-box-flex: 1.0;
+    -moz-box-flex: 1.0;
+}
+
+.snapshot .details {
+    line-height: 100px;
+    box-flex: 1.0;
+    -webkit-box-flex: 1.0;
+    -moz-box-flex: 1.0;
+}
+/* }}} */

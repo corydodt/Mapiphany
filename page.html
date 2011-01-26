@@ -86,26 +86,37 @@
     "my-maps"> <!-- [[[ -->
 
   <div class="snapshot">
-    <div class="indicators" />
-    <div class="thumbnail" />
-      *new*
+    <div class="snapshot-box box">
+
+      <div class="indicators"><input type="checkbox" /></div>
+
+      <div class="thumbnail box">
+        <div class="thumbnail-inner">
+          <img src="document-new.png" alt="new"
+            title="new" />
+        </div>
+      </div>
+
+      <div class="details" />
+
     </div>
-    <div class="details" />
   </div>
 
   {{each maps}}
   <div class="snapshot">
-    <!-- highlight .snapshot if it has a window open -->
-    <div class="indicators">
-      * <!-- show a window icon if it has a window open -->
-    </div>
-    
-    <div class="thumbnail">
-      <div style="width:100px; height: 100px">&nbsp;</div>
-    </div>
+    <div class="snapshot-box box">
+      <div class="indicators"><input type="checkbox" /></div>
+      
+      <div class="thumbnail box">
+        <div class="thumbnail-inner">
+          <img src="hexes.png" alt="${name}"
+            title="${name}" />
+        </div>
+      </div>
 
-    <div class="details">
-      ${name}
+      <div class="details">
+        <a href="#map-edit&${id}">${name}</a>
+      </div>
     </div>
   </div>
   {{/each}}
