@@ -52,13 +52,6 @@ function stripHash(uri) { // remove the hash (if any) from uri
     return uri.replace(rx, '');
 }
 
-function reloadTo(uri) { // send us to the uri for sure
-    window.location.href = uri;
-    // The following may only be required in some browsers; other
-    // browsers will already be reloading by this point.
-    window.location.reload();
-}
-
 function sortObject(obj, order) { // return an array of the key/value pairs in obj, sorted by key
     // if 'order' is given, it is an array that specifies the order by names
     // of keys, instead of using the natural sort order
@@ -83,32 +76,31 @@ function sortObject(obj, order) { // return an array of the key/value pairs in o
 
 // any defined region of the page space that requires rendering with a template
 var PageArea = Base.extend({
-    constructor: function (appState, $template) {
+    constructor: function (appState) {
         this.appState = appState;
-        this.$template = $template;
     },
 
-    render: function (data) {
-        return this.$template.tmpl(data);
+    render: function ($template, data) {
+        return $template.tmpl(data || this.appState);
     }
 });
 
 
 // the navigation and controls at the top of the page
 var Top = PageArea.extend({
-    render: function (data) {
-        var $ret = this.$template.tmpl(this.appState);
+    render: function ($template) {
+        var $ret = $template.tmpl(this.appState);
         var me = this;
         me.$node = $ret;
 
         $ret.find('a[href$=#clear]').click(function () { 
             var page = stripHash(window.location.href);
-            reloadTo(page + '#clear');
+            me.appState.redirect('clear');
             return false;
         });
 
         $ret.find('a[href$=#userEdit]').click(function () {
-            me.appState.view(VIEW_USER_EDIT);
+            me.appState.redirect(VIEW_USER_EDIT);
             return false;
         });
 
@@ -119,8 +111,8 @@ var Top = PageArea.extend({
 
         $ret.find('.map-tab').click(function () {
             var tab = $(this);
-            var newVis = VIEW_MAP_EDIT + '#' + tab.data('id');
-            me.appState.view(newVis);
+            var newVis = VIEW_MAP_EDIT + '&' + tab.data('id');
+            me.appState.redirect(newVis);
             return false;
         });
 
@@ -129,7 +121,7 @@ var Top = PageArea.extend({
         });
 
         $ret.find('a[href$=#myMaps]').parents('.tab').click(function () {
-            me.appState.view(VIEW_MY_MAPS);
+            me.appState.redirect(VIEW_MY_MAPS);
             return false;
         });
 
@@ -140,8 +132,8 @@ var Top = PageArea.extend({
 
 // the controls at the top of the map-edit area
 var Toolbar = PageArea.extend({
-    render: function (data) {
-        var ret = this.$template.tmpl(this.appState.currentMap);
+    render: function ($template) {
+        var ret = $template.tmpl(this.appState.currentMap);
         var me = this;
 
         ret.find('a[href$=#zoom]').click(function () {
@@ -176,14 +168,14 @@ var Toolbar = PageArea.extend({
 
 // the main workspace below the Top, which may contain different sub-apps
 var Workspace = PageArea.extend({
-    render: function (data) {
+    render: function () {
         var $n;
-        if (this.appState.getVisibleScreen()[0] == VIEW_MAP_EDIT) {
-            $n = this.appState.currentMap.renderMap($('#map-edit'));
-        } else if (this.appState.getVisibleScreen()[0] == VIEW_MY_MAPS) {
-            $n = $('#my-maps').tmpl(this.appState);
-        } else if (this.appState.getVisibleScreen()[0] == VIEW_USER_EDIT) {
-            $n = $('#user-edit').tmpl(this.appState);
+        if (this.appState.visibleScreen[0] == VIEW_MAP_EDIT) {
+            $n = this.appState.currentMap.render($('#map-edit'));
+        } else if (this.appState.visibleScreen[0] == VIEW_MY_MAPS) {
+            $n = this.appState.mapList.render($('#my-maps'));
+        } else if (this.appState.visibleScreen[0] == VIEW_USER_EDIT) {
+            $n = this.appState.userEditor.render($('#user-edit'));
         }
         return $n;
     }
@@ -197,12 +189,12 @@ var Framework = Base.extend({
     },
 
     render: function () {
-        (new Top(this.appState, $('#top-control-tmpl'))
-             ).render({}
+        (new Top(this.appState)
+             ).render($('#top-control-tmpl')
              ).insertBefore('#cursor');
         $('#workspace').empty().append(
-            (new Workspace(this.appState, $('#workspace-tmpl'))
-                 ).render({})
+            (new Workspace(this.appState)
+                 ).render($('#workspace-tmpl'))
             );
         $('title').html(this.appState.getTitle());
     }
@@ -235,6 +227,22 @@ var Pen = Base.extend({
 });
 
 
+var UserEditor = PageArea.extend({
+});
+
+
+var MapList = PageArea.extend({
+    render: function ($template) {
+        var $ret = $template.tmpl(this.appState);
+        var me = this;
+        $ret.find('.snapshot .thumbnail, .snapshot .details').click(function () {
+            me.appState.redirect(VIEW_MAP_EDIT + '&' + $(this).parents('.snapshot').attr('data-id'));
+        });
+        return $ret;
+    }
+});
+
+
 // the drawable map grid inside the workspace
 var Map = PageArea.extend({
     constructor: function (appState, name) {
@@ -242,7 +250,6 @@ var Map = PageArea.extend({
         var _split = name.split('#');
         this.name = _split[0];
         this.id = _split[1];
-        this.$template = $('#map-tab');
         this.modified = false;
         this.appState = appState;
         this.grid = null;
@@ -304,7 +311,7 @@ var Map = PageArea.extend({
         log("_restoreGridArea: " + t2.toString() + "ms");
     },
 
-    renderMap: function ($mapTemplate) { // turn on svg mode for the div
+    render: function ($mapTemplate) { // turn on svg mode for the div
         this.categories = sortObject(gTileCategories, CATEGORY_ORDER);
         var $mapEditNodes = $mapTemplate.tmpl(this);
         this.$node = $mapEditNodes.filter('#map-combined');
@@ -313,7 +320,7 @@ var Map = PageArea.extend({
             return me.pen.setCurrent($(this).data('tile'));
         });
 
-        var $toolbar = (new Toolbar(this.appState, $('#toolbar'))).render();
+        var $toolbar = (new Toolbar(this.appState)).render($('#toolbar'));
         this.$node.find('.toolbar').replaceWith($toolbar);
 
         // this must happen after templates have finished rendering so the
@@ -562,24 +569,16 @@ var UndoHistory = Base.extend({
 });
 
 
+
 // I remember what you were looking at in the app and I am responsible for all
 // localStorage interaction
 var AppState = Base.extend({
     constructor: function () {
         if (!localStorage.maps) {
-            _m1 = (new Map(this, 'your map#1')).save();
-            _m2 = (new Map(this, 'your map 2#2')).save();
-            _m1.extents = [1, 1, 2, 2];
-            _m1.hexes = [
-                [ ["Mountain", "Mountain"], ["Mountain", "Mountain"] ],
-                [ ["Grassland", "Grassland"], ["Mountain", "Mountain"] ]
-            ];
-            localStorage.maps = $.toJSON([_m1, _m2]);
-            localStorage.visibleScreen = VIEW_MAP_EDIT + '#1';
-            localStorage.openMaps = $.toJSON(['1', '2']);
-            localStorage.username = 'corydodt';
-            localStorage.email = 'mapiphany@s.goonmill.org';
+            this._generateSampleData();
         };
+
+        this.visibleScreen = this._getVisibleScreen();
 
         // TODO - make _upgrade1to2, _upgrade2to3 etc. so we can cleanly
         // upgrade storage
@@ -591,22 +590,36 @@ var AppState = Base.extend({
             var mt = Map.restore(m, me); 
             me.maps[mt.id] = mt;
         });
-        this.openMaps = $.evalJSON(localStorage.openMaps);
-
-        this.visibleScreen = localStorage.visibleScreen;
 
         this.username = localStorage.username;
         this.email = localStorage.email;
 
-        var vs = this.getVisibleScreen();
+        var vs = this.visibleScreen;
         if (vs[0] == VIEW_MAP_EDIT) {
             this.currentMap = this.maps[vs[1]];
+        } else if (vs[0] == VIEW_MY_MAPS) {
+            this.mapList = new MapList(this);
+        } else if (vs[0] == VIEW_USER_EDIT) {
+            this.userEditor = new UserEditor(this);
         }
 
         // save event - write to localStorage
         $(document).bind(EVENT_MAP_SAVE, function (ev) {
             me._mapSave();
         });
+    },
+
+    _generateSampleData: function () {
+        _m1 = (new Map(this, 'your map#1')).save();
+        _m2 = (new Map(this, 'your map 2#2')).save();
+        _m1.extents = [1, 1, 2, 2];
+        _m1.hexes = [
+            [ ["Mountain", "Mountain"], ["Mountain", "Mountain"] ],
+            [ ["Grassland", "Grassland"], ["Mountain", "Mountain"] ]
+        ];
+        localStorage.maps = $.toJSON([_m1, _m2]);
+        localStorage.username = 'corydodt';
+        localStorage.email = 'mapiphany@s.goonmill.org';
     },
 
     _mapSave: function () { // write all map states to localStorage
@@ -620,20 +633,31 @@ var AppState = Base.extend({
         localStorage.maps = $.toJSON(out);
     },
 
-    getVisibleScreen: function () {
-        return this.visibleScreen.split('#');
+    _getVisibleScreen: function () {
+        var frag = window.location.href.split('#')[1];
+        if (frag === undefined || VIEW_MY_MAPS === frag) {
+            return [VIEW_MY_MAPS, null];
+        } else if (VIEW_USER_EDIT === frag) {
+            return [VIEW_USER_EDIT, null];
+        } else if (frag.search(new RegExp('^' + VIEW_MAP_EDIT) >= 0)) {
+            var parts = frag.split('&');
+            return [parts[0], parts[1]];
+        } else {
+            return [null, null];
+        }
     },
 
-    view: function (destination) {
+    redirect: function (destination) {
         // navigate to the new destination
-        localStorage.visibleScreen = destination;
-        window.location.href = stripHash(window.location.href);
+        window.location.href = stripHash(window.location.href) + '#' + destination;
+        // The following may only be required in some browsers; other
+        // browsers will already be reloading by this point.
         window.location.reload();
     },
 
     getTitle: function () {
         // get the <title> content
-        var vs = this.getVisibleScreen();
+        var vs = this.visibleScreen;
         if (vs[0] == VIEW_MAP_EDIT) {
             return this.currentMap.name + ' (editing) - ' + APP_NAME;
         } else if (vs[0] == VIEW_USER_EDIT) {

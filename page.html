@@ -103,14 +103,13 @@
   </div>
 
   {{each maps}}
-  <div class="snapshot">
+  <div class="snapshot" data-id="${id}">
     <div class="snapshot-box box">
       <div class="indicators"><input type="checkbox" /></div>
       
       <div class="thumbnail box">
         <div class="thumbnail-inner">
-          <img src="hexes.png" alt="${name}"
-            title="${name}" />
+          <img src="hexes.png" alt="${name}" title="${name}" />
         </div>
       </div>
 
@@ -149,7 +148,7 @@
 <script type="text/x-jquery-tmpl" id=
     "map-tab"> <!-- [[[ -->
   <li data-id="${id}" class=
-    "map-tab tab {{if VIEW_MAP_EDIT+"#"+id == appState.visibleScreen}}active-tab{{/if}}"><a href=
+    "map-tab tab active-tab"><a href=
     "#mapEdit">{{if modified}}*{{/if}}${name}</a></li>
 </script> <!-- ]]] -->
 
@@ -162,11 +161,11 @@
 
     <li class="horizontal-list-item">
       <ul>
-        {{each(i, mapID) openMaps}}
-          {{tmpl(maps[mapID]) "#map-tab"}}
-        {{/each}}
+        {{if VIEW_MAP_EDIT == visibleScreen[0]}}
+          {{tmpl(currentMap) "#map-tab"}}
+        {{/if}}
         <li class=
-          "tab {{if VIEW_MY_MAPS == visibleScreen}}active-tab{{/if}}"><a href=
+          "tab {{if VIEW_MY_MAPS == visibleScreen[0]}}active-tab{{/if}}"><a href=
             "#myMaps">My Maps</a></li>
       </ul>
     </li>
