@@ -618,7 +618,7 @@ var UndoHistory = Base.extend({
 // localStorage interaction
 var AppState = Base.extend({
     constructor: function () {
-        if (!localStorage.maps) {
+        if (!localStorage.username) {
             this._generateSampleData();
         };
 
@@ -627,13 +627,16 @@ var AppState = Base.extend({
         // TODO - make _upgrade1to2, _upgrade2to3 etc. so we can cleanly
         // upgrade storage
         //
-        var _maps = $.evalJSON(localStorage.maps);
         var me = this;
         me.maps = {};
-        $.map(_maps, function (m) { 
-            var mt = Map.restore(m, me); 
-            me.maps[mt.id] = mt;
-        });
+        for (var n=0; n < localStorage.length; n++) {
+            var attr = localStorage.key(n);
+            if (attr.substr(0, 4) === 'map-') {
+                var m = $.evalJSON(localStorage[attr]);
+                var mt = Map.restore(m, me); 
+                me.maps[mt.id] = mt;
+            }
+        };
 
         this.username = localStorage.username;
         this.email = localStorage.email;
@@ -662,16 +665,15 @@ var AppState = Base.extend({
             [ "M0M0", "M0M0" ],
             [ "G0G0", "M0M0" ],
         ];
-        localStorage.maps = $.toJSON([_m1, _m2]);
+        localStorage['map-1'] = $.toJSON(_m1);
+        localStorage['map-2'] = $.toJSON(_m2);
         localStorage.username = 'corydodt';
         localStorage.email = 'mapiphany@s.goonmill.org';
     },
 
     _mapSave: function () { // write all map states to localStorage
-        log('AppState map save');
-        var out = $.evalJSON(localStorage.maps);
-        out[this.currentMap.id] = this.currentMap.save();
-        localStorage.maps = $.toJSON(out);
+        log('AppState map save id ' + this.currentMap.id);
+        localStorage['map-' + this.currentMap.id] = $.toJSON(this.currentMap.save());
     },
 
     _getVisibleScreen: function () {
