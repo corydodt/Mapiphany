@@ -29,9 +29,31 @@ X_UNIT = MULT * 0.5;
 DEFAULT_FILL = 'Grassland';
 CLASS_FG_FILL = 'fgFill1';
 DEFAULT_TILESET = 'rkterrain-finalopt';
+KEEP_LAYER = '~';
 
 CATEGORY_ORDER = ['Tools', 'Flat Land', 'Forests', 'Mountains and Hills', 'Arid Land', 'Water', 'Settlement', 'Symbol', 'Hex Background'];
 
+TOOLS_CATEGORY = {'Tools': 
+    ['Blank_FG', 'Blank_BG', 'Blank_Both']
+};
+
+TOOLS = {
+    'Blank_Both': {
+        categories: "Tools",
+        iconfilename: "blankboth.png",
+        set: "."
+    },
+    'Blank_BG': {
+        categories: "Tools",
+        iconfilename: "blankbg.png",
+        set: "."
+    },
+    'Blank_FG': {
+        categories: "Tools",
+        iconfilename: "blankfg.png",
+        set: "."
+    },
+};
 
 
 function dir(o) {
@@ -207,13 +229,13 @@ var Framework = Base.extend({
 var Pen = Base.extend({
     constructor: function ($node) {
         this.$node = $node;
-        // this.fgFill = null;
-        // this.bgFill = null;
+        this.fg = null;
+        this.bg = null;
+        this.fg2 = null;
         // this.fillSize = PEN_SMALL;
         // this.pathWidth = null;
         // this.pathColor = null;
         // this.pathStyle = null;
-        this.fillName = null;
     },
 
     // set the current pen and display the new setting
@@ -224,8 +246,36 @@ var Pen = Base.extend({
         $disp.attr('class', newTile);
         $disp.attr('title', newTile);
 
-        this.fillName = newTile;
-    },
+        this.bg = KEEP_LAYER;
+        this.fg = KEEP_LAYER;
+        this.fg2 = KEEP_LAYER;
+
+        if (newTile == 'Blank_FG') {
+            this.fg = null;
+            this.fg2 = null;
+
+        } else if (newTile == 'Blank_BG') {
+            this.bg = null;
+
+        } else if (newTile == 'Blank_Both') {
+            this.fg = null;
+            this.bg = null;
+            this.fg2 = null;
+
+        } else {
+            var fill = function (c) { return tile.fill.substr(c, 1) };
+            if (fill(0) == 'f') {
+                this.fg = newTile;
+            }
+            if (fill(1) == 'b') {
+                this.bg = newTile;
+            }
+            if (fill(2) == 'F') {
+                this.fg2 = newTile;
+            }
+
+        }
+    }
 });
 
 
@@ -298,29 +348,34 @@ var Map = PageArea.extend({
                 dat = this.grid[x][y].n.data();
                 a0 = this.setLookup(dat.fg, toAbbrev);
                 a1 = this.setLookup(dat.bg, toAbbrev);
-                col.push(a0 + a1);
+                a2 = this.setLookup(dat.fg2, toAbbrev);
+                col.push(a0 + a1 + a2);
             }
         }
         return ret;
     },
 
     setLookup: function (symbol, abbrevMap) { // add entries to my fill lookup tables
-        if (!symbol) {
-            return '';
+        if (symbol === undefined || symbol === null) {
+            symbol = '~null~';
         }
         if (abbrevMap[symbol] !== undefined) {
             return abbrevMap[symbol];
         }
-        var n = 0, suffixes = '123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        var c0 = symbol[0];
-        var abbrev = c0 + '0';
-        // find a free suffix to use with this symbol
-        while (this._toSymbol[abbrev] !== undefined) {
-            n++;
-            if (n > 51) {
-                throw "More than 52 symbols with the same first letter: " + c0 + "???";
+        if (symbol == '~null~') {
+            abbrev = '~~';
+        } else {
+            var n = 0, suffixes = '123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            var c0 = symbol[0];
+            var abbrev = c0 + '0';
+            // find a free suffix to use with this symbol
+            while (this._toSymbol[abbrev] !== undefined) {
+                n++;
+                if (n > 51) {
+                    throw "More than 52 symbols with the same first letter: " + c0 + "???";
+                }
+                abbrev = c0 + suffixes[n]; 
             }
-            abbrev = c0 + suffixes[n]; 
         }
 
         this._toSymbol[abbrev] = symbol;
@@ -339,10 +394,19 @@ var Map = PageArea.extend({
                 unshiftY = y - extents[1];
                 // set the hex properties, skipping the history layer
                 cell = hexes[unshiftX][unshiftY];
-                this.do_setFGBG(this.grid[x][y].n, 
-                        this._toSymbol[cell.substr(0, 2)], 
-                        this._toSymbol[cell.substr(2, 2)]
-                        );
+                var fg = this._toSymbol[cell.substr(0, 2)];
+                var bg = this._toSymbol[cell.substr(2, 2)];
+                var fg2 = this._toSymbol[cell.substr(4, 2)];
+                if (fg == '~null~') {
+                    fg = null;
+                }
+                if (bg == '~null~') {
+                    bg = null;
+                }
+                if (fg2 == '~null~') {
+                    fg2 = null;
+                }
+                this.do_setHex(this.grid[x][y].n, fg, bg, fg2);
             }
         }
         this._restoredExtents = this._restoredHexes = undefined;
@@ -357,6 +421,8 @@ var Map = PageArea.extend({
 
     render: function ($mapTemplate) { // turn on svg mode for the div
         $.require('tiles/' + this.tileset + '/tileset.js');
+        $.extend(gTileset, TOOLS);
+        $.extend(gTileCategories, TOOLS_CATEGORY);
 
         $('head').append('<link rel="stylesheet" type="text/css" href="tiles/' + this.tileset + '/tileset.css" />');
 
@@ -402,7 +468,7 @@ var Map = PageArea.extend({
         return $mapEditNodes;
     },
 
-    iconAt: function (label, x, y) { // place an icon image for this Fill at the coordinates x,y
+    _iconAt: function (label, x, y) { // place an icon image for this Fill at the coordinates x,y
         var $def = $('#' + label + '-icon');
 
         // create the <defs><image> when missing.
@@ -426,8 +492,17 @@ var Map = PageArea.extend({
             itm = this.svg.image(null, _g.x, _g.y, 4*X_UNIT, 2*Y_UNIT, $def.attr('href'), {'pointer-events': 'none'});
         }
         $(itm).addClass(CLASS_FG_FILL);
-        $(itm).attr('id', 'fg-' + x + '-' + y);
         return itm;
+    },
+
+    fgAt: function (label, x, y) { // place an icon image in the fg layer at x,y
+        var itm = this._iconAt(label, x, y);
+        $(itm).attr('id', 'fg-' + x + '-' + y);
+    },
+
+    fg2At: function (label, x, y) { // place an icon image in the fg2 layer at x,y
+        var itm = this._iconAt(label, x, y);
+        $(itm).attr('id', 'fg2-' + x + '-' + y);
     },
 
     zoom: function (scale, xAbs, yAbs) {    // rescale the map to the specified zoom
@@ -503,7 +578,7 @@ var Map = PageArea.extend({
                 _p1ID = xx + '-' + yy;
                 $p1.attr({id: _p1ID, title: _p1ID}).data({x: xx, y: yy, fg: this.defaultFill, bg: this.defaultFill});
 
-                this.iconAt(this.defaultFill, xx, yy);
+                this.fgAt(this.defaultFill, xx, yy);
 
                 // down hex
                 var $p2 = $(svg.polygon(null, [
@@ -518,7 +593,7 @@ var Map = PageArea.extend({
                 _p2ID = (xx + 1) + '-' + yy;
                 $p2.attr({id: _p2ID, title: _p2ID}).data({x: xx + 1, y: yy, fg: this.defaultFill, bg: this.defaultFill});
 
-                this.iconAt(this.defaultFill, xx + 1, yy);
+                this.fgAt(this.defaultFill, xx + 1, yy);
             }
         }
         var me = this;
@@ -548,18 +623,40 @@ var Map = PageArea.extend({
 
     onHexClick: function (hex) { // change a map hex, and remember it in the undo history
         var dat = $(hex).data();
-        this.history.do('setFGBG', [hex, this.pen.fillName, this.pen.fillName], [hex, dat.fg, dat.bg]); 
+        var fg = this.pen.fg, bg = this.pen.bg, fg2 = this.pen.fg2;
+        if (this.pen.fg == KEEP_LAYER) {
+            fg = dat.fg;
+        }
+        if (this.pen.fg2 == KEEP_LAYER) {
+            fg2 = dat.fg2;
+        }
+        if (this.pen.bg == KEEP_LAYER) {
+            bg = dat.bg;
+        }
+        this.history.do('setHex', [hex, fg, bg, fg2], [hex, dat.fg, dat.bg, dat.fg2]); 
     },
 
-    do_setFGBG: function (hex, fgFill, bgFill) { // apply a change to both fg and bg to the map DOM
+    do_setHex: function (hex, fgFill, bgFill, fg2Fill) { // apply a change to all layers and map DOM
         var $h = $(hex);
-        $h.attr('class', 'hex ' + bgFill);
-        $h.data({fg: fgFill, bg: bgFill});
+        var newData = {fg: fgFill, bg: bgFill, fg2: fg2Fill};
+        $h.data(newData);
+
+        // set bg
+        $h.attr('class', 'hex ' + bgFill || '');
 
         var _dat = $h.data();
+        // set fg
         var $fg = $('#fg-' + $h.attr('id'));
         $fg.remove();
-        this.iconAt(fgFill, _dat.x, _dat.y);
+        if (fgFill) {
+            this.fgAt(fgFill, _dat.x, _dat.y);
+        }
+        // set fg2
+        var $fg2 = $('#fg2-' + $h.attr('id'));
+        $fg2.remove();
+        if (fg2Fill) {
+            this.fg2At(fg2Fill, _dat.x, _dat.y);
+        }
     }
 }, {
     restore: function (data, appState) {
@@ -668,8 +765,8 @@ var AppState = Base.extend({
         _m1.lookup = {M0: 'Mountain', G0: 'Grassland'};
         _m1.extents = [1, 1, 2, 2];
         _m1.hexes = [
-            [ "M0M0", "M0M0" ],
-            [ "G0G0", "M0M0" ],
+            [ "M0M0~~", "M0M0~~" ],
+            [ "G0G0~~", "M0M0~~" ],
         ];
         localStorage['map-1'] = $.toJSON(_m1);
         localStorage['map-2'] = $.toJSON(_m2);
