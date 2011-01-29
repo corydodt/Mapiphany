@@ -61,11 +61,11 @@
     <div class="drawbar">
       {{each($i, category) categories}}
       <div class="drawbar-category"><em>${category[0]}</em></div>
-      {{each($i, tile) category[1]}}<span class="drawbar-tile" data-tile="${tile}"><span class="drawbar-tile-x1" style=
+      {{each($i, tile) category[1]}}<span class="drawbar-tile" title="${tile}" data-tile="${tile}"><span class="drawbar-tile-x1" style=
         "background-color:{{if gTileset[tile].backgroundrgb=='None'}}#c0c0c0{{else}}${gTileset[tile].backgroundrgb}{{/if}}">
         {{if gTileset[tile].iconfilename}}
         <img class="drawbar-tile-x1" src=
-          "tiles/${gTileset[tile].set}/${gTileset[tile].iconfilename}" title="${tile}"/>
+          "tiles/${gTileset[tile].set}/${gTileset[tile].iconfilename}" />
         {{/if}}</span></span>
       {{/each}}
       {{/each}}
