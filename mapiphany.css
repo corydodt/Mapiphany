@@ -111,6 +111,7 @@ a {
 }
 
 .drawbar {
+    padding-left: 4px;
     display: inline-block;
     height: 540px;
     width: 270px;

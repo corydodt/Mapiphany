@@ -98,8 +98,10 @@ class TileSet(FilePath):
                 continue
 
             tileset[name] = tile
-            categories.setdefault(tile['category'], []).append(name)
-            color = tile['backgroundrgb'].lower();
+            cats = tile['categories'].split(':')
+            for n, cat in enumerate(cats):
+                categories.setdefault(cat, []).append(name)
+            color = tile['backgroundrgb'].lower()
             cssFile.write('.%s { fill: %s; background-color: %s; }\n' % (
                 name, color, color))
         simplejson.dump(tileset, jsFile, sort_keys=True, indent=4 * ' ')
@@ -107,7 +109,6 @@ class TileSet(FilePath):
         categories = dict(map(lambda x: (x[0], sorted(x[1])), categories.items()))
         simplejson.dump(categories, jsFile, sort_keys=True, indent=4 * ' ')
         jsFile.write(';\n')
-
 
 
 def run(argv=None):

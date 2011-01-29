@@ -30,7 +30,7 @@ DEFAULT_FILL = 'Grassland';
 CLASS_FG_FILL = 'fgFill1';
 DEFAULT_TILESET = 'rkterrain-finalopt';
 
-CATEGORY_ORDER = ['Other Land', 'Forests', 'Rough Land', 'Water', 'Settlement', 'Symbol', 'Hex Fill', 'Other'];
+CATEGORY_ORDER = ['Tools', 'Flat Land', 'Forests', 'Mountains and Hills', 'Arid Land', 'Water', 'Settlement', 'Symbol', 'Hex Background'];
 
 
 
@@ -305,6 +305,9 @@ var Map = PageArea.extend({
     },
 
     setLookup: function (symbol, abbrevMap) { // add entries to my fill lookup tables
+        if (!symbol) {
+            return '';
+        }
         if (abbrevMap[symbol] !== undefined) {
             return abbrevMap[symbol];
         }
