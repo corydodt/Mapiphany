@@ -1,0 +1,17 @@
+creator: Cory Dodt <corymercurial@spam.goonmill.org>
+
+
+reporter: Cory Dodt <corymercurial@spam.goonmill.org>
+
+
+severity: minor
+
+
+status: open
+
+
+summary: fix race condition that causes the map to load with no icons first time
+
+
+time: Sat, 29 Jan 2011 07:48:17 +0000
+
