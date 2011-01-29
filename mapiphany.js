@@ -314,6 +314,9 @@ var Map = PageArea.extend({
         // find a free suffix to use with this symbol
         while (this._toSymbol[abbrev] !== undefined) {
             n++;
+            if (n > 51) {
+                throw "More than 52 symbols with the same first letter: " + c0 + "???";
+            }
             abbrev = c0 + suffixes[n]; 
         }
 
