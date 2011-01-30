@@ -131,15 +131,15 @@ a {
     margin: 0px 1px 0px 0px;
 }
 
-.drawbar-tile-x1 {
-    display: table-cell;
+.drawbar-tile-img, .drawbar-tile-x1 {
+    display: inline-block;
     width: 40px;
     height: 40px;
 }
 
-.drawbar-tile-x2 {
-    display: table-cell;
-    vertical-align: middle;
+#current .drawbar-tile-img, #current .drawbar-tile-x1 {
+    width: 30px;
+    height: 30px;
 }
 
 .hex-detail {

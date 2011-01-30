@@ -241,10 +241,9 @@ var Pen = Base.extend({
     // set the current pen and display the new setting
     setCurrent: function (newTile) {
         var tile = gTileset[newTile];
-        var $disp = $('#current');
-        $disp.attr('src', 'tiles/' + tile.set + '/' + tile.iconfilename);
-        $disp.attr('class', newTile);
-        $disp.attr('title', newTile);
+        var $disp = $('#current .drawbar-tile-x1');
+        var $cloned = $('#drawbar-tile').tmpl({tile: newTile});
+        $disp.replaceWith($cloned);
 
         this.bg = KEEP_LAYER;
         this.fg = KEEP_LAYER;

@@ -35,14 +35,22 @@
 
 
 <script type="text/x-jquery-tmpl" id=
+    "drawbar-tile">
+  <span class="drawbar-tile-x1" title="${tile}" style=
+    "background-color:{{if gTileset[tile].backgroundrgb=='None'}}#c0c0c0{{else}}${gTileset[tile].backgroundrgb}{{/if}}">
+    {{if gTileset[tile].iconfilename}}<img class="drawbar-tile-img" src=
+      "tiles/${gTileset[tile].set}/${gTileset[tile].iconfilename}" />
+    {{/if}}</span>
+</script>
+
+<script type="text/x-jquery-tmpl" id=
     "toolbar"> <!-- [[[ -->
 
   <div class="toolbar">
     <input type="button" value="s" name="save" />
     <input type="button" value="undo" name="undo" /> <input type="button" value="redo" name="redo" />
     Name: <input type="text" name="mapName" value="${name}" />
-    Current: <img id="current" style="width:30px; height: 34.4px" src="tiles/rkterrain-finalopt/grassland.png" class=
-      "Grassland" title="Grassland" />
+    Current: <span id="current">{{tmpl({tile:"Grassland"}) "#drawbar-tile"}}</span>
     Zoom: <a data-zoom="200" href="#zoom">200%</a> <a data-zoom="100" href="#zoom">100%</a> <a
       data-zoom="50" href="#zoom">50%</a>
     Units: <input type="text" name="mapUnits" value="1 mile" />
@@ -61,12 +69,8 @@
     <div class="drawbar">
       {{each($i, category) categories}}
       <div class="drawbar-category"><em>${category[0]}</em></div>
-      {{each($i, tile) category[1]}}<span class="drawbar-tile" title="${tile}" data-tile="${tile}"><span class="drawbar-tile-x1" style=
-        "background-color:{{if gTileset[tile].backgroundrgb=='None'}}#c0c0c0{{else}}${gTileset[tile].backgroundrgb}{{/if}}">
-        {{if gTileset[tile].iconfilename}}
-        <img class="drawbar-tile-x1" src=
-          "tiles/${gTileset[tile].set}/${gTileset[tile].iconfilename}" />
-        {{/if}}</span></span>
+      {{each($i, tile) category[1]}}<span class="drawbar-tile" 
+        data-tile="${tile}">{{tmpl({tile:tile}) "#drawbar-tile"}}</span>
       {{/each}}
       {{/each}}
     </div>
