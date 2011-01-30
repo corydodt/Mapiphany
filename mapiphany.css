@@ -98,9 +98,8 @@ a {
 }
 
 .toolbar {
-    height: 40px; 
+    height: 36px; 
     width: 996px;
-    margin-bottom: 8px;
 }
 
 .map {
@@ -137,6 +136,11 @@ a {
     height: 40px;
 }
 
+#current {
+    display: inline-block;
+    vertical-align: middle;
+}
+
 #current .drawbar-tile-img, #current .drawbar-tile-x1 {
     width: 30px;
     height: 30px;
@@ -158,6 +162,16 @@ a {
     stroke-width: 3;
     pointer-events: none;
     fill: transparent;
+}
+
+input[name=save] {
+    background-image: url('stock_save_22.png');
+    border: none;
+}
+
+input[name=save]:hover {
+    background-image: url('stock_save_22_hover.png');
+    border: none;
 }
 
 /* }}} */

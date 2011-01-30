@@ -160,9 +160,9 @@ var Toolbar = PageArea.extend({
         var ret = $template.tmpl(this.appState.currentMap);
         var me = this;
 
-        ret.find('a[href$=#zoom]').click(function () {
+        ret.find('select[name=zoom]').change(function () {
             var $me = $(this);
-            $(document).trigger(EVENT_MAP_ZOOM, [$me.data('zoom')]);
+            $(document).trigger(EVENT_MAP_ZOOM, [$me.val()]);
             return false;
         });
 
