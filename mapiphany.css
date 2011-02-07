@@ -11,6 +11,66 @@
 }}} */
 
 
+/* common utilities {{{ */
+.vbox {
+    display: box;
+    display: -moz-box;
+    display: -webkit-box;
+
+    box-orient: vertical;
+    -webkit-box-orient: vertical;
+    -moz-box-orient: vertical;
+
+    box-align: stretch;
+    -webkit-box-align: stretch;
+    -moz-box-align: stretch;
+}
+
+.hbox {
+    display: box;
+    display: -moz-box;
+    display: -webkit-box;
+
+    box-orient: horizontal;
+    -webkit-box-orient: horizontal;
+    -moz-box-orient: horizontal;
+
+    box-align: stretch;
+    -webkit-box-align: stretch;
+    -moz-box-align: stretch;
+
+    box-pack: center;
+    -webkit-box-pack: center;
+    -moz-box-pack: center;
+}
+
+/* inflexible */
+.f0 {
+    box-flex: 0.0;
+    -moz-box-flex: 0.0;
+    -webkit-box-flex: 0.0;
+}
+
+/* flexible */
+.f1 {
+    box-flex: 1.0;
+    -moz-box-flex: 1.0;
+    -webkit-box-flex: 1.0;
+}
+.f2 {
+    box-flex: 2.0;
+    -moz-box-flex: 2.0;
+    -webkit-box-flex: 2.0;
+}
+.f8 {
+    box-flex: 8.0;
+    -moz-box-flex: 8.0;
+    -webkit-box-flex: 8.0;
+}
+
+/* }}} */
+
+
 /* framework {{{ */
 
 #logo {
@@ -182,21 +242,6 @@ input[name=save]:hover {
     border-bottom: thin dotted black;
 }
 
-.box {
-    display: -moz-box;
-    display: -webkit-box;
-    display: box;
-    box-orient: horizontal;
-    -webkit-box-orient: horizontal;
-    -moz-box-orient: horizontal;
-    box-align: stretch;
-    -webkit-box-align: stretch;
-    -moz-box-align: stretch;
-    box-pack: center;
-    -webkit-box-pack: center;
-    -moz-box-pack: center;
-}
-
 .snapshot-box {
     height: 100px;
 }
@@ -213,24 +258,15 @@ input[name=save]:hover {
 .snapshot .thumbnail {
     width: 100px;
     text-align: center;
-    box-flex: 0;
-    -webkit-box-flex: 0;
-    -moz-box-flex: 0;
     box-align: center;
     -webkit-box-align: center;
     -moz-box-align: center;
 }
 
 .thumbnail-inner {
-    box-flex: 1.0;
-    -webkit-box-flex: 1.0;
-    -moz-box-flex: 1.0;
 }
 
 .snapshot .details {
     line-height: 100px;
-    box-flex: 1.0;
-    -webkit-box-flex: 1.0;
-    -moz-box-flex: 1.0;
 }
 /* }}} */

@@ -96,34 +96,34 @@
     "my-maps"> <!-- [[[ -->
 
   <div class="snapshot">
-    <div class="snapshot-box box">
+    <div class="snapshot-box hbox">
 
-      <div class="indicators"><input type="checkbox" /></div>
+      <div class="indicators f0"><input type="checkbox" /></div>
 
-      <div class="thumbnail box">
-        <div class="thumbnail-inner">
+      <div class="thumbnail f0 hbox">
+        <div class="thumbnail-inner f1">
           <img src="document-new.png" alt="new"
             title="new" />
         </div>
       </div>
 
-      <div class="details" />
+      <div class="details f1" />
 
     </div>
   </div>
 
   {{each maps}}
   <div class="snapshot" data-id="${id}">
-    <div class="snapshot-box box">
-      <div class="indicators"><input type="checkbox" /></div>
+    <div class="snapshot-box hbox">
+      <div class="indicators f0"><input type="checkbox" /></div>
       
-      <div class="thumbnail box">
+      <div class="thumbnail f0 hbox">
         <div class="thumbnail-inner">
           <img src="hexes.png" alt="${name}" title="${name}" />
         </div>
       </div>
 
-      <div class="details">
+      <div class="details f1">
         <a href="#map-edit&${id}">${name}</a>
       </div>
     </div>
