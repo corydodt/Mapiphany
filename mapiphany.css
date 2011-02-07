@@ -250,9 +250,6 @@ input[name=save]:hover {
     line-height: 100px;
     text-align: center;
     width: 30px;
-    box-flex: 0;
-    -webkit-box-flex: 0;
-    -moz-box-flex: 0;
 }
 
 .snapshot .thumbnail {
