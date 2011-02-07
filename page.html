@@ -27,21 +27,23 @@
   <link rel="stylesheet" type="text/css" href=
     'mapiphany.css' />
   <link rel="stylesheet" type="text/css" href=
-    'tileset.css' />
-  <link rel="stylesheet" type="text/css" href=
     'jquery-svg/jquery.svg.css' />
 </head> <!-- ]]] -->
 <body>
 
+<script type="text/x-jquery-tmpl" id=
+    "tileset-css"> <!-- [[[ -->
+  <link rel="stylesheet" type="text/css" href="tiles/${tileset}/tileset.css" />
+</script> <!-- ]]] -->
 
 <script type="text/x-jquery-tmpl" id=
-    "drawbar-tile">
+    "drawbar-tile"> <!-- [[[ -->
   <span class="drawbar-tile-x1" title="${tile}" style=
     "background-color:{{if gTileset[tile].backgroundrgb=='None'}}#c0c0c0{{else}}${gTileset[tile].backgroundrgb}{{/if}}">
     {{if gTileset[tile].iconfilename}}<img class="drawbar-tile-img" src=
       "tiles/${gTileset[tile].set}/${gTileset[tile].iconfilename}" />
     {{/if}}</span>
-</script>
+</script> <!-- ]]] -->
 
 <script type="text/x-jquery-tmpl" id=
     "toolbar"> <!-- [[[ -->

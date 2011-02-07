@@ -423,7 +423,7 @@ var Map = PageArea.extend({
         $.extend(gTileset, TOOLS);
         $.extend(gTileCategories, TOOLS_CATEGORY);
 
-        $('head').append('<link rel="stylesheet" type="text/css" href="tiles/' + this.tileset + '/tileset.css" />');
+        $('head').append($('#tileset-css').tmpl(this));
 
         this.categories = sortObject(gTileCategories, CATEGORY_ORDER);
         var $mapEditNodes = $mapTemplate.tmpl(this);
