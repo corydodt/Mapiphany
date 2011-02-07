@@ -39,9 +39,9 @@
     -webkit-box-align: stretch;
     -moz-box-align: stretch;
 
-    box-pack: center;
-    -webkit-box-pack: center;
-    -moz-box-pack: center;
+    box-pack: start;
+    -webkit-box-pack: start;
+    -moz-box-pack: start;
 }
 
 /* inflexible */
