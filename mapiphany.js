@@ -241,8 +241,8 @@ var Pen = Base.extend({
     // set the current pen and display the new setting
     setCurrent: function (newTile) {
         var tile = gTileset[newTile];
-        var $disp = $('#current .drawbar-tile-x1');
-        var $cloned = $('#drawbar-tile').tmpl({tile: newTile});
+        var $disp = $('#current .brushes-tile-x1');
+        var $cloned = $('#brushes-tile').tmpl({tile: newTile});
         $disp.replaceWith($cloned);
 
         this.bg = KEEP_LAYER;
@@ -427,20 +427,20 @@ var Map = PageArea.extend({
 
         this.categories = sortObject(gTileCategories, CATEGORY_ORDER);
         var $mapEditNodes = $mapTemplate.tmpl(this);
-        this.$node = $mapEditNodes.filter('#map-combined');
+        this.$node = $mapEditNodes.filter('#map-whole-workspace');
         var me = this;
-        this.$node.find('.drawbar-tile').click(function () { 
+        this.$node.find('.brushes-tile').click(function () { 
             return me.pen.setCurrent($(this).data('tile'));
         });
 
-        var $toolbar = (new Toolbar(this.appState)).render($('#toolbar'));
-        this.$node.find('.toolbar').replaceWith($toolbar);
+        var $toolbar = (new Toolbar(this.appState)).render($('#toolbar-tmpl'));
+        this.$node.find('#toolbar').replaceWith($toolbar);
 
         // this must happen after templates have finished rendering so the
         // node really exists. svg events can't trigger unless the node is
         // visible in the DOM.
         $(document).bind(EVENT_TEMPLATE_DONE, function (ev) {
-            var $mapNode = me.$node.find('.map');
+            var $mapNode = me.$node.find('#map');
             $mapNode.svg(function (svg) { 
                 me._renderSVG(svg);
                 if (me._restoredExtents) {
