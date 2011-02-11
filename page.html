@@ -8,7 +8,13 @@
   <script type='text/javascript' src=
     'jquery-1.4.4.js'></script>
 
-  <script type="text/javascript"> $.scriptPath = "/"; </script>
+  <script type="text/javascript"> 
+    // scriptPath is whatever directory this file is in
+    var _sxp = unescape(location.pathname);
+    _sxp = _sxp.substr(0, _sxp.lastIndexOf('/')) + '/';
+    $.scriptPath = _sxp;
+  </script>
+
   <script type='text/javascript' src=
     'jquery.require.js'></script>
 
