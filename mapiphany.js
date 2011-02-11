@@ -485,7 +485,7 @@ var Map = PageArea.extend({
         //
         var itm, _g = this.grid[x][y];
         if ($.browser.mozilla || $.browser.opera) {
-            // use has the best performance by far, when it is available
+            // <use> has the best performance by far, when it is available
             itm = this.svg.use(null, _g.x, _g.y, 4*X_UNIT, 2*Y_UNIT, '#' + $def.attr('id'), {'pointer-events': 'none'});
         } else {
             itm = this.svg.image(null, _g.x, _g.y, 4*X_UNIT, 2*Y_UNIT, $def.attr('href'), {'pointer-events': 'none'});
@@ -529,7 +529,7 @@ var Map = PageArea.extend({
         this.svg = svg;
 
         var grid = this.grid = {};
-        var defs = this.defs = svg.defs();
+        this.defs = svg.defs();
 
         var t1 = new Date();
 
