@@ -177,12 +177,12 @@
 
     <li class="horizontal-list-item">
       <ul>
-        {{if VIEW_MAP_EDIT == visibleScreen[0]}}
-          {{tmpl(currentMap) "#map-tab"}}
-        {{/if}}
         <li class=
           "tab {{if VIEW_MY_MAPS == visibleScreen[0]}}active-tab{{/if}}"><a href=
             "#myMaps">My Maps</a></li>
+        {{if VIEW_MAP_EDIT == visibleScreen[0]}}
+          {{tmpl(currentMap) "#map-tab"}}
+        {{/if}}
       </ul>
     </li>
     <li class="righty horizontal-list-item">
