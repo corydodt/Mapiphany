@@ -5,3 +5,5 @@ start:
 stop:
 	kill `cat hgserve.pid`
 
+tilesets:
+	python -m mapiphany.tileset
