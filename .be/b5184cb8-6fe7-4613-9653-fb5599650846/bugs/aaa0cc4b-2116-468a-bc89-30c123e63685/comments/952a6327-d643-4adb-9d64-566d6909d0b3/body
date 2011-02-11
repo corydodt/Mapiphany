@@ -1,0 +1,4 @@
+Maps don't get fully restored - there is no grid data - unless they are
+rendered.  To save successfully we have to load the non-displayed map from
+localStorage.
+

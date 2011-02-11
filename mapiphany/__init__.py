@@ -1,0 +1,3 @@
+"""
+Mapiphany map-making app
+"""

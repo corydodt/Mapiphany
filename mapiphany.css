@@ -1,0 +1,236 @@
+/* vim:set fdm=marker: */
+/* colors {{{ 
+ *
+#147DFF
+#0E58B3
+#96c5ff - lightest
+#0049a2 - darkest
+
+#FFE414
+#B3840E
+}}} */
+
+
+/* framework {{{ */
+
+#logo {
+    font: 40px/44px 'FFFTusjBold', Georgia, serif;
+    color: #147dff;
+    margin: 8px;
+}
+
+body {
+    font-family: sans-serif;
+    font-size: 10pt;
+}
+
+.tab.map-tab a {
+    color: #147dff;
+}
+
+.tab.active-tab {
+    background-color: #147dff;
+}
+
+.tab.active-tab a {
+    color: white;
+    font-weight: bold;
+}
+
+.tab {
+    cursor: pointer;
+    display: inline-block;
+    border: thin solid #ddd;
+    border-bottom: none;
+    margin: 1px;
+    margin-bottom: 0px;
+    background-color: white;
+}
+
+.horizontal-list-item {
+    display: inline-block;
+    border: thin solid transparent;
+    border-bottom: none;
+    margin: 1px;
+    margin-bottom: 0px;
+}
+
+.horizontal-list-item a, .tab a {
+    display: block;
+    padding: 2px;
+}
+
+.tab a {
+    text-decoration: none;
+    color: black;
+    font: 10px Georgia, serif;
+}
+
+a {
+    color: #147dff;
+}
+
+#top-control {
+    border-bottom: thin solid #ddd;
+    margin-bottom: 0px;
+    padding: 2px;
+    padding-bottom: 0px;
+    background-color: #fff;
+    background-image: url("bluegrad.png");
+    background-repeat: repeat-x;
+    background-position: bottom;
+}
+
+#workspace {
+    padding: 6px;
+    background-image: url("shadow.png");
+    background-position: top;
+    background-repeat: repeat-x;
+}
+
+/* }}} */
+
+
+/* #map-edit {{{ */
+.righty {
+    text-align: right;
+    float:right;
+}
+
+.toolbar {
+    height: 36px; 
+    width: 996px;
+}
+
+.map {
+    display: inline-block;
+    height: 540px;
+    width: 720px;
+    border: thin solid black;
+}
+
+.drawbar {
+    padding-left: 4px;
+    display: inline-block;
+    height: 540px;
+    width: 270px;
+    border: thin solid black;
+    margin-left: 4px;
+    overflow-y: scroll;
+}
+
+.drawbar-category {
+    margin-top: 20px;
+    margin-left: 20px;
+    margin-bottom: 7px;
+}
+
+.drawbar-tile {
+    display: inline-block;
+    margin: 0px 1px 0px 0px;
+}
+
+.drawbar-tile-img, .drawbar-tile-x1 {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+}
+
+#current {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#current .drawbar-tile-img, #current .drawbar-tile-x1 {
+    width: 30px;
+    height: 30px;
+}
+
+.hex-detail {
+    height: 200px;
+    width: 720px;
+}
+
+.hex { 
+    stroke: #888; 
+    stroke-width: 0.60px; 
+    fill: transparent;
+}
+
+.selected.hex {
+    stroke: #147dff;
+    stroke-width: 3;
+    pointer-events: none;
+    fill: transparent;
+}
+
+input[name=save] {
+    background-image: url('stock_save_22.png');
+    border: none;
+}
+
+input[name=save]:hover {
+    background-image: url('stock_save_22_hover.png');
+    border: none;
+}
+
+/* }}} */
+
+
+/* #my-maps {{{ */
+.snapshot {
+    border-bottom: thin dotted black;
+}
+
+.box {
+    display: -moz-box;
+    display: -webkit-box;
+    display: box;
+    box-orient: horizontal;
+    -webkit-box-orient: horizontal;
+    -moz-box-orient: horizontal;
+    box-align: stretch;
+    -webkit-box-align: stretch;
+    -moz-box-align: stretch;
+    box-pack: center;
+    -webkit-box-pack: center;
+    -moz-box-pack: center;
+}
+
+.snapshot-box {
+    height: 100px;
+}
+
+.snapshot .indicators {
+    line-height: 100px;
+    text-align: center;
+    width: 30px;
+    box-flex: 0;
+    -webkit-box-flex: 0;
+    -moz-box-flex: 0;
+}
+
+.snapshot .thumbnail {
+    width: 100px;
+    text-align: center;
+    box-flex: 0;
+    -webkit-box-flex: 0;
+    -moz-box-flex: 0;
+    box-align: center;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+}
+
+.thumbnail-inner {
+    box-flex: 1.0;
+    -webkit-box-flex: 1.0;
+    -moz-box-flex: 1.0;
+}
+
+.snapshot .details {
+    line-height: 100px;
+    box-flex: 1.0;
+    -webkit-box-flex: 1.0;
+    -moz-box-flex: 1.0;
+}
+/* }}} */

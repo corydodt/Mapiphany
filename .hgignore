@@ -1,0 +1,6 @@
+.*\.pyc
+^.be/id-cache
+.*\.orig$
+^twistd.pid$
+^twistd.log.*
+.*\.txt\.html$

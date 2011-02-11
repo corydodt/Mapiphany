@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+  <!-- vi:set ft=html fdm=marker fmr=[[[,]]]: -->
+<head> <!-- [[[ -->
+  <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+  <title>Mapiphany</title>
+
+  <script type='text/javascript' src=
+    'jquery-1.4.4.js'></script>
+
+  <script type="text/javascript"> $.scriptPath = "/"; </script>
+  <script type='text/javascript' src=
+    'jquery.require.js'></script>
+
+  <script type='text/javascript' src=
+    'mapiphany.js'></script>
+  <!-- FIXME - debugger statement is only recognized when $.require is not in
+  use -->
+  <!-- <script type='text/javascript'> $.require(
+    'mapiphany.js');
+  </script> -->
+
+  <link rel="stylesheet" type="text/css" href=
+    'reset.css' />
+  <link rel="stylesheet" type="text/css" href=
+    'font/stylesheet.css' />
+  <link rel="stylesheet" type="text/css" href=
+    'mapiphany.css' />
+  <link rel="stylesheet" type="text/css" href=
+    'jquery-svg/jquery.svg.css' />
+</head> <!-- ]]] -->
+<body>
+
+<script type="text/x-jquery-tmpl" id=
+    "tileset-css"> <!-- [[[ -->
+  <link rel="stylesheet" type="text/css" href="tiles/${tileset}/tileset.css" />
+</script> <!-- ]]] -->
+
+<script type="text/x-jquery-tmpl" id=
+    "drawbar-tile"> <!-- [[[ -->
+  <span class="drawbar-tile-x1" title="${tile}" style=
+    "background-color:{{if gTileset[tile].backgroundrgb=='None'}}#c0c0c0{{else}}${gTileset[tile].backgroundrgb}{{/if}}">
+    {{if gTileset[tile].iconfilename}}<img class="drawbar-tile-img" src=
+      "tiles/${gTileset[tile].set}/${gTileset[tile].iconfilename}" />
+    {{/if}}</span>
+</script> <!-- ]]] -->
+
+<script type="text/x-jquery-tmpl" id=
+    "toolbar"> <!-- [[[ -->
+
+  <div class="toolbar">
+    <input type="button" value="&nbsp;" name= "save" title="save" />
+    <input type="button" value="undo" name= "undo" title="undo" />
+    <input type="button" value="redo" name= "redo" title="redo" />
+    Name: <input type="text" name="mapName" value="${name}" />
+    Current: <span id="current">{{tmpl({tile:"Grassland"}) "#drawbar-tile"}}</span>
+    Zoom: <select name="zoom">
+      <option value="200">200%</option>
+      <option selected="selected" value="100">100%</option>
+      <option value="50">50%</option>
+    </select>
+    Units: <input type="text" name="mapUnits" value="1 mile" />
+  </div>
+</script> <!-- ]]] -->
+
+<script type="text/x-jquery-tmpl" id=
+    "map-edit"> <!-- [[[ -->
+
+  <div id="map-combined">
+
+    <div class="toolbar" />
+
+    <div class="map" />
+
+    <div class="drawbar">
+      {{each($i, category) categories}}
+      <div class="drawbar-category"><em>${category[0]}</em></div>
+      {{each($i, tile) category[1]}}<span class="drawbar-tile" 
+        data-tile="${tile}">{{tmpl({tile:tile}) "#drawbar-tile"}}</span>
+      {{/each}}
+      {{/each}}
+    </div>
+
+  </div>
+
+  <div class="hex-detail">
+    $coord $graphic $name
+    <div>
+      <textarea name="hexDescription"></textarea>
+    </div>
+  </div>
+
+</script> <!-- ]]] -->
+
+<script type="text/x-jquery-tmpl" id=
+    "my-maps"> <!-- [[[ -->
+
+  <div class="snapshot">
+    <div class="snapshot-box box">
+
+      <div class="indicators"><input type="checkbox" /></div>
+
+      <div class="thumbnail box">
+        <div class="thumbnail-inner">
+          <img src="document-new.png" alt="new"
+            title="new" />
+        </div>
+      </div>
+
+      <div class="details" />
+
+    </div>
+  </div>
+
+  {{each maps}}
+  <div class="snapshot" data-id="${id}">
+    <div class="snapshot-box box">
+      <div class="indicators"><input type="checkbox" /></div>
+      
+      <div class="thumbnail box">
+        <div class="thumbnail-inner">
+          <img src="hexes.png" alt="${name}" title="${name}" />
+        </div>
+      </div>
+
+      <div class="details">
+        <a href="#map-edit&${id}">${name}</a>
+      </div>
+    </div>
+  </div>
+  {{/each}}
+
+</script> <!-- ]]] -->
+
+<script type="text/x-jquery-tmpl" id=
+  "user-edit"> <!-- [[[ -->
+
+  ${username}'s account
+  <form name="account" action="#">
+    <div>
+      <label for="old-password">Change password:</label>
+      <input id="old-password" type="password" name="old-password" />
+    </div>
+    <div><input type="password" name="password1" /></div>
+    <div><input type="password" name="password2" /></div>
+
+    <div>
+      <label for="email">Change email:</label>
+      <input type="text" name="email" id="email" value="${email}" />
+    </div>
+
+    <div><input type="submit" name="save-account" /></div>
+  </form>
+
+</script> <!-- ]]] -->
+
+
+<script type="text/x-jquery-tmpl" id=
+    "map-tab"> <!-- [[[ -->
+  <li data-id="${id}" class=
+    "map-tab tab active-tab"><a href=
+    "#mapEdit">{{if modified}}*{{/if}}${name}</a></li>
+</script> <!-- ]]] -->
+
+
+<script type="text/x-jquery-tmpl" id=
+    "top-control-tmpl"> <!-- [[[ -->
+
+  <ul id="top-control">
+    <li><div id="logo">Mapiphany</div></li>
+
+    <li class="horizontal-list-item">
+      <ul>
+        {{if VIEW_MAP_EDIT == visibleScreen[0]}}
+          {{tmpl(currentMap) "#map-tab"}}
+        {{/if}}
+        <li class=
+          "tab {{if VIEW_MY_MAPS == visibleScreen[0]}}active-tab{{/if}}"><a href=
+            "#myMaps">My Maps</a></li>
+      </ul>
+    </li>
+    <li class="righty horizontal-list-item">
+      <ul>
+        <li class="horizontal-list-item"><a href="#clear">!clear!</a></li>
+        <li class="horizontal-list-item"><a href="#userEdit">${username}</a></li>
+        <li class="horizontal-list-item"><a href="#logout">Logout</a></li>
+      </ul>
+    </li>
+  </ul>
+
+</script> <!-- ]]] -->
+
+<div id="cursor"></div>
+
+<div id="workspace">
+  <h1>!?</h1>
+</div>
+
+
+</body>
+</html>

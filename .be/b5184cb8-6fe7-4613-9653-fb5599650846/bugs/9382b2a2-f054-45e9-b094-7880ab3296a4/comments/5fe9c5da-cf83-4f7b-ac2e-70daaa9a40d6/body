@@ -1,0 +1,1 @@
+Fixed by using appState.currentMap instead of appState as template argument

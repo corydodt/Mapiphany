@@ -1,0 +1,70 @@
+===========
+Map actions
+===========
+
+User Actions
+============
+
+
+Set Foreground/Background Fill
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* click on hex
+* must be a fg/bg fill selected
+* if water-type fill on a water tile, splits tile and applies only to the
+  portion of the tile that is on the water side
+
+Set Bg Fill Only
+~~~~~~~~~~~~~~~~
+* click on hex
+* must be a bg-only fill selected
+* if water-type fill on a water tile, splits tile and applies only to the
+  portion of the tile that is on the water side
+
+Set Foreground Fill Only
+~~~~~~~~~~~~~~~~~~~~~~~~
+* click on hex
+* must be a fg-only fill selected
+* if water-type fill on a tile with water boundary, splits tile and applies
+  only to the portion of the tile that is on the water side
+
+Set Fg/Bg, Bg-Only, or Fg-Only on multiple Hexes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* click on hex
+* must be a fg/bg, bg-only or fg-only fill selected
+* not applicable to symbol-only fill
+* if water-type fill on a water tile, splits tile and applies only to the
+  portion of the tile that is on the water side
+
+Add Foreground Symbol
+~~~~~~~~~~~~~~~~~~~~~
+* click on hex
+* must be a symbol selected
+
+Draw Freehand Path
+~~~~~~~~~~~~~~~~~~
+* mouse movement with mouse button down adds points
+* path smoothing occurs on mouseup
+* must be a path tool selected
+* If water-type tool on a tile with a water boundary, applies only to the
+  portion of the tile that is on the **land** side
+
+Pen Properties
+==============
+
+* fg fill or None
+* bg fill or None
+* fill size (L or S)
+* Path Width (from 1 to 40)
+* Path style
+* Path color
+
+Additional Drawing Tools
+========================
+
+Water Boundary Layer
+~~~~~~~~~~~~~~~~~~~~
+
+Draw in outlines for land, indicate land or sea.
+
+
+.. vim:set ft=rst:
