@@ -19,13 +19,18 @@ VIEW_MAP_EDIT = 'map-edit';
 VIEW_USER_EDIT = 'user-edit';
 VIEW_MY_MAPS = 'my-maps';
 VIEW_CLEAR = 'clear';
+
 APP_NAME = 'Mapiphany';
+
 EVENT_TEMPLATE_DONE = 'template-done';
+
 EVENT_MAP_ZOOM = 'map-zoom';
 EVENT_MAP_UNDO = 'map-undo';
 EVENT_MAP_REDO = 'map-redo';
 EVENT_MAP_SAVE = 'map-save';
 EVENT_MAP_RENAME = 'map-rename';
+EVENT_MAP_PRINT = 'map-print';
+
 PEN_SMALL = 'small';
 PEN_LARGE = 'large';
 MULT = 25; // baseline multiplier to get a decent-sized hex
@@ -174,6 +179,10 @@ var Toolbar = PageArea.extend({
 
         ret.find('input[name=save]').click(function () {
             $(document).trigger(EVENT_MAP_SAVE, []);
+        });
+
+        ret.find('input[name=print]').click(function () {
+            $(document).trigger(EVENT_MAP_PRINT, []);
         });
 
         return ret;
@@ -457,6 +466,9 @@ var Map = PageArea.extend({
         });
         $(document).bind(EVENT_MAP_RENAME, function (ev, id, name) {
             me.name = name;
+        });
+        $(document).bind(EVENT_MAP_PRINT, function (ev) {
+            alert('not implemented');
         });
         return $mapEditNodes;
     },
