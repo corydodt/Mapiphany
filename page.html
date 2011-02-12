@@ -37,10 +37,12 @@
 </head> <!-- ]]] -->
 <body>
 
+
 <script type="text/x-jquery-tmpl" id=
     "tileset-css"> <!-- [[[ -->
   <link rel="stylesheet" type="text/css" href="tiles/${tileset}/tileset.css" />
 </script> <!-- ]]] -->
+
 
 <script type="text/x-jquery-tmpl" id=
     "brushes-tile"> <!-- [[[ -->
@@ -51,10 +53,11 @@
     {{/if}}</span>
 </script> <!-- ]]] -->
 
+
 <script type="text/x-jquery-tmpl" id=
     "toolbar-tmpl"> <!-- [[[ -->
 
-  <div id="toolbar" class="f0 hbox">
+  <div id="toolbar" class="f0">
     <input type="button" value="&nbsp;" name= "save" title="save" />
     <input type="button" value="undo" name= "undo" title="undo" />
     <input type="button" value="redo" name= "redo" title="redo" />
@@ -73,6 +76,7 @@
   </div>
 </script> <!-- ]]] -->
 
+
 <script type="text/x-jquery-tmpl" id=
     "map-edit"> <!-- [[[ -->
 
@@ -80,7 +84,7 @@
     <div id="toolbar" class="f0 hbox" />
 
     <div class="f8 hbox">
-      <div id="map" class="map f1"/>
+      <div id="map" class="f1"/>
 
       <div id="brushes" class="f0 vbox">
         <div id="brushes-inner">
@@ -111,6 +115,7 @@
   </div>
 
 </script> <!-- ]]] -->
+
 
 <script type="text/x-jquery-tmpl" id=
     "my-maps"> <!-- [[[ -->
@@ -151,6 +156,7 @@
   {{/each}}
 
 </script> <!-- ]]] -->
+
 
 <script type="text/x-jquery-tmpl" id=
   "user-edit"> <!-- [[[ -->
@@ -209,6 +215,7 @@
   </ul>
 
 </script> <!-- ]]] -->
+
 
 <div id="app" class="vbox">
   <div id="cursor" class="f0"></div>
