@@ -1,3 +1,7 @@
+//
+// Mapiphany main application - load and render the framework and web objects
+//
+
 $.require('base.js');
 
 $.require('jquery.tmpl.js');
@@ -7,6 +11,8 @@ $.require('jquery-svg/jquery.svgdom.js');
 $.require('jquery-svg/jquery.svganim.js');
 
 $.require('tiles/tilesets.js');
+$.require('logging.js');
+$.require('patchsvg.js');
 
 
 VIEW_MAP_EDIT = 'map-edit';
@@ -54,21 +60,6 @@ TOOLS = {
         set: "."
     },
 };
-
-
-function dir(o) {
-    try {
-        return console.dir(o);
-    } catch (e) {
-    }
-}
-
-function log(m) {
-    try {
-        return console.log(m);
-    } catch (e) {
-    }
-}
 
 
 function stripHash(uri) { // remove the hash (if any) from uri
