@@ -37,66 +37,85 @@
 </head> <!-- ]]] -->
 <body>
 
+
 <script type="text/x-jquery-tmpl" id=
     "tileset-css"> <!-- [[[ -->
   <link rel="stylesheet" type="text/css" href="tiles/${tileset}/tileset.css" />
 </script> <!-- ]]] -->
 
+
 <script type="text/x-jquery-tmpl" id=
-    "drawbar-tile"> <!-- [[[ -->
-  <span class="drawbar-tile-x1" title="${tile}" style=
+    "brushes-tile"> <!-- [[[ -->
+  <span class="brushes-tile-x1" title="${tile}" style=
     "background-color:{{if gTileset[tile].backgroundrgb=='None'}}#c0c0c0{{else}}${gTileset[tile].backgroundrgb}{{/if}}">
-    {{if gTileset[tile].iconfilename}}<img class="drawbar-tile-img" src=
+    {{if gTileset[tile].iconfilename}}<img class="brushes-tile-img" src=
       "tiles/${gTileset[tile].set}/${gTileset[tile].iconfilename}" />
     {{/if}}</span>
 </script> <!-- ]]] -->
 
-<script type="text/x-jquery-tmpl" id=
-    "toolbar"> <!-- [[[ -->
 
-  <div class="toolbar">
+<script type="text/x-jquery-tmpl" id=
+    "toolbar-tmpl"> <!-- [[[ -->
+
+  <div id="toolbar" class="f0">
     <input type="button" value="&nbsp;" name= "save" title="save" />
     <input type="button" value="undo" name= "undo" title="undo" />
     <input type="button" value="redo" name= "redo" title="redo" />
-    Name: <input type="text" name="mapName" value="${name}" />
-    Current: <span id="current">{{tmpl({tile:"Grassland"}) "#drawbar-tile"}}</span>
-    Zoom: <select name="zoom">
+    <span class="f0">Name:</span> <input class="f1" type="text" name="mapName" value="${name}" />
+    <span class="f0">Current:</span> <span id="current">{{tmpl({tile:"Grassland"}) "#brushes-tile"}}</span>
+    <span>Zoom:</span> <select name="zoom">
       <option value="200">200%</option>
       <option selected="selected" value="100">100%</option>
       <option value="50">50%</option>
     </select>
-    Units: <input type="text" name="mapUnits" value="1 mile" />
+    <span>Units:</span> <select name="mapUnits">
+        <option value="10mi">10mi</option>
+        <option selected="selected" value="1mi">1 mile</option>
+        <option value="halfmi">1/2 mile</option>
+      </select>
   </div>
 </script> <!-- ]]] -->
+
 
 <script type="text/x-jquery-tmpl" id=
     "map-edit"> <!-- [[[ -->
 
-  <div id="map-combined">
+  <div id="map-whole-workspace" class="vbox f1">
+    <div id="toolbar" class="f0 hbox" />
 
-    <div class="toolbar" />
+    <div class="f8 hbox">
+      <div id="map" class="f1"/>
 
-    <div class="map" />
-
-    <div class="drawbar">
-      {{each($i, category) categories}}
-      <div class="drawbar-category"><em>${category[0]}</em></div>
-      {{each($i, tile) category[1]}}<span class="drawbar-tile" 
-        data-tile="${tile}">{{tmpl({tile:tile}) "#drawbar-tile"}}</span>
-      {{/each}}
-      {{/each}}
+      <div id="brushes" class="f0 vbox">
+        <div id="brushes-inner">
+          {{each($i, category) categories}}
+          <div class="brushes-category"><em>${category[0]}</em></div>
+          {{each($i, tile) category[1]}}<span class="brushes-tile" 
+            data-tile="${tile}">{{tmpl({tile:tile}) "#brushes-tile"}}</span>
+          {{/each}}
+          {{/each}}
+        </div>
+      </div>
+      
+      
     </div>
 
-  </div>
-
-  <div class="hex-detail">
-    $coord $graphic $name
-    <div>
-      <textarea name="hexDescription"></textarea>
+    <div class="hex-detail f1 vbox">
+      <div class="hex-detail-data f0 hbox">
+        <div class=
+          "f0">$coord</div> <div class=
+          "f0">$graphic</div> <div class=
+          "f1">$name</div>
+      </div>
+      <div class=
+        "hex-detail-description">
+        <textarea name="hexDescription"></textarea>
+      </div>
     </div>
   </div>
 
 </script> <!-- ]]] -->
+
 
 <script type="text/x-jquery-tmpl" id=
     "my-maps"> <!-- [[[ -->
@@ -138,6 +157,7 @@
 
 </script> <!-- ]]] -->
 
+
 <script type="text/x-jquery-tmpl" id=
   "user-edit"> <!-- [[[ -->
 
@@ -172,17 +192,17 @@
 <script type="text/x-jquery-tmpl" id=
     "top-control-tmpl"> <!-- [[[ -->
 
-  <ul id="top-control">
+  <ul id="top-control" class="f0">
     <li><div id="logo">Mapiphany</div></li>
 
     <li class="horizontal-list-item">
       <ul>
-        {{if VIEW_MAP_EDIT == visibleScreen[0]}}
-          {{tmpl(currentMap) "#map-tab"}}
-        {{/if}}
         <li class=
           "tab {{if VIEW_MY_MAPS == visibleScreen[0]}}active-tab{{/if}}"><a href=
             "#myMaps">My Maps</a></li>
+        {{if VIEW_MAP_EDIT == visibleScreen[0]}}
+          {{tmpl(currentMap) "#map-tab"}}
+        {{/if}}
       </ul>
     </li>
     <li class="righty horizontal-list-item">
@@ -196,10 +216,13 @@
 
 </script> <!-- ]]] -->
 
-<div id="cursor"></div>
 
-<div id="workspace">
-  <h1>!?</h1>
+<div id="app" class="vbox">
+  <div id="cursor" class="f0"></div>
+
+  <div id="workspace" class="f1 vbox">
+    <h1>!?</h1>
+  </div>
 </div>
 
 

@@ -1,3 +1,7 @@
+//
+// Mapiphany main application - load and render the framework and web objects
+//
+
 $.require('base.js');
 
 $.require('jquery.tmpl.js');
@@ -7,6 +11,8 @@ $.require('jquery-svg/jquery.svgdom.js');
 $.require('jquery-svg/jquery.svganim.js');
 
 $.require('tiles/tilesets.js');
+$.require('logging.js');
+$.require('patchsvg.js');
 
 
 VIEW_MAP_EDIT = 'map-edit';
@@ -54,21 +60,6 @@ TOOLS = {
         set: "."
     },
 };
-
-
-function dir(o) {
-    try {
-        return console.dir(o);
-    } catch (e) {
-    }
-}
-
-function log(m) {
-    try {
-        return console.log(m);
-    } catch (e) {
-    }
-}
 
 
 function stripHash(uri) { // remove the hash (if any) from uri
@@ -241,8 +232,8 @@ var Pen = Base.extend({
     // set the current pen and display the new setting
     setCurrent: function (newTile) {
         var tile = gTileset[newTile];
-        var $disp = $('#current .drawbar-tile-x1');
-        var $cloned = $('#drawbar-tile').tmpl({tile: newTile});
+        var $disp = $('#current .brushes-tile-x1');
+        var $cloned = $('#brushes-tile').tmpl({tile: newTile});
         $disp.replaceWith($cloned);
 
         this.bg = KEEP_LAYER;
@@ -427,24 +418,27 @@ var Map = PageArea.extend({
 
         this.categories = sortObject(gTileCategories, CATEGORY_ORDER);
         var $mapEditNodes = $mapTemplate.tmpl(this);
-        this.$node = $mapEditNodes.filter('#map-combined');
+        this.$node = $mapEditNodes.filter('#map-whole-workspace');
         var me = this;
-        this.$node.find('.drawbar-tile').click(function () { 
+        this.$node.find('.brushes-tile').click(function () { 
             return me.pen.setCurrent($(this).data('tile'));
         });
 
-        var $toolbar = (new Toolbar(this.appState)).render($('#toolbar'));
-        this.$node.find('.toolbar').replaceWith($toolbar);
+        var $toolbar = (new Toolbar(this.appState)).render($('#toolbar-tmpl'));
+        this.$node.find('#toolbar').replaceWith($toolbar);
 
         // this must happen after templates have finished rendering so the
         // node really exists. svg events can't trigger unless the node is
         // visible in the DOM.
         $(document).bind(EVENT_TEMPLATE_DONE, function (ev) {
-            var $mapNode = me.$node.find('.map');
-            $mapNode.svg(function (svg) { 
-                me._renderSVG(svg);
-                if (me._restoredExtents) {
-                    me._restoreGridArea();
+            var $mapNode = me.$node.find('#map');
+            $mapNode.svg({
+                onLoad: function (svg) { 
+                    svg.configure({width: $mapNode.width(), height: $mapNode.height()});
+                    me._renderSVG(svg);
+                    if (me._restoredExtents) {
+                        me._restoreGridArea();
+                    }
                 }
             });
             me.pen = new Pen($('#current'));
@@ -485,7 +479,7 @@ var Map = PageArea.extend({
         //
         var itm, _g = this.grid[x][y];
         if ($.browser.mozilla || $.browser.opera) {
-            // use has the best performance by far, when it is available
+            // <use> has the best performance by far, when it is available
             itm = this.svg.use(null, _g.x, _g.y, 4*X_UNIT, 2*Y_UNIT, '#' + $def.attr('id'), {'pointer-events': 'none'});
         } else {
             itm = this.svg.image(null, _g.x, _g.y, 4*X_UNIT, 2*Y_UNIT, $def.attr('href'), {'pointer-events': 'none'});
@@ -511,10 +505,10 @@ var Map = PageArea.extend({
         var factor = 100.0 / scale;
 
         var $root = $(this.svg.root());
-        var rw = $root.parent().width();
-        var rh = $root.parent().height();
+        var rw = $root[0].width.baseVal.value;
+        var rh = $root[0].height.baseVal.value;
 
-        var vb = this.svg.root().viewBox;
+        var vb = $root[0].viewBox;
         if (xAbs === undefined) {
             xAbs = vb.baseVal.x;
         }
@@ -522,23 +516,30 @@ var Map = PageArea.extend({
             yAbs = vb.baseVal.y;
         }
 
-        $root.animate({svgViewBox: xAbs + ' ' + yAbs + ' ' + rw * factor + ' ' + rh * factor}, 500);
+        this.$node.find('.' + CLASS_FG_FILL).attr('display', 'none');
+        var me = this;
+        $root.animate({svgViewBox: xAbs + ' ' + yAbs + ' ' + rw * factor + ' ' + rh * factor}, 500, 'swing',
+                function () {
+                    me.$node.find('.' + CLASS_FG_FILL).attr('display', '');
+                });
+
+        return [xAbs, yAbs, rw * factor, rh * factor];
     },
 
     _renderSVG: function (svg) { // create a new hex canvas using defaults
         this.svg = svg;
 
         var grid = this.grid = {};
-        var defs = this.defs = svg.defs();
+        this.defs = svg.defs();
 
         var t1 = new Date();
 
         // position the viewbox so that no whitespace is visible at the edges
-        this.zoom(100, X_UNIT, Y_UNIT);
+        var geom = this.zoom(100, X_UNIT, Y_UNIT);
 
         // for convenience define a lot of constants
-        var rw = $(svg.root()).parent().width();
-        var rh = $(svg.root()).parent().height();
+        var rw = geom[2];
+        var rh = geom[3];
 
         // x-dimension constants
         var _05, _15, _2, _3, _35;

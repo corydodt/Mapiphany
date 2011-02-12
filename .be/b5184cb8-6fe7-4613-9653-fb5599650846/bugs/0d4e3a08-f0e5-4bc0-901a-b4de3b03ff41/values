@@ -7,7 +7,7 @@ reporter: Cory Dodt <corymercurial@spam.goonmill.org>
 severity: minor
 
 
-status: open
+status: closed
 
 
 summary: fix race condition that causes the map to load with no icons first time
