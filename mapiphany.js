@@ -313,6 +313,7 @@ var Map = PageArea.extend({
         this._restoredExtents = null;
         this._restoredHexes = null;
         this._toSymbol = null;
+        this.extents = {minX: null, minY: null, maxX: null, maxY: null};
     },
 
     save: function () { // serialize this map instance to dict data
@@ -321,15 +322,13 @@ var Map = PageArea.extend({
              modified: this.modified,
              defaultFill: this.defaultFill,
              hexes: null,
-             extents: null,
+             extents: [this.extents.minX, this.extents.minY, this.extents.maxX, this.extents.maxY],
              tileset: this.tileset
         };
         if (this.grid) {
-            var _fixmeExtents = [0, 0, 19, 12];
-            var hexes = this._saveGridArea.apply(this, _fixmeExtents);
+            var hexes = this._saveGridArea.apply(this, _r.extents);
             _r.lookup = this._toSymbol;
             _r.hexes = hexes;
-            _r.extents = _fixmeExtents;
         }
         return _r;
     },
@@ -653,10 +652,24 @@ var Map = PageArea.extend({
         var newData = {fg: fgFill, bg: bgFill, fg2: fg2Fill};
         $h.data(newData);
 
+        var _dat = $h.data();
+        // update extents
+        if (this.extents.minX === null || _dat.x < this.extents.minX) {
+            this.extents.minX = _dat.x;
+        }
+        if (this.extents.minY === null || _dat.y < this.extents.minY) {
+            this.extents.minY = _dat.y;
+        }
+        if (this.extents.maxX === null || _dat.x > this.extents.maxX) {
+            this.extents.maxX = _dat.x;
+        }
+        if (this.extents.maxY === null || _dat.y > this.extents.maxY) {
+            this.extents.maxY = _dat.y;
+        }
+
         // set bg
         $h.attr('class', 'hex ' + bgFill || '');
 
-        var _dat = $h.data();
         // set fg
         var $fg = $('#fg-' + $h.attr('id'));
         $fg.remove();
@@ -775,7 +788,10 @@ var AppState = Base.extend({
         _m1 = (new Map(this, 'your map#1')).save();
         _m2 = (new Map(this, 'your map 2#2')).save();
         _m1.lookup = {M0: 'Mountain', G0: 'Grassland'};
-        _m1.extents = [1, 1, 2, 2];
+        _m1.extents.minX = 1;
+        _m1.extents.minY = 1;
+        _m1.extents.maxX = 2;
+        _m1.extents.maxY = 2;
         _m1.hexes = [
             [ "M0M0~~", "M0M0~~" ],
             [ "G0G0~~", "M0M0~~" ],
