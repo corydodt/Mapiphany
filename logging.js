@@ -24,7 +24,7 @@ function log(m) {
 // use console.log to display error message and traceback
 function err(e) {
     var frames = printStackTrace(e);
-    for (n=0; n<frames.length; n++) {
+    for (n=frames.length-1; n>=0; n--) {
         log(frames[n]);
     }
     log(e);
