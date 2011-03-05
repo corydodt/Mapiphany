@@ -13,6 +13,7 @@ $.require('jquery-svg/jquery.svganim.js');
 $.require('tiles/tilesets.js');
 $.require('logging.js');
 $.require('patchsvg.js');
+$.require('undo.js');
 
 
 VIEW_MAP_EDIT = 'map-edit';
@@ -701,45 +702,6 @@ var Map = PageArea.extend({
         return ret;
     }
 });
-
-
-// implement command-based undo, managing the actions that can be applied to
-// the object
-var UndoHistory = Base.extend({
-    constructor: function (managedObject) {
-        this.managedObject = managedObject;
-        this.history = [];
-        this.future = []; // for redo, remember commands that were undone
-    },
-
-    // TODO - isDirty. Not as simple as checking history.length, must take
-    // into account where the current map state is wrt future and history.
-
-    do: function (cmd, args, previous) { // apply an action to the managedObject and remember it
-        this.managedObject['do_' + cmd].apply(this.managedObject, args);
-        this.history.push([cmd, args, previous]);
-        this.future = [];
-    },
-
-    undo: function () { // un-apply whatever the last action was
-        if (this.history.length == 0) {
-            return;
-        }
-        var last = this.history.pop();
-        this.managedObject['do_' + last[0]].apply(this.managedObject, last[2]);
-        this.future.push(last);
-    },
-
-    redo: function () { // distinguished from "do" because it doesn't clear the "future" list
-        if (this.future.length == 0) {
-            return;
-        }
-        var future = this.future.pop();
-        this.managedObject['do_' + future[0]].apply(this.managedObject, future[1]);
-        this.history.push(future);
-    }
-});
-
 
 
 // I remember what you were looking at in the app and I am responsible for all
