@@ -476,12 +476,20 @@ var Map = PageArea.extend({
     _iconAt: function (label, x, y) { // place an icon image for this Fill at the coordinates x,y
         var $def = $('#' + label + '-icon');
 
+        var tile = gTileset[label];
+        var sf = tile.scalefactor;
+        var xFactor = 4*X_UNIT*sf;
+        var yFactor = 2*Y_UNIT*sf;
+        var xOff = (4*X_UNIT - xFactor)/2;
+        var yOff = (2*Y_UNIT - yFactor)/2;
+        var id = label + '-icon';
+        var href = 'tiles/' + tile.set + '/' + tile.iconfilename;
+
         // create the <defs><image> when missing.
         if ($def.length == 0) {
-            var tile = gTileset[label];
-
-            var href = 'tiles/' + tile.set + '/' + tile.iconfilename;
-            $def = $(this.svg.image(this.defs, 0, 0, 4*X_UNIT, 2*Y_UNIT, href, { id: label + '-icon' }));
+            // adjust the tile by the scalefactor in width/height, then adjust
+            // x/y offset to center it
+            $def = $(this.svg.image(this.defs, xOff, yOff, xFactor, yFactor, href, { id: id }));
         }
 
         // It's a shame there is no $.support for svg features.  who knows
@@ -492,9 +500,9 @@ var Map = PageArea.extend({
         var itm, _g = this.grid[x][y];
         if ($.browser.mozilla || $.browser.opera) {
             // <use> has the best performance by far, when it is available
-            itm = this.svg.use(null, _g.x, _g.y, 4*X_UNIT, 2*Y_UNIT, '#' + $def.attr('id'), {'pointer-events': 'none'});
+            itm = this.svg.use(null, _g.x, _g.y, 4*X_UNIT, 2*Y_UNIT, '#' + id, {'pointer-events': 'none'});
         } else {
-            itm = this.svg.image(null, _g.x, _g.y, 4*X_UNIT, 2*Y_UNIT, $def.attr('href'), {'pointer-events': 'none'});
+            itm = this.svg.image(null, _g.x + xOff, _g.y + yOff, xFactor, yFactor, href, { id: label + '-icon' });
         }
         $(itm).addClass(CLASS_FG_FILL);
         return itm;
