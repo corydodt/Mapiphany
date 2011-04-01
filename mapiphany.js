@@ -390,6 +390,13 @@ var Map = PageArea.extend({
         for (x = extents[0]; x <= extents[2]; x++) {
             unshiftX = x - extents[0];
             for (y = extents[1]; y <= extents[3]; y++) {
+                // when the saved map is larger than the displayed map, skip
+                // over it. we'll be growing the grid if the screen is ever
+                // resized or moved.
+                if (this.grid[x] === undefined || this.grid[x][y] === undefined) {
+                    continue;
+                }
+
                 unshiftY = y - extents[1];
                 // set the hex properties, skipping the history layer
                 cell = hexes[unshiftX][unshiftY];
