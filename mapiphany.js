@@ -393,8 +393,8 @@ var Map = PageArea.extend({
                 // when the saved map is larger than the displayed map, skip
                 // over it. we'll be growing the grid if the screen is ever
                 // resized or moved.
-                if (this.grid[x] === undefined || this.grid[x][y] === undefined) {
-                    continue;
+                if (this.grid[x][y] === undefined) {
+                    break;
                 }
 
                 unshiftY = y - extents[1];
@@ -414,6 +414,13 @@ var Map = PageArea.extend({
                 }
                 this.do_setHex(this.grid[x][y].n, fg, bg, fg2);
             }
+            // when the saved map is larger than the displayed map, skip
+            // over it. we'll be growing the grid if the screen is ever
+            // resized or moved.
+            if (this.grid[x] === undefined) {
+                break;
+            }
+
         }
         this._restoredExtents = this._restoredHexes = undefined;
         var t2 = new Date() - t1;
