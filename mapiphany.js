@@ -5,7 +5,9 @@
 $.require('base.js');
 
 $.require('jquery.tmpl.js');
+
 $.require('jquery.json-2.2.js');
+
 $.require('jquery-svg/jquery.svg.js');
 $.require('jquery-svg/jquery.svgdom.js');
 $.require('jquery-svg/jquery.svganim.js');
@@ -287,6 +289,7 @@ var MapList = PageArea.extend({
     render: function ($template) {
         var $ret = $template.tmpl(this.appState);
         var me = this;
+
         $ret.find('.snapshot .thumbnail, .snapshot .details').click(function () {
             me.appState.redirect(VIEW_MAP_EDIT + '&' + $(this).parents('.snapshot').attr('data-id'));
         });
