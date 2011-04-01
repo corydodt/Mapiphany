@@ -4,3 +4,5 @@
 ^twistd.pid$
 ^twistd.log.*
 .*\.txt\.html$
+^jquery-ui/development-bundle/
+^jquery-ui/index.html$
