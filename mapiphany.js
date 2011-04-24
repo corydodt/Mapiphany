@@ -104,6 +104,7 @@ var PageArea = Base.extend({
     },
 
     render: function ($template, data) {
+        log("render PageArea to " + $template + " with " + data);
         return $template.tmpl(data || this.appState);
     }
 });
@@ -112,6 +113,7 @@ var PageArea = Base.extend({
 // the navigation and controls at the top of the page
 var Top = PageArea.extend({
     render: function ($template) {
+        log("render Top to " + $template.selector);
         var $ret = $template.tmpl(this.appState);
         var me = this;
         me.$node = $ret;
@@ -156,6 +158,7 @@ var Top = PageArea.extend({
 // the controls at the top of the map-edit area
 var Toolbar = PageArea.extend({
     render: function ($template) {
+        log("render Toolbar to " + $template.selector);
         var ret = $template.tmpl(this.appState.currentMap);
         var me = this;
 
@@ -196,6 +199,7 @@ var Toolbar = PageArea.extend({
 // the main workspace below the Top, which may contain different sub-apps
 var Workspace = PageArea.extend({
     render: function () {
+        log("render Workspace");
         var $n;
         if (this.appState.visibleScreen[0] == VIEW_MAP_EDIT) {
             $n = this.appState.currentMap.render($('#map-edit'));
@@ -216,6 +220,7 @@ var Framework = Base.extend({
     },
 
     render: function () {
+        log("render Framework");
         (new Top(this.appState)
              ).render($('#top-control-tmpl')
              ).insertBefore('#cursor');
@@ -287,6 +292,7 @@ var UserEditor = PageArea.extend({
 
 var MapList = PageArea.extend({
     render: function ($template) {
+        log("render MapList to " + $template.selector);
         var $ret = $template.tmpl(this.appState);
         var me = this;
 
@@ -772,6 +778,7 @@ var AppState = Base.extend({
     },
 
     _generateSampleData: function () {
+        var _m1, _m2;
         _m1 = (new Map(this, 'your map#1')).save();
         _m2 = (new Map(this, 'your map 2#2')).save();
         _m1.lookup = {M0: 'Mountain', G0: 'Grassland'};
