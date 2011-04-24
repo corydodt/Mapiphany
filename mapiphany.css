@@ -258,6 +258,11 @@ input[name=save]:hover {
     border: none;
 }
 
+#export-window-content textarea {
+    width: 30em;
+    height: 20em;
+}
+
 /* }}} */
 
 
@@ -290,4 +295,10 @@ input[name=save]:hover {
 .snapshot .details {
     line-height: 100px;
 }
+
+#import-window-content textarea {
+    width: 30em;
+    height: 20em;
+}
+
 /* }}} */

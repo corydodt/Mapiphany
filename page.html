@@ -34,6 +34,8 @@
     'mapiphany.css' />
   <link rel="stylesheet" type="text/css" href=
     'jquery-svg/jquery.svg.css' />
+  <link rel="stylesheet" type="text/css" href=
+    'jquery-ui/css/blueprint/jquery-ui-1.8.7.custom.css' />
 </head> <!-- ]]] -->
 <body>
 
@@ -73,8 +75,27 @@
         <option selected="selected" value="1mi">1 mile</option>
         <option value="halfmi">1/2 mile</option>
       </select>
-    <input type="button" value="print" name="print" title="print" />
+    <input type="button" value="print" name="print" title="print view in a new window" />
+    <input type="button" value="export" name="export" title="export to a window" />
   </div>
+</script> <!-- ]]] -->
+
+<script type="text/x-jquery-tmpl" id=
+    "import-window-tmpl"> <!-- [[[ -->
+    <div id="import-window-content" class=
+      "ui-dialog ui-widget ui-widget-content ui-corner-all" title=
+      "Paste a previously-exported map here">
+      <p><textarea name="pasted-map"></textarea></p>
+    </div>
+</script> <!-- ]]] -->
+
+<script type="text/x-jquery-tmpl" id=
+    "export-window-tmpl"> <!-- [[[ -->
+    <div id="export-window-content" class=
+      "ui-dialog ui-widget ui-widget-content ui-corner-all" title=
+      "Copy the following to a text file to save it">
+      <textarea>${mapData}</textarea>
+    </div>
 </script> <!-- ]]] -->
 
 
@@ -125,12 +146,19 @@
   <div class="snapshot">
     <div class="snapshot-box hbox">
 
-      <div class="indicators f0"><input type="checkbox" /></div>
+      <div class="indicators f0">&nbsp;</div>
 
-      <div class="thumbnail f0 hbox">
+      <div id="new-button" class="thumbnail f0 hbox">
         <div class="thumbnail-inner f1">
           <img src="document-new.png" alt="new"
             title="new" />
+        </div>
+      </div>
+
+      <div id="import-button" class="thumbnail f0 hbox">
+        <div class="thumbnail-inner f1">
+          <img src="document-import.png" alt="import"
+            title="import" />
         </div>
       </div>
 

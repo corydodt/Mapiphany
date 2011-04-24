@@ -4,6 +4,8 @@
 
 $.require('base.js');
 
+$.require('jquery-ui/js/jquery-ui-1.8.7.custom.min.js');
+
 $.require('jquery.tmpl.js');
 
 $.require('jquery.json-2.2.js');
@@ -33,6 +35,7 @@ EVENT_MAP_REDO = 'map-redo';
 EVENT_MAP_SAVE = 'map-save';
 EVENT_MAP_RENAME = 'map-rename';
 EVENT_MAP_PRINT = 'map-print';
+EVENT_MAP_EXPORT = 'map-export';
 
 PEN_SMALL = 'small';
 PEN_LARGE = 'large';
@@ -191,6 +194,10 @@ var Toolbar = PageArea.extend({
             $(document).trigger(EVENT_MAP_PRINT, []);
         });
 
+        ret.find('input[name=export]').click(function () {
+            $(document).trigger(EVENT_MAP_EXPORT, []);
+        });
+
         return ret;
     }
 });
@@ -299,6 +306,19 @@ var MapList = PageArea.extend({
         $ret.find('.snapshot .thumbnail, .snapshot .details').click(function () {
             me.appState.redirect(VIEW_MAP_EDIT + '&' + $(this).parents('.snapshot').attr('data-id'));
         });
+
+        $ret.find('#import-button').click(function (ev) {
+            $('#import-window-content').remove();
+            var $t = $('#import-window-tmpl').tmpl({});
+            $('body').append($t);
+            $('#import-window-content').dialog({
+                width: 'auto',
+                height: 'auto',
+                modal: true,
+                buttons: {'import': function () { me.onImportClicked(this); } }
+            });
+        });
+
         return $ret;
     }
 });
@@ -492,6 +512,16 @@ var Map = PageArea.extend({
         });
         $(document).bind(EVENT_MAP_PRINT, function (ev) {
             alert('not implemented');
+        });
+        $(document).bind(EVENT_MAP_EXPORT, function (ev) {
+            $('#export-window-content').remove();
+            var $t = $('#export-window-tmpl').tmpl({mapData: $.toJSON(me.save())});
+            $('body').append($t);
+            $('#export-window-content').dialog({
+                width: 'auto',
+                height: 'auto',
+                modal: true
+            });
         });
         return $mapEditNodes;
     },
