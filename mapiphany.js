@@ -798,7 +798,11 @@ var AppState = Base.extend({
 
     _mapSave: function () { // write all map states to localStorage
         log('AppState map save id ' + this.currentMap.id);
-        localStorage['map-' + this.currentMap.id] = $.toJSON(this.currentMap.save());
+        this._mapStoreRaw(this.currentMap.id, $.toJSON(this.currentMap.save()));
+    },
+
+    _mapStoreRaw: function (id, mapData) { // put a map into storage, by its key
+        localStorage['map-' + id] = mapData;
     },
 
     _getVisibleScreen: function () {
