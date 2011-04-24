@@ -749,13 +749,14 @@ var AppState = Base.extend({
         // upgrade storage
         //
         var me = this;
+        me.mapIDs = [];
         me.maps = {};
         for (var n=0; n < localStorage.length; n++) {
             var attr = localStorage.key(n);
             if (attr.substr(0, 4) === 'map-') {
                 var m = $.evalJSON(localStorage[attr]);
                 var mt = Map.restore(m, me); 
-                me.maps[mt.id] = mt;
+                me.addMap(mt.id, mt);
             }
         };
 
@@ -794,6 +795,12 @@ var AppState = Base.extend({
         localStorage['map-2'] = $.toJSON(_m2);
         localStorage.username = 'corydodt';
         localStorage.email = 'mapiphany@s.goonmill.org';
+    },
+
+    addMap: function (id, map) { // put a map in my array of maps, and do bookkeeping
+        this.maps[id] = map;
+        this.mapIDs.push(id);
+        this.mapIDs.sort();
     },
 
     _mapSave: function () { // write all map states to localStorage
