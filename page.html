@@ -139,19 +139,20 @@
     </div>
   </div>
 
-  {{each maps}}
-  <div class="snapshot" data-id="${id}">
+  {{each mapIDs}}
+  <div class="snapshot" data-id="${$data.maps[$value].id}">
     <div class="snapshot-box hbox">
       <div class="indicators f0"><input type="checkbox" /></div>
       
       <div class="thumbnail f0 hbox">
         <div class="thumbnail-inner">
-          <img src="hexes.png" alt="${name}" title="${name}" />
+          <img src="hexes.png" alt="${$data.maps[$value].name}" title=
+            "${$data.maps[$value].name}" />
         </div>
       </div>
 
       <div class="details f1">
-        <a href="#map-edit&${id}">${name}</a>
+        <a href="#map-edit&${$data.maps[$value].id}">${$data.maps[$value].name}</a>
       </div>
     </div>
   </div>
@@ -218,6 +219,8 @@
 
 </script> <!-- ]]] -->
 
+
+<!-- DEFAULT BODY -->
 
 <div id="app" class="vbox">
   <div id="cursor" class="f0"></div>
