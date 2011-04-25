@@ -770,6 +770,9 @@ var Map = PageArea.extend({
 // localStorage interaction
 var AppState = Base.extend({
     constructor: function () {
+        var me = this;
+        me.maps = {};
+
         if (!localStorage.username) {
             this._generateSampleData();
         };
@@ -779,13 +782,12 @@ var AppState = Base.extend({
         // TODO - make _upgrade1to2, _upgrade2to3 etc. so we can cleanly
         // upgrade storage
         //
-        var me = this;
-        me.mapIDs = [];
-        me.maps = {};
         for (var n=0; n < localStorage.length; n++) {
             var attr = localStorage.key(n);
             if (attr.substr(0, 4) === 'map-') {
                 var m = $.evalJSON(localStorage[attr]);
+                // FIXME - no need to completely restore map data on the "My
+                // Maps" page..
                 var mt = Map.restore(m, me); 
                 me.addMap(mt.id, mt);
             }

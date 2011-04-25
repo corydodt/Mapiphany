@@ -167,20 +167,20 @@
     </div>
   </div>
 
-  {{each mapIDs}}
-  <div class="snapshot" data-id="${$data.maps[$value].id}">
+  {{each sortObject(maps)}}
+  <div class="snapshot" data-id="${$value[1].id}">
     <div class="snapshot-box hbox">
       <div class="indicators f0"><input type="checkbox" /></div>
       
       <div class="thumbnail f0 hbox">
         <div class="thumbnail-inner">
-          <img src="hexes.png" alt="${$data.maps[$value].name}" title=
-            "${$data.maps[$value].name}" />
+          <img src="hexes.png" alt="${$value[1].name}" title=
+            "${$value[1].name}" />
         </div>
       </div>
 
       <div class="details f1">
-        <a href="#map-edit&${$data.maps[$value].id}">${$data.maps[$value].name}</a>
+        <a href="#map-edit&${$value[1].id}">${$value[1].name}</a>
       </div>
     </div>
   </div>
