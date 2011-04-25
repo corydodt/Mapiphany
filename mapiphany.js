@@ -210,7 +210,7 @@ var Workspace = PageArea.extend({
         log("render Workspace");
         var $n;
         if (this.appState.visibleScreen[0] == VIEW_MAP_EDIT) {
-            $n = this.appState.currentMap.render($('#map-edit'));
+            $n = this.appState.currentMapView.render($('#map-edit'));
         } else if (this.appState.visibleScreen[0] == VIEW_MY_MAPS) {
             $n = this.appState.mapList.render($('#my-maps'));
         } else if (this.appState.visibleScreen[0] == VIEW_USER_EDIT) {
@@ -749,6 +749,7 @@ var Map = PageArea.extend({
 }, {
     restore: function (data, appState) {
         // restore: return a new instance of Map from the given dict data
+        var cell, fg, bg, fg2;
         var ret = new Map(appState, '#');
         ret.name = data.name;
         ret.id = data.id;
