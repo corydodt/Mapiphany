@@ -234,7 +234,7 @@ var Framework = Base.extend({
              ).insertBefore('#cursor');
         $('#workspace').empty().append(
             (new Workspace(this.appState)
-                 ).render($('#workspace-tmpl'))
+                 ).render()
             );
         $('title').html(this.appState.getTitle());
     }
