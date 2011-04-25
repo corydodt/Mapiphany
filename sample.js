@@ -1,0 +1,68 @@
+SAMPLE_1 = {"name":"Sample 1 (rkterrain)", "id":"1", "modified":false, "defaultFill":"Grassland",
+    "hexes":[
+        ["M0M0~~","H0H0~~","H0H0~~","M0M0~~","H0H0~~","M0M0~~","M0M0~~","M0M0~~"],
+        ["M0M0~~","M0M0~~","H0H0~~","M0M0~~","M0M0~~","M0M0~~","H0H0~~","H0H0~~"],
+        ["M0M0~~","H0H0~~","H0H0~~","M0M0~~","M0M0~~","M0M0~~","H0H0~~","H0H0~~"],
+        ["M0M0~~","M0M0~~","M0M0~~","M0M0~~","V0H0V0","H0H0~~","H0H0~~","S2S2~~"],
+        ["M0M0~~","M0M0~~","H0H0~~","H0H0~~","M0M0~~","H0H0~~","H0H0~~","S0S0~~"],
+        ["M0M0~~","M0M0~~","H0H0~~","H0H0~~","H0H0~~","H0H0~~","H0H0~~","H0H0~~"],
+        ["M0M0~~","M0M0~~","H0H0~~","H0H0~~","H0H0~~","H0H0~~","H0H0~~","F0F0~~"],
+        ["M0M0~~","H0H0~~","H0H0~~","H0H0~~","H0H0~~","E0E0~~","E0E0~~","F0F0~~"],
+        ["M0M0~~","H0H0~~","H0H0~~","H0H0~~","H0H0~~","E2E2~~","E0E0~~","E0E0~~"],
+        ["M0M0~~","H0H0~~","M0M0~~","H0H0~~","H0H0~~","D0D0~~","D0D0~~","D0D0~~"],
+    ],
+    "tileset":"rkterrain-finalopt",
+    "lookup":{
+        "D0":"Dead_Forest_Hills",
+        "D2":"Dead_Forest_Mountain",
+        "D3":"Dead_Forest",
+        "D4":"Deep_Sea",
+        "E0":"Evergreen_Hills",
+        "E2":"Evergreen_Mountains",
+        "F0":"Forested_Hills",
+        "G0":"Grassland",
+        "G2":"Grassy_Hills",
+        "H0":"Hills",
+        "M0":"Mountain",
+        "S0":"Sandy_Desert",
+        "S2":"Sand_Dunes",
+        "S3":"Sea",
+        "V0":"Village",
+        "~~":"~null~"
+    }
+};
+
+
+SAMPLE_2 = {"name":"Sample 2 (multicolored)", "id":"1", "modified":false, "defaultFill":"Grassland",
+    "hexes":[
+        ["M0M0~~","H0H0~~","H0H0~~","M0M0~~","H0H0~~","M0M0~~","M0M0~~","M0M0~~"],
+        ["M0M0~~","M0M0~~","H0H0~~","M0M0~~","M0M0~~","M0M0~~","H0H0~~","H0H0~~"],
+        ["M0M0~~","H0H0~~","H0H0~~","M0M0~~","M0M0~~","M0M0~~","H0H0~~","H0H0~~"],
+        ["M0M0~~","M0M0~~","M0M0~~","M0M0~~","V0H0V0","H0H0~~","H0H0~~","S2S2~~"],
+        ["M0M0~~","M0M0~~","H0H0~~","H0H0~~","M0M0~~","H0H0~~","H0H0~~","S0S0~~"],
+        ["M0M0~~","M0M0~~","H0H0~~","H0H0~~","H0H0~~","H0H0~~","H0H0~~","H0H0~~"],
+        ["M0M0~~","M0M0~~","H0H0~~","H0H0~~","H0H0~~","H0H0~~","H0H0~~","F0F0~~"],
+        ["M0M0~~","H0H0~~","H0H0~~","H0H0~~","H0H0~~","E0E0~~","E0E0~~","F0F0~~"],
+        ["M0M0~~","H0H0~~","H0H0~~","H0H0~~","H0H0~~","E2E2~~","E0E0~~","E0E0~~"],
+        ["M0M0~~","H0H0~~","M0M0~~","H0H0~~","H0H0~~","D0D0~~","D0D0~~","D0D0~~"],
+    ],
+    "tileset":"multicolored-icons",
+    "lookup":{
+        "D0":"Dead_Forest_Hills",
+        "D2":"Dead_Forest_Mountain",
+        "D3":"Dead_Forest",
+        "D4":"Deep_Sea",
+        "E0":"Evergreen_Hills",
+        "E2":"Evergreen_Mountains",
+        "F0":"Forested_Hills",
+        "G0":"Grassland",
+        "G2":"Grassy_Hills",
+        "H0":"Hills",
+        "M0":"Mountain",
+        "S0":"Sandy_Desert",
+        "S2":"Sand_Dunes",
+        "S3":"Sea",
+        "V0":"Village",
+        "~~":"~null~"
+    }
+};

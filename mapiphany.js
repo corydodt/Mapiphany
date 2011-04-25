@@ -18,6 +18,7 @@ $.require('tiles/tilesets.js');
 $.require('logging.js');
 $.require('patchsvg.js');
 $.require('undo.js');
+$.require('sample.js');
 
 
 VIEW_MAP_EDIT = 'map-edit';
@@ -808,29 +809,39 @@ var AppState = Base.extend({
         });
     },
 
-    _generateSampleData: function () {
-        var _m1, _m2;
-        _m1 = (new Map(this, 'your map#1')).save();
-        _m2 = (new Map(this, 'your map 2#2')).save();
-        _m1.lookup = {M0: 'Mountain', G0: 'Grassland'};
-        _m1.extents.minX = 1;
-        _m1.extents.minY = 1;
-        _m1.extents.maxX = 2;
-        _m1.extents.maxY = 2;
-        _m1.hexes = [
-            [ "M0M0~~", "M0M0~~" ],
-            [ "G0G0~~", "M0M0~~" ],
-        ];
-        localStorage['map-1'] = $.toJSON(_m1);
-        localStorage['map-2'] = $.toJSON(_m2);
-        localStorage.username = 'corydodt';
-        localStorage.email = 'mapiphany@s.goonmill.org';
+    _getFreeMapID: function () { // hand out an unused id for a new map
+        var max;
+        var arr = sortObject(this.maps);
+        if (arr.length == 0) {
+            return 1;
+        }
+        max = parseInt(arr[arr.length - 1][1].id, 10);
+        return max + 1;
     },
 
-    addMap: function (id, map) { // put a map in my array of maps, and do bookkeeping
+    createMap: function (mapData) { // create a new Map instance from a plain object, or new
+        var id, _m;
+        id = this._getFreeMapID();
+
+        if (! mapData) {
+            _m = (new Map(this, 'new map#' + id)).save();
+        } else{
+            mapData.id = id;
+            _m = Map.restore(mapData);
+        }
+        this.addMap(id, _m);
+        this._mapStoreRaw(id, $.toJSON(mapData));
+    },
+
+    _generateSampleData: function () {
+        localStorage.username = 'corydodt';
+        localStorage.email = 'mapiphany@s.goonmill.org';
+        this.createMap(SAMPLE_1);
+        this.createMap(SAMPLE_2);
+    },
+
+    addMap: function (id, map) { // put a map in my array of maps
         this.maps[id] = map;
-        this.mapIDs.push(id);
-        this.mapIDs.sort();
     },
 
     _mapSave: function () { // write all map states to localStorage
