@@ -436,7 +436,7 @@ var MapView = PageArea.extend({
         });
         $(document).bind(EVENT_MAP_EXPORT, function (ev) {
             $('#export-window-content').remove();
-            var $t = $('#export-window-tmpl').tmpl({mapData: $.toJSON(me.save())});
+            var $t = $('#export-window-tmpl').tmpl({mapData: $.toJSON(me.map.save())});
             $('body').append($t);
             $('#export-window-content').dialog({
                 width: 'auto',
