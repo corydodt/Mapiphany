@@ -902,7 +902,7 @@ $(function () {
         // redirect
         window.location = window.location.href.replace(/#clear$/, '#my-maps');
     }
-    var appState = new AppState();
+    window.appState = new AppState(); // make it a global for easier debugging
 
     var fw = new Framework(appState);
     fw.render();
