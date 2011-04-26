@@ -321,6 +321,15 @@ var MapList = PageArea.extend({
         });
 
         return $ret;
+    },
+
+    onImportClicked: function (dlg) {
+        var rawData, data;
+        rawData = $('#import-window-content [name="pasted-map"]').val();
+        data = $.evalJSON(rawData);
+        this.appState.createMap(data);
+        this.appState.redirect(VIEW_MY_MAPS);
+        $(dlg).dialog("close");
     }
 });
 
