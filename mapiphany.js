@@ -453,7 +453,11 @@ var MapView = PageArea.extend({
         return $mapEditNodes;
     },
 
-    _iconAt: function (label, x, y) { // place an icon image for this Fill at the coordinates x,y
+    _iconAt: function (label, x, y, prefix) { // place an icon image for this Fill at the coordinates x,y
+        if (label === undefined) { 
+            throw "Assertion failed: attempting to set an undefined icon";
+        }
+
         var settings, $def, tile, sf, xFactor, yFactor, xOff, yOff, id, href, itm, _g;
 
         tile = gTileset[label];
@@ -479,7 +483,7 @@ var MapView = PageArea.extend({
         }
 
         _g = this.grid[x][y];
-        settings = {'pointer-events': 'none', id: 'fg-' + x + '-' + y};
+        settings = {'pointer-events': 'none', id: prefix + '-' + x + '-' + y};
         if (MAP_IMAGE_NODENAME == 'use') {
             // <use> has the best performance by far, when it is available
             itm = this.svg.use(this.svgHexes, _g.x, _g.y, 4*X_UNIT, 2*Y_UNIT, '#' + id, settings);
@@ -490,17 +494,11 @@ var MapView = PageArea.extend({
     },
 
     fgAt: function (label, x, y) { // place an icon image in the fg layer at x,y
-        if (label === undefined) { 
-            throw "Assertion failed: attempting to set an undefined icon";
-        }
-        var itm = this._iconAt(label, x, y);
+        this._iconAt(label, x, y, 'fg');
     },
 
     fg2At: function (label, x, y) { // place an icon image in the fg2 layer at x,y
-        if (label === undefined) { 
-            throw "Assertion failed: attempting to set an undefined icon";
-        }
-        var itm = this._iconAt(label, x, y);
+        this._iconAt(label, x, y, 'fg2');
     },
 
     zoom: function (scale, xAbs, yAbs) {    // rescale the map to the specified zoom
