@@ -467,9 +467,8 @@ var MapView = PageArea.extend({
 
         // create the <defs><image> when missing.
         if ($def.length == 0) {
-            // adjust the tile by the scalefactor in width/height, then adjust
-            // x/y offset to center it
-            this.svg.image(this.defs, xOff, yOff, xFactor, yFactor, href, { id: id });
+            // adjust the tile by the scalefactor in width/height
+            this.svg.image(this.defs, xOff, yOff, xFactor, yFactor, href, {id: id});
         }
 
         var itm, _g = this.grid[x][y];
@@ -556,7 +555,7 @@ var MapView = PageArea.extend({
         _MED = 2 * _SHORT;
         _TALL = 3 * _SHORT;
 
-        var defaultClass = {'class': 'hex ' + this.map.defaultFill};
+        var defaultClass = 'hex ' + this.map.defaultFill;
 
         var xAbs, xx, x05, x15, x2, x3, x35;
         var yAbs, yy, yS, yM, yT;
@@ -567,32 +566,34 @@ var MapView = PageArea.extend({
                 yS = yAbs + _SHORT; yM = yAbs + _MED; yT = yAbs + _TALL;
 
                 // up hex
+                _p1ID = xx + '-' + yy;
                 var $p1 = $(svg.polygon(svgHexes, [
                         [x05, yAbs], [x15, yAbs], [x2, yS],
                         [x15, yM], [x05, yM], [xAbs, yS], [x05, yAbs]
-                    ], defaultClass));
+                    ], {'class': defaultClass, id: _p1ID, title: _p1ID}));
                 // store the coordinates
                 if (! grid[xx]) {
                     grid[xx] = {};
                 }
                 grid[xx][yy] = {x: xAbs, y: yAbs, n: $p1};
-                _p1ID = xx + '-' + yy;
-                $p1.attr({id: _p1ID, title: _p1ID}).data({x: xx, y: yy, fg: this.map.defaultFill, bg: this.map.defaultFill});
+                // $p1.attr({id: _p1ID, title: _p1ID}).data({x: xx, y: yy, fg: this.map.defaultFill, bg: this.map.defaultFill});
+                $p1.data({x: xx, y: yy, fg: this.map.defaultFill, bg: this.map.defaultFill});
 
                 this.fgAt(this.map.defaultFill, xx, yy);
 
                 // down hex
+                _p2ID = (xx + 1) + '-' + yy;
                 var $p2 = $(svg.polygon(svgHexes, [
                         [x2, yS], [x3, yS], [x35, yM],
                         [x3, yT], [x2, yT], [x15, yM], [x2, yS]
-                    ], defaultClass));
+                    ], {'class': defaultClass, id: _p2ID, title: _p2ID}));
                 // store the coordinates
                 if (! grid[xx + 1]) {
                     grid[xx + 1] = {};
                 }
                 grid[xx + 1][yy] = {x: x15, y: yS, n: $p2};
-                _p2ID = (xx + 1) + '-' + yy;
-                $p2.attr({id: _p2ID, title: _p2ID}).data({x: xx + 1, y: yy, fg: this.map.defaultFill, bg: this.map.defaultFill});
+                // $p2.attr({id: _p2ID, title: _p2ID}).data({x: xx + 1, y: yy, fg: this.map.defaultFill, bg: this.map.defaultFill});
+                $p2.data({x: xx + 1, y: yy, fg: this.map.defaultFill, bg: this.map.defaultFill});
 
                 this.fgAt(this.map.defaultFill, xx + 1, yy);
             }
