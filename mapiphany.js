@@ -454,16 +454,18 @@ var MapView = PageArea.extend({
     },
 
     _iconAt: function (label, x, y) { // place an icon image for this Fill at the coordinates x,y
-        var $def = $('#' + label + '-icon');
+        var settings, $def, tile, sf, xFactor, yFactor, xOff, yOff, id, href, itm, _g;
 
-        var tile = gTileset[label];
-        var sf = tile.scalefactor;
-        var xFactor = 4*X_UNIT*sf;
-        var yFactor = 2*Y_UNIT*sf;
-        var xOff = (4*X_UNIT - xFactor)/2;
-        var yOff = (2*Y_UNIT - yFactor)/2;
-        var id = label + '-icon';
-        var href = 'tiles/' + tile.set + '/' + tile.iconfilename;
+        $def = $('#' + label + '-icon');
+
+        tile = gTileset[label];
+        sf = tile.scalefactor;
+        xFactor = 4*X_UNIT*sf;
+        yFactor = 2*Y_UNIT*sf;
+        xOff = (4*X_UNIT - xFactor)/2;
+        yOff = (2*Y_UNIT - yFactor)/2;
+        id = label + '-icon';
+        href = 'tiles/' + tile.set + '/' + tile.iconfilename;
 
         // create the <defs><image> when missing.
         if ($def.length == 0) {
@@ -472,12 +474,13 @@ var MapView = PageArea.extend({
             this.svg.image(this.defs, xOff, yOff, xFactor, yFactor, href, { id: id });
         }
 
-        var itm, _g = this.grid[x][y];
+        _g = this.grid[x][y];
+        settings = {'pointer-events': 'none', id: 'fg-' + x + '-' + y};
         if (MAP_IMAGE_NODENAME == 'use') {
             // <use> has the best performance by far, when it is available
-            itm = this.svg.use(this.svgHexes, _g.x, _g.y, 4*X_UNIT, 2*Y_UNIT, '#' + id, {'pointer-events': 'none'});
+            itm = this.svg.use(this.svgHexes, _g.x, _g.y, 4*X_UNIT, 2*Y_UNIT, '#' + id, settings);
         } else {
-            itm = this.svg.image(this.svgHexes, _g.x + xOff, _g.y + yOff, xFactor, yFactor, href, { id: label + '-icon' });
+            itm = this.svg.image(this.svgHexes, _g.x + xOff, _g.y + yOff, xFactor, yFactor, href, settings);
         }
         return itm;
     },
@@ -487,7 +490,6 @@ var MapView = PageArea.extend({
             throw "Assertion failed: attempting to set an undefined icon";
         }
         var itm = this._iconAt(label, x, y);
-        $(itm).attr('id', 'fg-' + x + '-' + y);
     },
 
     fg2At: function (label, x, y) { // place an icon image in the fg2 layer at x,y
@@ -495,7 +497,6 @@ var MapView = PageArea.extend({
             throw "Assertion failed: attempting to set an undefined icon";
         }
         var itm = this._iconAt(label, x, y);
-        $(itm).attr('id', 'fg2-' + x + '-' + y);
     },
 
     zoom: function (scale, xAbs, yAbs) {    // rescale the map to the specified zoom
