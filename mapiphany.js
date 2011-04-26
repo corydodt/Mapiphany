@@ -689,8 +689,9 @@ var Map = Base.extend({
     },
 
     save: function () { // serialize this map instance to dict data
-        var fg, bg, fg2, hexes, _r, cell, grid = [];
+        var fg, bg, fg2, ld, hexes, _r, cell, grid = [];
         hexes = this.hexes;
+        ld = this.lookdown;
         for (x in hexes) {
             for (y in hexes[x]) {
                 cell = hexes[x][y];
@@ -700,9 +701,9 @@ var Map = Base.extend({
                 if (! cell) {
                     grid[x][y] = null;
                 } else {
-                    fg = this.lookdown[cell[0]] || '~~';
-                    bg = this.lookdown[cell[1]] || '~~';
-                    fg2 = this.lookdown[cell[2]] || '~~';
+                    fg = this._setLookup(cell[0]);
+                    bg = this._setLookup(cell[1]);
+                    fg2 = this._setLookup(cell[2]);
                     grid[x][y] = fg + bg + fg2;
                 }
             }
