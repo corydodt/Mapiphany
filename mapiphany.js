@@ -456,9 +456,13 @@ var MapView = PageArea.extend({
     _iconAt: function (label, x, y) { // place an icon image for this Fill at the coordinates x,y
         var settings, $def, tile, sf, xFactor, yFactor, xOff, yOff, id, href, itm, _g;
 
+        tile = gTileset[label];
+        if (! tile.iconfilename) { // tile is blank on one of the icon layers
+            return;
+        }
+
         $def = $('#' + label + '-icon');
 
-        tile = gTileset[label];
         sf = tile.scalefactor;
         xFactor = 4*X_UNIT*sf;
         yFactor = 2*Y_UNIT*sf;
