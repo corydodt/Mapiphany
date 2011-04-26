@@ -45,9 +45,15 @@ SIN60 = Math.sin(60 * Math.PI / 180);
 Y_UNIT = MULT * SIN60;
 X_UNIT = MULT * 0.5;
 DEFAULT_FILL = 'Grassland';
-CLASS_FG_FILL = 'fgFill1';
 DEFAULT_TILESET = 'rkterrain-finalopt';
 KEEP_LAYER = '~';
+
+// It's a shame there is no $.support for svg features.  who knows
+// what the current support grid is like for all these features?
+//
+// This is based on: http://www.codedread.com/svg-support-table.html
+//
+MAP_IMAGE_NODENAME = ($.browser.mozilla || $.browser.opera) ? 'use' : 'image';
 
 CATEGORY_ORDER = ['Tools', 'Flat Land', 'Forests', 'Mountains and Hills', 'Arid Land', 'Water', 'Settlement', 'Symbol', 'Hex Background'];
 
@@ -463,22 +469,16 @@ var MapView = PageArea.extend({
         if ($def.length == 0) {
             // adjust the tile by the scalefactor in width/height, then adjust
             // x/y offset to center it
-            $def = $(this.svg.image(this.defs, xOff, yOff, xFactor, yFactor, href, { id: id }));
+            this.svg.image(this.defs, xOff, yOff, xFactor, yFactor, href, { id: id });
         }
 
-        // It's a shame there is no $.support for svg features.  who knows
-        // what the current support grid is like for all these features?
-        //
-        // This is based on: http://www.codedread.com/svg-support-table.html
-        //
         var itm, _g = this.grid[x][y];
-        if ($.browser.mozilla || $.browser.opera) {
+        if (MAP_IMAGE_NODENAME == 'use') {
             // <use> has the best performance by far, when it is available
-            itm = this.svg.use(null, _g.x, _g.y, 4*X_UNIT, 2*Y_UNIT, '#' + id, {'pointer-events': 'none'});
+            itm = this.svg.use(this.svgHexes, _g.x, _g.y, 4*X_UNIT, 2*Y_UNIT, '#' + id, {'pointer-events': 'none'});
         } else {
-            itm = this.svg.image(null, _g.x + xOff, _g.y + yOff, xFactor, yFactor, href, { id: label + '-icon' });
+            itm = this.svg.image(this.svgHexes, _g.x + xOff, _g.y + yOff, xFactor, yFactor, href, { id: label + '-icon' });
         }
-        $(itm).addClass(CLASS_FG_FILL);
         return itm;
     },
 
@@ -516,11 +516,11 @@ var MapView = PageArea.extend({
             yAbs = vb.baseVal.y;
         }
 
-        this.$node.find('.' + CLASS_FG_FILL).attr('display', 'none');
+        this.$node.find('#svg-hexes > ' + MAP_IMAGE_NODENAME).attr('display', 'none');
         var me = this;
         $root.animate({svgViewBox: xAbs + ' ' + yAbs + ' ' + rw * factor + ' ' + rh * factor}, 500, 'swing',
                 function () {
-                    me.$node.find('.' + CLASS_FG_FILL).attr('display', '');
+                    me.$node.find('#svg-hexes > ' + MAP_IMAGE_NODENAME).attr('display', '');
                 });
 
         return [xAbs, yAbs, rw * factor, rh * factor];
@@ -528,6 +528,7 @@ var MapView = PageArea.extend({
 
     _renderSVG: function (svg) { // create a new hex canvas using defaults
         this.svg = svg;
+        var svgHexes = this.svgHexes = svg.group(null, 'svg-hexes');
 
         var grid = this.grid = {};
         this.defs = svg.defs();
@@ -566,7 +567,7 @@ var MapView = PageArea.extend({
                 yS = yAbs + _SHORT; yM = yAbs + _MED; yT = yAbs + _TALL;
 
                 // up hex
-                var $p1 = $(svg.polygon(null, [
+                var $p1 = $(svg.polygon(svgHexes, [
                         [x05, yAbs], [x15, yAbs], [x2, yS],
                         [x15, yM], [x05, yM], [xAbs, yS], [x05, yAbs]
                     ], defaultClass));
@@ -581,7 +582,7 @@ var MapView = PageArea.extend({
                 this.fgAt(this.map.defaultFill, xx, yy);
 
                 // down hex
-                var $p2 = $(svg.polygon(null, [
+                var $p2 = $(svg.polygon(svgHexes, [
                         [x2, yS], [x3, yS], [x35, yM],
                         [x3, yT], [x2, yT], [x15, yM], [x2, yS]
                     ], defaultClass));
@@ -606,7 +607,7 @@ var MapView = PageArea.extend({
                 // overlapped by hexes down and to the right.
                 var $clone = $(this).clone();
                 $clone.addClass('selected');
-                svg.root().appendChild($clone[0]);
+                svgHexes.appendChild($clone[0]);
 
             }).mouseout(function () {
                 me.$node.find('.selected.hex').remove();
