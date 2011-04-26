@@ -467,8 +467,9 @@ var MapView = PageArea.extend({
 
         // create the <defs><image> when missing.
         if ($def.length == 0) {
-            // adjust the tile by the scalefactor in width/height
-            this.svg.image(this.defs, xOff, yOff, xFactor, yFactor, href, {id: id});
+            // adjust the tile by the scalefactor in width/height, then adjust
+            // x/y offset to center it
+            this.svg.image(this.defs, xOff, yOff, xFactor, yFactor, href, { id: id });
         }
 
         var itm, _g = this.grid[x][y];
@@ -576,7 +577,6 @@ var MapView = PageArea.extend({
                     grid[xx] = {};
                 }
                 grid[xx][yy] = {x: xAbs, y: yAbs, n: $p1};
-                // $p1.attr({id: _p1ID, title: _p1ID}).data({x: xx, y: yy, fg: this.map.defaultFill, bg: this.map.defaultFill});
                 $p1.data({x: xx, y: yy, fg: this.map.defaultFill, bg: this.map.defaultFill});
 
                 this.fgAt(this.map.defaultFill, xx, yy);
@@ -592,7 +592,6 @@ var MapView = PageArea.extend({
                     grid[xx + 1] = {};
                 }
                 grid[xx + 1][yy] = {x: x15, y: yS, n: $p2};
-                // $p2.attr({id: _p2ID, title: _p2ID}).data({x: xx + 1, y: yy, fg: this.map.defaultFill, bg: this.map.defaultFill});
                 $p2.data({x: xx + 1, y: yy, fg: this.map.defaultFill, bg: this.map.defaultFill});
 
                 this.fgAt(this.map.defaultFill, xx + 1, yy);
