@@ -335,151 +335,62 @@ var MapList = PageArea.extend({
 
 
 // the drawable map grid inside the workspace
-var Map = PageArea.extend({
-    constructor: function (appState, name) {
+var MapView = PageArea.extend({
+    constructor: function (appState, map) {
         // FIXME - use regex split, and unescape ## into # 
-        var _split = name.split('#');
-        this.name = _split[0];
-        this.id = _split[1];
-        this.modified = false;
         this.appState = appState;
+        this.map = map;
         this.grid = null;
         this.$node = null;
         this.pen = null;
         this.svg = null;
-        this.tileset = DEFAULT_TILESET;
         this.history = new UndoHistory(this);
-        this.defaultFill = DEFAULT_FILL;
-        this._restoredExtents = null;
-        this._restoredHexes = null;
-        this._toSymbol = null;
-        this.extents = {minX: null, minY: null, maxX: null, maxY: null};
-    },
-
-    save: function () { // serialize this map instance to dict data
-        var _r = {name: this.name,
-             id: this.id,
-             modified: this.modified,
-             defaultFill: this.defaultFill,
-             hexes: null,
-             extents: [this.extents.minX, this.extents.minY, this.extents.maxX, this.extents.maxY],
-             tileset: this.tileset
-        };
-        if (this.grid) {
-            var hexes = this._saveGridArea.apply(this, _r.extents);
-            _r.lookup = this._toSymbol;
-            _r.hexes = hexes;
-        }
-        return _r;
-    },
-
-    _saveGridArea: function (minX, minY, maxX, maxY) { // serialize a grid of squares from minx/Y to maxX/Y
-        var ret = [], n;
-        var toAbbrev = {};
-
-        this._toSymbol = {};
-
-        for (x=minX; x<maxX + 1; x++) {
-            var col = [], dat;
-            ret.push(col);
-            for (y=minY; y<maxY + 1; y++) {
-                dat = this.grid[x][y].n.data();
-                a0 = this.setLookup(dat.fg, toAbbrev);
-                a1 = this.setLookup(dat.bg, toAbbrev);
-                a2 = this.setLookup(dat.fg2, toAbbrev);
-                col.push(a0 + a1 + a2);
-            }
-        }
-        return ret;
-    },
-
-    setLookup: function (symbol, abbrevMap) { // add entries to my fill lookup tables
-        if (symbol === undefined || symbol === null) {
-            symbol = '~null~';
-        }
-        if (abbrevMap[symbol] !== undefined) {
-            return abbrevMap[symbol];
-        }
-        if (symbol == '~null~') {
-            abbrev = '~~';
-        } else {
-            var n = 0, suffixes = '123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            var c0 = symbol[0];
-            var abbrev = c0 + '0';
-            // find a free suffix to use with this symbol
-            while (this._toSymbol[abbrev] !== undefined) {
-                n++;
-                if (n > 51) {
-                    throw "More than 52 symbols with the same first letter: " + c0 + "???";
-                }
-                abbrev = c0 + suffixes[n]; 
-            }
-        }
-
-        this._toSymbol[abbrev] = symbol;
-        abbrevMap[symbol] = abbrev;
-        return abbrev;
     },
 
     _restoreGridArea: function () { // rebuild the map drawing from whatever we restored
         var t1 = new Date();
-        var extents = this._restoredExtents;
-        var hexes = this._restoredHexes;
-        var unshiftX, unshiftY, cell;
-        for (x = extents[0]; x <= extents[2]; x++) {
-            unshiftX = x - extents[0];
-            for (y = extents[1]; y <= extents[3]; y++) {
-                // when the saved map is larger than the displayed map, skip
-                // over it. we'll be growing the grid if the screen is ever
-                // resized or moved.
-                if (this.grid[x][y] === undefined) {
-                    break;
-                }
-
-                unshiftY = y - extents[1];
-                // set the hex properties, skipping the history layer
-                cell = hexes[unshiftX][unshiftY];
-                var fg = this._toSymbol[cell.substr(0, 2)];
-                var bg = this._toSymbol[cell.substr(2, 2)];
-                var fg2 = this._toSymbol[cell.substr(4, 2)];
-                if (fg == '~null~') {
-                    fg = null;
-                }
-                if (bg == '~null~') {
-                    bg = null;
-                }
-                if (fg2 == '~null~') {
-                    fg2 = null;
-                }
-                this.do_setHex(this.grid[x][y].n, fg, bg, fg2);
-            }
+        var hexes = this.map.hexes;
+        for (x in hexes) {
             // when the saved map is larger than the displayed map, skip
             // over it. we'll be growing the grid if the screen is ever
             // resized or moved.
             if (this.grid[x] === undefined) {
                 break;
             }
+            for (y in hexes[x]) {
+                // when the saved map is larger than the displayed map, skip
+                // over it. we'll be growing the grid if the screen is ever
+                // resized or moved.
+                if (this.grid[x][y] === undefined) {
+                    break;
+                }
+                hex = hexes[x][y];
+                // there can be "gaps" in the model's hex grid.  skip gaps.
+                if (! hex) {
+                    continue;
+                }
 
+                // FIXME - do_setHex makes a call to set data in the model,
+                // which is a waste of time during a restore operation.  Maybe
+                // a flag to prevent that call?
+                this.do_setHex(this.grid[x][y].n, hex[0], hex[1], hex[2]);
+            }
         }
-        this._restoredExtents = this._restoredHexes = undefined;
         var t2 = new Date() - t1;
         log("_restoreGridArea: " + t2.toString() + "ms");
-
-        // clean up
-        this._restoredExtents = null;
-        this._restoredHexes = null;
-        this._toSymbol = null;
     },
 
     render: function ($mapTemplate) { // turn on svg mode for the div
-        $.require('tiles/' + this.tileset + '/tileset.js');
+        log("render MapView to " + $mapTemplate.selector);
+        $.require('tiles/' + this.map.tileset + '/tileset.js');
         $.extend(gTileset, TOOLS);
         $.extend(gTileCategories, TOOLS_CATEGORY);
 
-        $('head').append($('#tileset-css').tmpl(this));
+        $('head').append($('#tileset-css').tmpl(this.map));
 
-        this.categories = sortObject(gTileCategories, CATEGORY_ORDER);
-        var $mapEditNodes = $mapTemplate.tmpl(this);
+        var _d = {categories: sortObject(gTileCategories, CATEGORY_ORDER)};
+        var $mapEditNodes = $mapTemplate.tmpl(_d);
+
         this.$node = $mapEditNodes.filter('#map-whole-workspace');
         var me = this;
         this.$node.find('.brushes-tile').click(function () { 
@@ -498,13 +409,13 @@ var Map = PageArea.extend({
                 onLoad: function (svg) { 
                     svg.configure({width: $mapNode.width(), height: $mapNode.height()});
                     me._renderSVG(svg);
-                    if (me._restoredExtents) {
+                    if (me.map.hexes) {
                         me._restoreGridArea();
                     }
                 }
             });
             me.pen = new Pen($('#current'));
-            me.pen.setCurrent(me.defaultFill);
+            me.pen.setCurrent(me.map.defaultFill);
         });
         $(document).bind(EVENT_MAP_UNDO, function (ev) {
             log('undo');
@@ -518,7 +429,7 @@ var Map = PageArea.extend({
             me.zoom(zoom);
         });
         $(document).bind(EVENT_MAP_RENAME, function (ev, id, name) {
-            me.name = name;
+            me.map.name = name;
         });
         $(document).bind(EVENT_MAP_PRINT, function (ev) {
             alert('not implemented');
@@ -572,11 +483,17 @@ var Map = PageArea.extend({
     },
 
     fgAt: function (label, x, y) { // place an icon image in the fg layer at x,y
+        if (label === undefined) { 
+            throw "Assertion failed: attempting to set an undefined icon";
+        }
         var itm = this._iconAt(label, x, y);
         $(itm).attr('id', 'fg-' + x + '-' + y);
     },
 
     fg2At: function (label, x, y) { // place an icon image in the fg2 layer at x,y
+        if (label === undefined) { 
+            throw "Assertion failed: attempting to set an undefined icon";
+        }
         var itm = this._iconAt(label, x, y);
         $(itm).attr('id', 'fg2-' + x + '-' + y);
     },
@@ -638,7 +555,7 @@ var Map = PageArea.extend({
         _MED = 2 * _SHORT;
         _TALL = 3 * _SHORT;
 
-        var defaultClass = {'class': 'hex ' + this.defaultFill};
+        var defaultClass = {'class': 'hex ' + this.map.defaultFill};
 
         var xAbs, xx, x05, x15, x2, x3, x35;
         var yAbs, yy, yS, yM, yT;
@@ -659,9 +576,9 @@ var Map = PageArea.extend({
                 }
                 grid[xx][yy] = {x: xAbs, y: yAbs, n: $p1};
                 _p1ID = xx + '-' + yy;
-                $p1.attr({id: _p1ID, title: _p1ID}).data({x: xx, y: yy, fg: this.defaultFill, bg: this.defaultFill});
+                $p1.attr({id: _p1ID, title: _p1ID}).data({x: xx, y: yy, fg: this.map.defaultFill, bg: this.map.defaultFill});
 
-                this.fgAt(this.defaultFill, xx, yy);
+                this.fgAt(this.map.defaultFill, xx, yy);
 
                 // down hex
                 var $p2 = $(svg.polygon(null, [
@@ -674,9 +591,9 @@ var Map = PageArea.extend({
                 }
                 grid[xx + 1][yy] = {x: x15, y: yS, n: $p2};
                 _p2ID = (xx + 1) + '-' + yy;
-                $p2.attr({id: _p2ID, title: _p2ID}).data({x: xx + 1, y: yy, fg: this.defaultFill, bg: this.defaultFill});
+                $p2.attr({id: _p2ID, title: _p2ID}).data({x: xx + 1, y: yy, fg: this.map.defaultFill, bg: this.map.defaultFill});
 
-                this.fgAt(this.defaultFill, xx + 1, yy);
+                this.fgAt(this.map.defaultFill, xx + 1, yy);
             }
         }
         var me = this;
@@ -725,19 +642,8 @@ var Map = PageArea.extend({
         $h.data(newData);
 
         var _dat = $h.data();
-        // update extents
-        if (this.extents.minX === null || _dat.x < this.extents.minX) {
-            this.extents.minX = _dat.x;
-        }
-        if (this.extents.minY === null || _dat.y < this.extents.minY) {
-            this.extents.minY = _dat.y;
-        }
-        if (this.extents.maxX === null || _dat.x > this.extents.maxX) {
-            this.extents.maxX = _dat.x;
-        }
-        if (this.extents.maxY === null || _dat.y > this.extents.maxY) {
-            this.extents.maxY = _dat.y;
-        }
+
+        this.map.set(_dat.x, _dat.y, fgFill, bgFill, fg2Fill);
 
         // set bg
         $h.attr('class', 'hex ' + bgFill || '');
@@ -755,7 +661,92 @@ var Map = PageArea.extend({
             this.fg2At(fg2Fill, _dat.x, _dat.y);
         }
     }
-}, {
+});
+
+
+// the map model
+var Map = Base.extend({
+    constructor: function (appState, name) {
+        var _split = name.split('#');
+        this.name = _split[0];
+        this.id = _split[1];
+        this.lookup = {};
+        this.lookdown = {};
+        this.modified = false;
+        this.defaultFill = DEFAULT_FILL;
+        this.hexes = null;
+        this.tileset = DEFAULT_TILESET;
+    },
+
+    set: function (x, y, fgFill, bgFill, fg2Fill) {
+        if (! this.hexes[x]) {
+            this.hexes[x] = [];
+        }
+        this.hexes[x][y] = [fgFill, bgFill, fg2Fill];
+        this._setLookup(fgFill);
+        this._setLookup(bgFill);
+        this._setLookup(fg2Fill);
+    },
+
+    save: function () { // serialize this map instance to dict data
+        var fg, bg, fg2, hexes, _r, cell, grid = [];
+        hexes = this.hexes;
+        for (x in hexes) {
+            for (y in hexes[x]) {
+                cell = hexes[x][y];
+                if (! grid[x]) {
+                    grid[x] = [];
+                }
+                if (! cell) {
+                    grid[x][y] = null;
+                } else {
+                    fg = this.lookdown[cell[0]] || '~~';
+                    bg = this.lookdown[cell[1]] || '~~';
+                    fg2 = this.lookdown[cell[2]] || '~~';
+                    grid[x][y] = fg + bg + fg2;
+                }
+            }
+        }
+        var _r = {name: this.name,
+             id: this.id,
+             modified: this.modified,
+             defaultFill: this.defaultFill,
+             hexes: grid,
+             lookup: this.lookup,
+             tileset: this.tileset
+        };
+        return _r;
+    },
+
+    _setLookup: function (symbol) { // add entries to my fill lookup tables
+        if (symbol === undefined || symbol === null) {
+            symbol = '~null~';
+        }
+        if (this.lookdown[symbol]) {
+            return this.lookdown[symbol];
+        }
+        if (symbol == '~null~') {
+            abbrev = '~~';
+        } else {
+            var n = 0, suffixes = '123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            var c0 = symbol[0];
+            var abbrev = c0 + '0';
+            // find a free suffix to use with this symbol
+            while (this.lookup[abbrev] !== undefined) {
+                n++;
+                if (n > 51) {
+                    throw "More than 52 symbols with the same first letter: " + c0 + "???";
+                }
+                abbrev = c0 + suffixes[n]; 
+            }
+        }
+
+        this.lookup[abbrev] = symbol;
+        this.lookdown[symbol] = abbrev;
+        return abbrev;
+    }
+},
+{
     restore: function (data, appState) {
         // restore: return a new instance of Map from the given dict data
         var cell, fg, bg, fg2;
@@ -764,12 +755,37 @@ var Map = PageArea.extend({
         ret.id = data.id;
         ret.modified = data.modified;
         ret.tileset = data.tileset;
+        ret.hexes = [];
 
-        // extents and hexes are not intended to be looked at after the map is
-        // painted for the first time, so these attributes are private
-        ret._restoredExtents = data.extents;
-        ret._restoredHexes = data.hexes;
-        ret._toSymbol = data.lookup;
+        for (x in data.hexes) {
+            if (data.hexes[x] === null) {
+                ret.hexes[x] = null;
+            } else {
+                for (y in data.hexes[x]) {
+                    if (! ret.hexes[x]) {
+                        ret.hexes[x] = [];
+                    }
+                    if (data.hexes[x][y] === null) {
+                        ret.hexes[x][y] = null;
+                    } else {
+                        cell = data.hexes[x][y];
+                        fg = data.lookup[cell.substr(0, 2)];
+                        bg = data.lookup[cell.substr(2, 2)];
+                        fg2 = data.lookup[cell.substr(4, 2)];
+                        if (bg == "~null~") {
+                            bg = null;
+                        }
+                        if (fg == "~null~") {
+                            fg = null;
+                        }
+                        if (fg2 == "~null~") {
+                            fg2 = null;
+                        }
+                        ret.hexes[x][y] = [fg, bg, fg2];
+                    }
+                }
+            }
+        }
 
         return ret;
     }
@@ -809,6 +825,7 @@ var AppState = Base.extend({
         var vs = this.visibleScreen;
         if (vs[0] == VIEW_MAP_EDIT) {
             this.currentMap = this.maps[vs[1]];
+            this.currentMapView = new MapView(this, this.currentMap);
         } else if (vs[0] == VIEW_MY_MAPS) {
             this.mapList = new MapList(this);
         } else if (vs[0] == VIEW_USER_EDIT) {
