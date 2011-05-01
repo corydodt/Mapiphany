@@ -155,7 +155,7 @@ var Top = PageArea.extend({
             me.$node.find('[data-id=' + id + '] a').text(name);
         });
 
-        $ret.find('a[href$=#myMaps]').parents('.tab').click(function () {
+        $ret.find('a[href$=#my-maps]').parents('.tab').click(function () {
             me.appState.redirect(VIEW_MY_MAPS);
             return false;
         });
