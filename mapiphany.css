@@ -248,12 +248,23 @@ a {
     fill: transparent;
 }
 
-input[name=undo] {
-    background-image: url('action-undo.png');
+
+.toolbar-button {
     border: none;
     width: 24px;
     height: 24px;
     background-color: white;
+}
+
+.my-maps-button {
+    border: none;
+    width: 64px;
+    height: 64px;
+    background-color: white;
+}
+
+input[name=undo] {
+    background-image: url('action-undo.png');
 }
 
 input[name=undo]:hover {
@@ -262,10 +273,6 @@ input[name=undo]:hover {
 
 input[name=redo] {
     background-image: url('action-redo.png');
-    border: none;
-    width: 24px;
-    height: 24px;
-    background-color: white;
 }
 
 input[name=redo]:hover {
@@ -274,10 +281,6 @@ input[name=redo]:hover {
 
 input[name=print] {
     background-image: url('action-print.png');
-    border: none;
-    width: 24px;
-    height: 24px;
-    background-color: white;
 }
 
 input[name=print]:hover {
@@ -286,10 +289,6 @@ input[name=print]:hover {
 
 input[name=export] {
     background-image: url('document-export.png');
-    border: none;
-    width: 24px;
-    height: 24px;
-    background-color: white;
 }
 
 input[name=export]:hover {
@@ -298,10 +297,6 @@ input[name=export]:hover {
 
 input[name=save] {
     background-image: url('document-save.png');
-    border: none;
-    width: 24px;
-    height: 24px;
-    background-color: white;
 }
 
 input[name=save]:hover {
@@ -310,10 +305,6 @@ input[name=save]:hover {
 
 input[name=new-button] {
     background-image: url('document-new.png');
-    border: none;
-    width: 64px;
-    height: 64px;
-    background-color: white;
 }
 
 input[name=new-button]:hover {
@@ -322,10 +313,6 @@ input[name=new-button]:hover {
 
 input[name=import-button] {
     background-image: url('document-import.png');
-    border: none;
-    width: 64px;
-    height: 64px;
-    background-color: white;
 }
 
 input[name=import-button]:hover {

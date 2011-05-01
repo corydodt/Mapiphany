@@ -60,9 +60,9 @@
     "toolbar-tmpl"> <!-- [[[ -->
 
   <div id="toolbar" class="f0">
-    <input type="button" value="&nbsp;" name= "save" title="save" />
-    <input type="button" value="&nbsp;" name= "undo" title="undo" />
-    <input type="button" value="&nbsp;" name= "redo" title="redo" />
+    <input class="toolbar-button" type="button" value="&nbsp;" name= "save" title="save" />
+    <input class="toolbar-button" type="button" value="&nbsp;" name= "undo" title="undo" />
+    <input class="toolbar-button" type="button" value="&nbsp;" name= "redo" title="redo" />
     <span class="f0">Name:</span> <input class="f1" type="text" name="mapName" value="${name}" />
     <span class="f0">Current:</span> <span id="current">{{tmpl({tile:"Grassland"}) "#brushes-tile"}}</span>
     <span>Zoom:</span> <select name="zoom">
@@ -75,8 +75,8 @@
         <option selected="selected" value="1mi">1 mile</option>
         <option value="halfmi">1/2 mile</option>
       </select>
-    <input type="button" value="&nbsp;" name="print" title="print view in a new window" />
-    <input type="button" value="&nbsp;" name="export" title="export to a window" />
+    <input class="toolbar-button" type="button" value="&nbsp;" name="print" title="print view in a new window" />
+    <input class="toolbar-button" type="button" value="&nbsp;" name="export" title="export to a window" />
   </div>
 </script> <!-- ]]] -->
 
@@ -155,11 +155,11 @@
       <div class="indicators f0">&nbsp;</div>
 
       <div class="thumbnail f0 hbox">
-        <input type="button" value="&nbsp;" name="new-button" title="new" />
+        <input class="my-maps-button" type="button" value="&nbsp;" name="new-button" title="new" />
       </div>
 
       <div class="thumbnail f0 hbox">
-        <input type="button" value="&nbsp;" name="import-button" title="import" />
+        <input class="my-maps-button" type="button" value="&nbsp;" name="import-button" title="import" />
       </div>
 
       <div class="details f1" />
