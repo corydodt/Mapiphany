@@ -314,7 +314,7 @@ var MapList = PageArea.extend({
             me.appState.redirect(VIEW_MAP_EDIT + '&' + $(this).parents('.snapshot').attr('data-id'));
         });
 
-        $ret.find('#import-button').click(function (ev) {
+        $ret.find('input[name=import-button]').click(function (ev) {
             $('#import-window-content').remove();
             var $t = $('#import-window-tmpl').tmpl({});
             $('body').append($t);
