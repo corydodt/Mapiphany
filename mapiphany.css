@@ -248,14 +248,88 @@ a {
     fill: transparent;
 }
 
-input[name=save] {
-    background-image: url('stock_save_22.png');
+input[name=undo] {
+    background-image: url('action-undo.png');
     border: none;
+    width: 24px;
+    height: 24px;
+    background-color: white;
+}
+
+input[name=undo]:hover {
+    background-image: url('action-undo-hover.png');
+}
+
+input[name=redo] {
+    background-image: url('action-redo.png');
+    border: none;
+    width: 24px;
+    height: 24px;
+    background-color: white;
+}
+
+input[name=redo]:hover {
+    background-image: url('action-redo-hover.png');
+}
+
+input[name=print] {
+    background-image: url('action-print.png');
+    border: none;
+    width: 24px;
+    height: 24px;
+    background-color: white;
+}
+
+input[name=print]:hover {
+    background-image: url('action-print-hover.png');
+}
+
+input[name=export] {
+    background-image: url('document-export.png');
+    border: none;
+    width: 24px;
+    height: 24px;
+    background-color: white;
+}
+
+input[name=export]:hover {
+    background-image: url('document-export-hover.png');
+}
+
+input[name=save] {
+    background-image: url('document-save.png');
+    border: none;
+    width: 24px;
+    height: 24px;
+    background-color: white;
 }
 
 input[name=save]:hover {
-    background-image: url('stock_save_22_hover.png');
+    background-image: url('document-save-hover.png');
+}
+
+input[name=new-button] {
+    background-image: url('document-new.png');
     border: none;
+    width: 64px;
+    height: 64px;
+    background-color: white;
+}
+
+input[name=new-button]:hover {
+    background-image: url('document-new-hover.png');
+}
+
+input[name=import-button] {
+    background-image: url('document-import.png');
+    border: none;
+    width: 64px;
+    height: 64px;
+    background-color: white;
+}
+
+input[name=import-button]:hover {
+    background-image: url('document-import-hover.png');
 }
 
 #export-window-content textarea {

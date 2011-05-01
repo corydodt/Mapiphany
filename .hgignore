@@ -6,3 +6,4 @@
 .*\.txt\.html$
 ^jquery-ui/development-bundle/
 ^jquery-ui/index.html$
+^must_have_icon_set/
