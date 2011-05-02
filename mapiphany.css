@@ -151,14 +151,14 @@ a {
     padding: 2px;
     padding-bottom: 0px;
     background-color: #fff;
-    background-image: url("bluegrad.png");
+    background-image: url('static/images/bluegrad.png');
     background-repeat: repeat-x;
     background-position: bottom;
 }
 
 #workspace {
     padding: 6px;
-    background-image: url("shadow.png");
+    background-image: url('static/images/shadow.png');
     background-position: top;
     background-repeat: repeat-x;
 }
@@ -264,59 +264,59 @@ a {
 }
 
 input[name=undo] {
-    background-image: url('action-undo.png');
+    background-image: url('static/images/action-undo.png');
 }
 
 input[name=undo]:hover {
-    background-image: url('action-undo-hover.png');
+    background-image: url('static/images/action-undo-hover.png');
 }
 
 input[name=redo] {
-    background-image: url('action-redo.png');
+    background-image: url('static/images/action-redo.png');
 }
 
 input[name=redo]:hover {
-    background-image: url('action-redo-hover.png');
+    background-image: url('static/images/action-redo-hover.png');
 }
 
 input[name=print] {
-    background-image: url('action-print.png');
+    background-image: url('static/images/action-print.png');
 }
 
 input[name=print]:hover {
-    background-image: url('action-print-hover.png');
+    background-image: url('static/images/action-print-hover.png');
 }
 
 input[name=export] {
-    background-image: url('document-export.png');
+    background-image: url('static/images/document-export.png');
 }
 
 input[name=export]:hover {
-    background-image: url('document-export-hover.png');
+    background-image: url('static/images/document-export-hover.png');
 }
 
 input[name=save] {
-    background-image: url('document-save.png');
+    background-image: url('static/images/document-save.png');
 }
 
 input[name=save]:hover {
-    background-image: url('document-save-hover.png');
+    background-image: url('static/images/document-save-hover.png');
 }
 
 input[name=new-button] {
-    background-image: url('document-new.png');
+    background-image: url('static/images/document-new.png');
 }
 
 input[name=new-button]:hover {
-    background-image: url('document-new-hover.png');
+    background-image: url('static/images/document-new-hover.png');
 }
 
 input[name=import-button] {
-    background-image: url('document-import.png');
+    background-image: url('static/images/document-import.png');
 }
 
 input[name=import-button]:hover {
-    background-image: url('document-import-hover.png');
+    background-image: url('static/images/document-import-hover.png');
 }
 
 #export-window-content textarea {
