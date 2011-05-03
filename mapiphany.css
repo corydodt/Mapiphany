@@ -303,22 +303,6 @@ input[name=save]:hover {
     background-image: url('static/images/document-save-hover.png');
 }
 
-input[name=new-button] {
-    background-image: url('static/images/document-new.png');
-}
-
-input[name=new-button]:hover {
-    background-image: url('static/images/document-new-hover.png');
-}
-
-input[name=import-button] {
-    background-image: url('static/images/document-import.png');
-}
-
-input[name=import-button]:hover {
-    background-image: url('static/images/document-import-hover.png');
-}
-
 #export-window-content textarea {
     width: 30em;
     height: 20em;
@@ -360,6 +344,22 @@ input[name=import-button]:hover {
 #import-window-content textarea {
     width: 30em;
     height: 20em;
+}
+
+input[name=new-button] {
+    background-image: url('static/images/document-new.png');
+}
+
+input[name=new-button]:hover {
+    background-image: url('static/images/document-new-hover.png');
+}
+
+input[name=import-button] {
+    background-image: url('static/images/document-import.png');
+}
+
+input[name=import-button]:hover {
+    background-image: url('static/images/document-import-hover.png');
 }
 
 /* }}} */
