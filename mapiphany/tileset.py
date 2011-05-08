@@ -4,6 +4,7 @@ Manage tilesets and load the default tileset
 import os
 import sys
 from ConfigParser import ConfigParser
+from inspect import cleandoc
 
 from twisted.python.filepath import FilePath
 
@@ -87,7 +88,9 @@ class TileSet(FilePath):
         merged = TileSet.applyMerge(self)
 
         jsFile = merged.child('tileset.js').open('w')
-        jsFile.write('var gTileset = ')
+        jsFile.write(cleandoc('''$.require("../tilesets.js");
+            gTilesetCatalog.register('%s',
+            ''' % (self.name,))
 
         cssFile = merged.child('tileset.css').open('w')
 
@@ -105,7 +108,7 @@ class TileSet(FilePath):
             cssFile.write('.%s { fill: %s; background-color: %s; }\n' % (
                 name, color, color))
         simplejson.dump(tileset, jsFile, sort_keys=True, indent=4 * ' ')
-        jsFile.write(';\nvar gTileCategories = ')
+        fixme.... jsFile.write(';\nvar gTileCategories = ')
         categories = dict(map(lambda x: (x[0], sorted(x[1])), categories.items()))
         simplejson.dump(categories, jsFile, sort_keys=True, indent=4 * ' ')
         jsFile.write(';\n')
@@ -118,12 +121,6 @@ def run(argv=None):
     sets = discoverTilesets(FilePath('tiles'))
     for ts in sets:
         ts.writeResources()
-
-    f = open('tiles/tilesets.js', 'w')
-
-    segs = [x.segmentsFrom(x.parent())[-1] for x in sets]
-    paths = ','.join(['"%s"' % seg for seg in segs])
-    f.write('var gTilesets = [%s];\n' % (paths,))
 
 
 if __name__ == '__main__':

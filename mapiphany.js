@@ -19,6 +19,7 @@ $.require('logging.js');
 $.require('patchsvg.js');
 $.require('undo.js');
 $.require('sample.js');
+$.require('util.js');
 
 
 VIEW_MAP_EDIT = 'map-edit';
@@ -84,28 +85,6 @@ function stripHash(uri) { // remove the hash (if any) from uri
     var rx = /#[^#]*$/;
     return uri.replace(rx, '');
 }
-
-function sortObject(obj, order) { // return an array of the key/value pairs in obj, sorted by key
-    // if 'order' is given, it is an array that specifies the order by names
-    // of keys, instead of using the natural sort order
-    var arr = [], loop = obj;
-    if (order !== undefined) {
-        loop = order;
-    }
-    $.each(loop, function (item) {
-        if (order) {
-            item = loop[item];
-        }
-        if (obj.hasOwnProperty(item)) {
-            arr.push([item, obj[item]]);
-        }
-    });
-    if (order === undefined) {
-        arr.sort();
-    }
-    return arr;
-};
-
 
 // any defined region of the page space that requires rendering with a template
 var PageArea = Base.extend({
@@ -314,8 +293,24 @@ var MapList = PageArea.extend({
             me.appState.redirect(VIEW_MAP_EDIT + '&' + $(this).parents('.snapshot').attr('data-id'));
         });
 
+        $ret.find('input[name=new-button]').click(function (ev) {
+            $('.ui-dialog').remove();
+            debugger;
+            var $t = $('#new-window-tmpl').tmpl({
+                tilesets: gTilesetCatalog.getNames(),
+                tiles: ['Grassland', 'Sandy_Desert']
+            });
+            $('body').append($t);
+            $('#new-window-content').dialog({
+                width: 'auto',
+                height: 'auto',
+                modal: true,
+                buttons: {'new': function () { me.onNewClicked(this); } },
+            });
+        });
+
         $ret.find('input[name=import-button]').click(function (ev) {
-            $('#import-window-content').remove();
+            $('.ui-dialog').remove();
             var $t = $('#import-window-tmpl').tmpl({});
             $('body').append($t);
             $('#import-window-content').dialog({
@@ -327,6 +322,14 @@ var MapList = PageArea.extend({
         });
 
         return $ret;
+    },
+
+    onNewClicked: function (dlg) {
+        alert('get tileset, get default tile, get name');
+        rawData = $('#new-window-content [name="pasted-map"]').val();
+        this.appState.createMap(data);
+        this.appState.redirect(VIEW_MY_MAPS);
+        $(dlg).dialog("close");
     },
 
     onImportClicked: function (dlg) {
