@@ -88,30 +88,23 @@ class TileSet(FilePath):
         merged = TileSet.applyMerge(self)
 
         jsFile = merged.child('tileset.js').open('w')
-        jsFile.write(cleandoc('''$.require("../tilesets.js");
-            gTilesetCatalog.register('%s',
-            ''' % (self.name,))
+        jsFile.write(cleandoc('''$.require("tiles/tilesets.js");
+            gTilesetCatalog.register('%s', 
+            ''' % (self.name,)))
 
         cssFile = merged.child('tileset.css').open('w')
 
         tileset = {}
-        categories = {}
         for name, tile in merged:
             if name == '__default__':
                 continue
 
             tileset[name] = tile
-            cats = tile['categories'].split(':')
-            for n, cat in enumerate(cats):
-                categories.setdefault(cat, []).append(name)
             color = tile['backgroundrgb'].lower()
             cssFile.write('.%s { fill: %s; background-color: %s; }\n' % (
                 name, color, color))
         simplejson.dump(tileset, jsFile, sort_keys=True, indent=4 * ' ')
-        fixme.... jsFile.write(';\nvar gTileCategories = ')
-        categories = dict(map(lambda x: (x[0], sorted(x[1])), categories.items()))
-        simplejson.dump(categories, jsFile, sort_keys=True, indent=4 * ' ')
-        jsFile.write(';\n')
+        jsFile.write(');\n')
 
 
 def run(argv=None):
