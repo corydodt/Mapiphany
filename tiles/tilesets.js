@@ -50,7 +50,7 @@ var TilesetCatalog = Base.extend({
     },
 
     getCategories: function (name) { // generate the grouped categories by parsing the tiles in this tileset
-        if (this._categoryCache.hasOwnProperty(name)) { 
+        if (this._categoryCache[name] !== undefined) {
             return this._categoryCache[name];
         }
         var cats = {}, ts, _thisCats;
@@ -58,12 +58,13 @@ var TilesetCatalog = Base.extend({
         for (tileName in ts) {
             if (ts.hasOwnProperty(tileName)) {
                 _thisCats = ts[tileName].categories.split(':');
-                for (c in _thisCats) {
-                    if (cats[c] === undefined) {
-                        cats[c] = [];
+                $.each(_thisCats, function () {
+                    var cat = this;
+                    if (cats[cat] === undefined) {
+                        cats[cat] = [];
                     }
-                    cats[c].push(tileName);
-                }
+                    cats[cat].push(tileName);
+                });
             }
         }
         $.each(cats, function () {

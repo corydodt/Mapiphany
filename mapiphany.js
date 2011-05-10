@@ -124,7 +124,7 @@ var Top = PageArea.extend({
 var Toolbar = PageArea.extend({
     render: function ($template) {
         log("render Toolbar to " + $template.selector);
-        var ret = $template.tmpl(this.appState.currentMap);
+        var ret = $template.tmpl(this.appState.currentMapView);
         var me = this;
 
         ret.find('select[name=zoom]').change(function () {
@@ -204,7 +204,7 @@ var Framework = Base.extend({
 
 // the current drawing settings
 var Pen = Base.extend({
-    constructor: function ($node) {
+    constructor: function ($node, mapView) {
         this.$node = $node;
         this.fg = null;
         this.bg = null;
@@ -213,13 +213,14 @@ var Pen = Base.extend({
         // this.pathWidth = null;
         // this.pathColor = null;
         // this.pathStyle = null;
+        this.mapView = mapView;
     },
 
     // set the current pen and display the new setting
     setCurrent: function (newTile) {
-        var tile = gTileset[newTile];
+        var tile = this.mapView.tileset[newTile];
         var $disp = $('#current .brushes-tile-x1');
-        var $cloned = $('#brushes-tile').tmpl({tile: newTile});
+        var $cloned = $('#brushes-tile').tmpl({tile: tile});
         $disp.replaceWith($cloned);
 
         this.bg = KEEP_LAYER;
@@ -330,6 +331,7 @@ var MapView = PageArea.extend({
         this.pen = null;
         this.svg = null;
         this.history = new UndoHistory(this);
+        this.tileset = null;
     },
 
     _restoreGridArea: function () { // rebuild the map drawing from whatever we restored
@@ -374,7 +376,7 @@ var MapView = PageArea.extend({
         this.tileset = gTilesetCatalog.get(this.map.tileset);
         var cats = sortObject(gTilesetCatalog.getCategories(this.map.tileset),
                 CATEGORY_ORDER);
-        var _d = {categories: cats};
+        var _d = {categories: cats, tileset: this.tileset};
 
         var $mapEditNodes = $mapTemplate.tmpl(_d);
 
@@ -401,7 +403,7 @@ var MapView = PageArea.extend({
                     }
                 }
             });
-            me.pen = new Pen($('#current'));
+            me.pen = new Pen($('#current'), me);
             me.pen.setCurrent(me.map.defaultFill);
         });
         $(document).bind(EVENT_MAP_UNDO, function (ev) {
@@ -441,7 +443,7 @@ var MapView = PageArea.extend({
 
         var settings, $def, tile, sf, xFactor, yFactor, xOff, yOff, id, href, itm, _g;
 
-        tile = gTileset[label];
+        tile = this.tileset[label];
         if (! tile.iconfilename) { // tile is blank on one of the icon layers
             return;
         }
