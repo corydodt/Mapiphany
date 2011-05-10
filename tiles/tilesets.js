@@ -1,3 +1,6 @@
+// Catalog that tracks all the global tilesets
+//
+
 $.require('base.js');
 
 $.require('util.js');
