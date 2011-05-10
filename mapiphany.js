@@ -56,30 +56,6 @@ KEEP_LAYER = '~';
 //
 MAP_IMAGE_NODENAME = ($.browser.mozilla || $.browser.opera) ? 'use' : 'image';
 
-CATEGORY_ORDER = ['Tools', 'Flat Land', 'Forests', 'Mountains and Hills', 'Arid Land', 'Water', 'Settlement', 'Symbol', 'Hex Background'];
-
-TOOLS_CATEGORY = {'Tools': 
-    ['Blank_FG', 'Blank_BG', 'Blank_Both']
-};
-
-TOOLS = {
-    'Blank_Both': {
-        categories: "Tools",
-        iconfilename: "blankboth.png",
-        set: "."
-    },
-    'Blank_BG': {
-        categories: "Tools",
-        iconfilename: "blankbg.png",
-        set: "."
-    },
-    'Blank_FG': {
-        categories: "Tools",
-        iconfilename: "blankfg.png",
-        set: "."
-    },
-};
-
 
 function stripHash(uri) { // remove the hash (if any) from uri
     var rx = /#[^#]*$/;
@@ -391,13 +367,15 @@ var MapView = PageArea.extend({
 
     render: function ($mapTemplate) { // turn on svg mode for the div
         log("render MapView to " + $mapTemplate.selector);
-        $.require('tiles/' + this.map.tileset + '/tileset.js');
-        $.extend(gTileset, TOOLS);
-        $.extend(gTileCategories, TOOLS_CATEGORY);
 
         $('head').append($('#tileset-css').tmpl(this.map));
 
-        var _d = {categories: sortObject(gTileCategories, CATEGORY_ORDER)};
+        $.require('tiles/' + this.map.tileset + '/tileset.js');
+        this.tileset = gTilesetCatalog.get(this.map.tileset);
+        var cats = sortObject(gTilesetCatalog.getCategories(this.map.tileset),
+                CATEGORY_ORDER);
+        var _d = {categories: cats};
+
         var $mapEditNodes = $mapTemplate.tmpl(_d);
 
         this.$node = $mapEditNodes.filter('#map-whole-workspace');
