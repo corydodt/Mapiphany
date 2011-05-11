@@ -86,11 +86,11 @@
     <div id="new-window-content" class=
       "ui-dialog ui-widget ui-widget-content ui-corner-all" title=
       "How would you like to start this map?">
-      <p class="hbox">Name: <input type="text" name=
+      <p >Name: <input type="text" name=
         "name" placeholder="Name of your new map" /></p>
-      <p class="hbox">Tileset: <select name="tileset-select" id=
+      <p >Tileset: <select name="tileset-select" id=
         "tileset-select">
-          {{each tilesets}}
+          {{each gTilesetCatalog.getNames()}}
           <option value="${$value}">${$value}</option>
           {{/each}}
         </select>

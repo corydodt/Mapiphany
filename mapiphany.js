@@ -14,7 +14,8 @@ $.require('jquery-svg/jquery.svg.js');
 $.require('jquery-svg/jquery.svgdom.js');
 $.require('jquery-svg/jquery.svganim.js');
 
-$.require('tiles/tilesets.js');
+$.require('tilesets.js');
+$.require('generated-tilesets.js');
 $.require('logging.js');
 $.require('patchsvg.js');
 $.require('undo.js');
@@ -272,7 +273,6 @@ var MapList = PageArea.extend({
 
         $ret.find('input[name=new-button]').click(function (ev) {
             $('.ui-dialog').remove();
-            debugger;
             var $t = $('#new-window-tmpl').tmpl({
                 tilesets: gTilesetCatalog.getNames(),
                 tiles: ['Grassland', 'Sandy_Desert']
@@ -372,7 +372,6 @@ var MapView = PageArea.extend({
 
         $('head').append($('#tileset-css').tmpl(this.map));
 
-        $.require('tiles/' + this.map.tileset + '/tileset.js');
         this.tileset = gTilesetCatalog.get(this.map.tileset);
         var cats = sortObject(gTilesetCatalog.getCategories(this.map.tileset),
                 CATEGORY_ORDER);

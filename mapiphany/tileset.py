@@ -11,6 +11,9 @@ from twisted.python.filepath import FilePath
 import simplejson
 
 
+GENERATED_TILESETS = 'generated-tilesets.js'
+
+
 def discoverTilesets(path):
     """
     Walk path and look for directories containing tileset.ini; return tilesets
@@ -88,7 +91,7 @@ class TileSet(FilePath):
         merged = TileSet.applyMerge(self)
 
         jsFile = merged.child('tileset.js').open('w')
-        jsFile.write(cleandoc('''$.require("tiles/tilesets.js");
+        jsFile.write(cleandoc('''$.require("tilesets.js");
             gTilesetCatalog.register('%s', 
             ''' % (self.name,)))
 
@@ -106,11 +109,18 @@ class TileSet(FilePath):
         simplejson.dump(tileset, jsFile, sort_keys=True, indent=4 * ' ')
         jsFile.write(');\n')
 
+        jsListFile = merged.parent().parent().child(GENERATED_TILESETS).open('a')
+        jsListFile.write("$.require('tiles/%s/tileset.js');\n" % (self.name,))
+        
+
 
 def run(argv=None):
     if argv is None:
         argv = sys.argv
 
+    generated = FilePath(GENERATED_TILESETS)
+    if generated.exists():
+        generated.remove()
     sets = discoverTilesets(FilePath('tiles'))
     for ts in sets:
         ts.writeResources()
