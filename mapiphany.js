@@ -302,20 +302,24 @@ var MapList = PageArea.extend({
     },
 
     onNewClicked: function (dlg) {
-        alert('get tileset, get default tile, get name');
-        rawData = $('#new-window-content [name="pasted-map"]').val();
-        this.appState.createMap(data);
-        this.appState.redirect(VIEW_MY_MAPS);
-        $(dlg).dialog("close");
+        var data = {}, $dlg = $(dlg), newMap;
+        data.name = $dlg.find('[name="name"]').val();
+        data.tileset = $dlg.find('[name="tileset-select"]').val();
+        data.defaultTile = $dlg.find('[name="default-tile-select"]').val();
+
+        newMap = this.appState.createMap(data);
+        this.appState.redirect(VIEW_MAP_EDIT + '&' + newMap.id);
+        $dlg.dialog("close");
     },
 
     onImportClicked: function (dlg) {
-        var rawData, data;
-        rawData = $('#import-window-content [name="pasted-map"]').val();
+        var rawData, data, newMap;
+        rawData = $(dlg).find('#import-window-content [name="pasted-map"]').val();
         data = $.evalJSON(rawData);
-        this.appState.createMap(data);
-        this.appState.redirect(VIEW_MY_MAPS);
-        $(dlg).dialog("close");
+
+        newMap = this.appState.createMap(data);
+        this.appState.redirect(VIEW_MAP_EDIT + '&' + newMap.id);
+        $dlg.dialog("close");
     }
 });
 
@@ -840,13 +844,15 @@ var AppState = Base.extend({
         id = this._getFreeMapID();
 
         if (! mapData) {
-            _m = (new Map(this, 'new map#' + id)).save();
+            _m = new Map(this, 'new map#' + id);
+            _m.save();
         } else{
             mapData.id = id;
             _m = Map.restore(mapData);
         }
         this.addMap(id, _m);
         this._mapStoreRaw(id, $.toJSON(mapData));
+        return _m;
     },
 
     _generateSampleData: function () {
