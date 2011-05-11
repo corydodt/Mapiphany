@@ -303,7 +303,7 @@ input[name=save]:hover {
     background-image: url('static/images/document-save-hover.png');
 }
 
-#export-window-content textarea {
+#export-dialog-content textarea {
     width: 30em;
     height: 20em;
 }
@@ -341,7 +341,7 @@ input[name=save]:hover {
     line-height: 100px;
 }
 
-#import-window-content textarea {
+#import-dialog-content textarea {
     width: 30em;
     height: 20em;
 }

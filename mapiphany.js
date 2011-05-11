@@ -273,12 +273,12 @@ var MapList = PageArea.extend({
 
         $ret.find('input[name=new-button]').click(function (ev) {
             $('.ui-dialog').remove();
-            var $t = $('#new-window-tmpl').tmpl({
+            var $t = $('#new-dialog-tmpl').tmpl({
                 tilesets: gTilesetCatalog.getNames(),
                 tiles: ['Grassland', 'Sandy_Desert']
             });
             $('body').append($t);
-            $('#new-window-content').dialog({
+            $('#new-dialog-content').dialog({
                 width: 'auto',
                 height: 'auto',
                 modal: true,
@@ -288,9 +288,9 @@ var MapList = PageArea.extend({
 
         $ret.find('input[name=import-button]').click(function (ev) {
             $('.ui-dialog').remove();
-            var $t = $('#import-window-tmpl').tmpl({});
+            var $t = $('#import-dialog-tmpl').tmpl({});
             $('body').append($t);
-            $('#import-window-content').dialog({
+            $('#import-dialog-content').dialog({
                 width: 'auto',
                 height: 'auto',
                 modal: true,
@@ -314,7 +314,7 @@ var MapList = PageArea.extend({
 
     onImportClicked: function (dlg) {
         var rawData, data, newMap;
-        rawData = $(dlg).find('#import-window-content [name="pasted-map"]').val();
+        rawData = $(dlg).find('#import-dialog-content [name="pasted-map"]').val();
         data = $.evalJSON(rawData);
 
         newMap = this.appState.createMap(data);
@@ -427,10 +427,10 @@ var MapView = PageArea.extend({
             alert('not implemented');
         });
         $(document).bind(EVENT_MAP_EXPORT, function (ev) {
-            $('#export-window-content').remove();
-            var $t = $('#export-window-tmpl').tmpl({mapData: $.toJSON(me.map.save())});
+            $('#export-dialog-content').remove();
+            var $t = $('#export-dialog-tmpl').tmpl({mapData: $.toJSON(me.map.save())});
             $('body').append($t);
-            $('#export-window-content').dialog({
+            $('#export-dialog-content').dialog({
                 width: 'auto',
                 height: 'auto',
                 modal: true
