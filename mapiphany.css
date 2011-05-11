@@ -317,17 +317,17 @@ input[name=save]:hover {
 }
 
 .snapshot-box {
-    height: 100px;
+    height: 70px;
 }
 
 .snapshot .indicators {
-    line-height: 100px;
+    line-height: 70px;
     text-align: center;
     width: 30px;
 }
 
 .snapshot .thumbnail {
-    width: 100px;
+    width: 70px;
     text-align: center;
     box-align: center;
     -webkit-box-align: center;
@@ -338,7 +338,7 @@ input[name=save]:hover {
 }
 
 .snapshot .details {
-    line-height: 100px;
+    line-height: 70px;
 }
 
 #import-dialog-content textarea {
