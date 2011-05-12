@@ -344,7 +344,9 @@ var MapList = PageArea.extend({
         $anyChecked = $('.indicators input:checked');
 
         $.each($anyChecked, function () {
-            id = $(this).parents('.snapshot').data('id');
+            var $par = $(this).parents('.snapshot');
+            id = $par.data('id');
+            $par.fadeOut();
             me.appState.removeMap(id);
         });
         this.appState.redirect(VIEW_MY_MAPS);
