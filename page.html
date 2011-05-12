@@ -87,22 +87,34 @@
     <div id="new-dialog-content" class=
       "ui-dialog ui-widget ui-widget-content ui-corner-all" title=
       "How would you like to start this map?">
-      <p >Name: <input type="text" name=
-        "name" placeholder="Name of your new map" /></p>
-      <p >Tileset: <select name="tileset-select" id=
-        "tileset-select">
-          {{each gTilesetCatalog.getNames()}}
-          <option value="${$value}">${$value}</option>
-          {{/each}}
-        </select>
-      </p>
-      <p>Default Tile Fill: <select size="3" name="default-tile-select" id=
-        "default-tile-select">
-          {{each tiles}}
-          <option value="${$value}">${$value}</option>
-          {{/each}}
-        </select>
-      </p>
+      <div class="hbox form-row">
+        <div class="f0 form-column-1">Name:</div>
+        <div class="f1">&nbsp;</div>
+        <div class="f1 form-column-2"><input type="text" name=
+          "name" placeholder="Name of your new map" /></div>
+      </div>
+      <div class="hbox form-row">
+        <div class="f0 form-column-1">Tileset:</div>
+        <div class="f1">&nbsp;</div>
+        <div class="f8 form-column-2"><select name="tileset-select" id=
+            "tileset-select">
+            {{each gTilesetCatalog.getNames()}}
+            <option value="${$value}">${$value}</option>
+            {{/each}}
+          </select>
+        </div>
+      </div>
+      <div class="hbox form-row">
+        <div class="f0 form-column-1">Default Tile Fill:</div>
+        <div class="f1">&nbsp;</div>
+        <div class="f8 form-column-2"><select size="3" name="default-tile-select" id=
+          "default-tile-select">
+            {{each tiles}}
+            <option value="${$value}">${$value}</option>
+            {{/each}}
+          </select>
+        </div>
+      </div>
     </div>
 </script> <!-- ]]] -->
 

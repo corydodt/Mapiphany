@@ -346,6 +346,23 @@ input[name=save]:hover {
     height: 20em;
 }
 
+#new-dialog-content .form-row {
+    margin-bottom: 4pt;
+}
+
+#new-dialog-content .form-column-1 {
+    width: 85pt;
+    text-align: right;
+}
+
+#new-dialog-content .form-column-2 {
+    width: 180pt;
+}
+
+#new-dialog-content .form-column-2 input, #new-dialog-content .form-column-2 select {
+    width: 100%;
+}
+
 input[name=new-button] {
     background-image: url('static/images/document-new.png');
 }

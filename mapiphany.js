@@ -285,7 +285,7 @@ var MapList = PageArea.extend({
             });
             $('body').append($t);
             $('#new-dialog-content').dialog({
-                width: 'auto',
+                width: '400px',
                 height: 'auto',
                 modal: true,
                 buttons: {'new': function () { me.onNewClicked(this); } },
