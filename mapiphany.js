@@ -39,6 +39,7 @@ EVENT_MAP_SAVE = 'map-save';
 EVENT_MAP_RENAME = 'map-rename';
 EVENT_MAP_PRINT = 'map-print';
 EVENT_MAP_EXPORT = 'map-export';
+EVENT_MAPLIST_CHECKED = 'maplist-checked';
 
 PEN_SMALL = 'small';
 PEN_LARGE = 'large';
@@ -266,6 +267,7 @@ var MapList = PageArea.extend({
         log("render MapList to " + $template.selector);
         var $ret = $template.tmpl(this.appState);
         var me = this;
+        me.$node = $ret;
 
         $ret.find('.snapshot .thumbnail, .snapshot .details').click(function () {
             me.appState.redirect(VIEW_MAP_EDIT + '&' + $(this).parents('.snapshot').attr('data-id'));
@@ -298,10 +300,58 @@ var MapList = PageArea.extend({
             });
         });
 
+        $ret.find('input[name=remove-button]').click(function (ev) {
+            var $t, $anyChecked;
+            $('.ui-dialog').remove();
+
+            $anyChecked = $('.indicators input:checked');
+            var $t = $('#remove-dialog-tmpl').tmpl({
+                checked: $anyChecked,
+                maps: me.appState.maps});
+
+            $('body').append($t);
+            $('#remove-dialog-content').dialog({
+                width: 'auto',
+                height: 'auto',
+                modal: true,
+                buttons: {'remove': function () { me.onRemoveClicked(this); } }
+            });
+        });
+
+        $ret.find('.indicators input[type=checkbox]').click(function (ev) {
+            $(document).trigger(EVENT_MAPLIST_CHECKED, [ev.currentTarget]);
+        });
+
+        $(document).bind(EVENT_MAPLIST_CHECKED, function (ev, checkbox) {
+            me.updateRemoveButton();
+        });
+
         return $ret;
     },
 
-    onNewClicked: function (dlg) {
+    updateRemoveButton: function () { // set the enabled/disabled state of the remove button
+        var anyChecked;
+        anyChecked = $('.indicators input:checked');
+        if (anyChecked.length > 0) {
+            $('input[name=remove-button]').removeClass('ui-state-disabled');
+        } else {
+            $('input[name=remove-button]').addClass('ui-state-disabled');
+        }
+    },
+
+    onRemoveClicked: function (dlg) { // remove button in remove dialog in #my-maps was clicked
+        var $dlg = $(dlg), $anyChecked, id, me = this;
+        $anyChecked = $('.indicators input:checked');
+
+        $.each($anyChecked, function () {
+            id = $(this).parents('.snapshot').data('id');
+            me.appState.removeMap(id);
+        });
+        this.appState.redirect(VIEW_MY_MAPS);
+        $dlg.dialog("close");
+    },
+
+    onNewClicked: function (dlg) { // new button in new dialog in #my-maps was clicked
         var data = {}, $dlg = $(dlg), newMap;
         data.name = $dlg.find('[name="name"]').val();
         data.tileset = $dlg.find('[name="tileset-select"]').val();
@@ -312,7 +362,7 @@ var MapList = PageArea.extend({
         $dlg.dialog("close");
     },
 
-    onImportClicked: function (dlg) {
+    onImportClicked: function (dlg) { // import button in import dialog in #my-maps was clicked
         var rawData, data, newMap;
         rawData = $(dlg).find('#import-dialog-content [name="pasted-map"]').val();
         data = $.evalJSON(rawData);
@@ -853,6 +903,10 @@ var AppState = Base.extend({
         this.addMap(id, _m);
         this._mapStoreRaw(id, $.toJSON(mapData));
         return _m;
+    },
+
+    removeMap: function (id) { // remove a map from storage by its key
+        localStorage.removeItem('map-' + id);
     },
 
     _generateSampleData: function () {

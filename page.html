@@ -127,6 +127,20 @@
 
 
 <script type="text/x-jquery-tmpl" id=
+    "remove-dialog-tmpl"> <!-- [[[ -->
+    <div id="remove-dialog-content" class=
+      "ui-dialog ui-widget ui-widget-content ui-corner-all" title=
+      "Really remove {{if checked.length > 1}}these maps{{else}}this map{{/if}}?">
+      {{if log(checked)}}{{/if}}
+      <ul>{{each checked}}
+        <li>- ${maps[$($value).parents(".snapshot").data("id")].name}</li>
+        {{/each}}
+      </ul>
+    </div>
+</script> <!-- ]]] -->
+
+
+<script type="text/x-jquery-tmpl" id=
     "map-edit"> <!-- [[[ -->
 
   <div id="map-whole-workspace" class="vbox f1">
@@ -187,6 +201,10 @@
 
       <div class="thumbnail f0 hbox">
         <input class="my-maps-button" type="button" value="&nbsp;" name="import-button" title="import" />
+      </div>
+
+      <div class="thumbnail f0 hbox">
+        <input class="ui-state-disabled my-maps-button" type="button" value="&nbsp;" name="remove-button" title="remove" />
       </div>
 
       <div class="details f1" />

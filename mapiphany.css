@@ -362,4 +362,12 @@ input[name=import-button]:hover {
     background-image: url('static/images/document-import-hover.png');
 }
 
+input[name=remove-button] {
+    background-image: url('static/images/document-remove.png');
+}
+
+input[name=remove-button]:hover {
+    background-image: url('static/images/document-remove-hover.png');
+}
+
 /* }}} */
