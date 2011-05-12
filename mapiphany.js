@@ -220,9 +220,13 @@ var Pen = Base.extend({
 
     // set the current pen and display the new setting
     setCurrent: function (newTile) {
-        var tile = this.mapView.tileset[newTile];
-        var $disp = $('#current .brushes-tile-x1');
-        var $cloned = $('#brushes-tile').tmpl({tile: tile});
+        var oTile, $disp, $cloned;
+        oTile = this.mapView.tileset[newTile];
+        $disp = $('#current .brushes-tile-x1');
+        $cloned = $('#brushes-tile').tmpl({
+            tile: newTile, 
+            tileset: this.mapView.tileset
+        });
         $disp.replaceWith($cloned);
 
         this.bg = KEEP_LAYER;
@@ -242,7 +246,7 @@ var Pen = Base.extend({
             this.fg2 = null;
 
         } else {
-            var fill = function (c) { return tile.fill.substr(c, 1) };
+            var fill = function (c) { return oTile.fill.substr(c, 1) };
             if (fill(0) == 'f') {
                 this.fg = newTile;
             }

@@ -50,9 +50,9 @@
 <script type="text/x-jquery-tmpl" id=
     "brushes-tile"> <!-- [[[ -->
   <span class="brushes-tile-x1" title="${tile}" style=
-    "background-color:{{if tile.backgroundrgb=='None'}}#c0c0c0{{else}}${tile.backgroundrgb}{{/if}}">
-    {{if tile.iconfilename}}<img class="brushes-tile-img" src=
-      "tiles/${tile.set}/${tile.iconfilename}" />
+    "background-color:{{if tileset[tile].backgroundrgb=='None'}}#c0c0c0{{else}}${tileset[tile].backgroundrgb}{{/if}}">
+    {{if tileset[tile].iconfilename}}<img class="brushes-tile-img" src=
+      "tiles/${tileset[tile].set}/${tileset[tile].iconfilename}" />
     {{/if}}</span>
 </script> <!-- ]]] -->
 
@@ -65,7 +65,7 @@
     <input class="toolbar-button" type="button" value="&nbsp;" name= "undo" title="undo" />
     <input class="toolbar-button" type="button" value="&nbsp;" name= "redo" title="redo" />
     <span class="f0">Name:</span> <input class="f1" type="text" name="mapName" value="${name}" />
-    <span class="f0">Current:</span> <span id="current">{{tmpl({tile:tileset[map.defaultFill]}) "#brushes-tile"}}</span>
+    <span class="f0">Current:</span> <span id="current">{{tmpl({tile:map.defaultFill, tileset:tileset}) "#brushes-tile"}}</span>
     <span>Zoom:</span> <select name="zoom">
       <option value="200">200%</option>
       <option selected="selected" value="100">100%</option>
@@ -161,7 +161,7 @@
           {{each($i, category) categories}}
           <div class="brushes-category"><em>${category[0]}</em></div>
           {{each($j, tile) category[1]}}<span class="brushes-tile" 
-            data-tile="${tile}">{{tmpl({tile:tileset[tile]}) "#brushes-tile"}}</span>
+            data-tile="${tile}">{{tmpl({tile:tile, tileset:tileset}) "#brushes-tile"}}</span>
           {{/each}}
           {{/each}}
         </div>
