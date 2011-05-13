@@ -91,9 +91,10 @@ class TileSet(FilePath):
         merged = TileSet.applyMerge(self)
 
         jsFile = merged.child('tileset.js').open('w')
+        desc = self.ini.get('__default__', 'description').strip()
         jsFile.write(cleandoc('''$.require("tilesets.js");
-            gTilesetCatalog.register('%s', 
-            ''' % (self.name,)))
+            gTilesetCatalog.register('%s', '%s', 
+            ''' % (self.name, desc)))
 
         cssFile = merged.child('tileset.css').open('w')
 

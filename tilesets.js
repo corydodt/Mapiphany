@@ -37,8 +37,9 @@ var TilesetCatalog = Base.extend({
         this._categoryCache = {};
     },
 
-    register: function (name, tileset) { // put a tileset into the catalog
+    register: function (name, description, tileset) { // put a tileset into the catalog
         this._catalog[name] = tileset;
+        $.extend(tileset, {__default__: {description: description}});
         $.extend(tileset, TOOLS);
         var categories = this.getCategories(name);
         $.extend(categories, TOOLS_CATEGORY);
@@ -56,6 +57,9 @@ var TilesetCatalog = Base.extend({
         var cats = {}, ts, _thisCats;
         ts = this.get(name);
         for (tileName in ts) {
+            if (tileName == '__default__') {
+                continue;
+            }
             if (ts.hasOwnProperty(tileName)) {
                 _thisCats = ts[tileName].categories.split(':');
                 $.each(_thisCats, function () {

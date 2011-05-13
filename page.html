@@ -101,7 +101,8 @@
         <div class="f8 form-column-2"><select name="tileset-select" id=
             "tileset-select">
             {{each gTilesetCatalog.getNames()}}
-            <option value="${$value}">${$value}</option>
+            <option value=
+              "${$value}">${gTilesetCatalog.get($value).__default__.description}</option>
             {{/each}}
           </select>
         </div>
