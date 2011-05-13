@@ -111,7 +111,6 @@ class TileSet(FilePath):
 
         jsListFile = merged.parent().parent().child(GENERATED_TILESETS).open('a')
         jsListFile.write("$.require('tiles/%s/tileset.js');\n" % (self.name,))
-        
 
 
 def run(argv=None):
