@@ -4,6 +4,8 @@ cp = ConfigParser()
 cp.read('tileset.ini')
 
 for sect in cp.sections():
+    if sect == '__default__':
+        continue
     col = cp.get(sect, 'backgroundrgb')
     if col == 'null':
         col = None
