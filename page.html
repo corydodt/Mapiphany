@@ -61,9 +61,11 @@
     "toolbar-tmpl"> <!-- [[[ -->
 
   <div id="toolbar" class="f0">
-    <input class="toolbar-button" type="button" value="&nbsp;" name= "save" title="save" />
-    <input class="toolbar-button" type="button" value="&nbsp;" name= "undo" title="undo" />
-    <input class="toolbar-button" type="button" value="&nbsp;" name= "redo" title="redo" />
+    <input class="toolbar-button" type="button" value="&nbsp;" name="save" title="save" />
+    <input class="toolbar-button" type="button" value="&nbsp;" name="properties" title=
+      "map properties" />
+    <input class="toolbar-button" type="button" value="&nbsp;" name="undo" title="undo" />
+    <input class="toolbar-button" type="button" value="&nbsp;" name="redo" title="redo" />
     <span class="f0">Name:</span> <input class="f1" type="text" name="mapName" value="${name}" />
     <span class="f0">Current:</span> <span id="current">{{tmpl({tile:map.defaultFill, tileset:tileset}) "#brushes-tile"}}</span>
     <span>Zoom:</span> <select name="zoom">

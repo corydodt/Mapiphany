@@ -287,6 +287,14 @@ input[name=print]:hover {
     background-image: url('static/images/action-print-hover.png');
 }
 
+input[name=properties] {
+    background-image: url('static/images/document-properties.png');
+}
+
+input[name=properties]:hover {
+    background-image: url('static/images/document-properties-hover.png');
+}
+
 input[name=export] {
     background-image: url('static/images/document-export.png');
 }
