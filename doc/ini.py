@@ -23,3 +23,17 @@ for line in s.splitlines():
         print None
     else:
         print '#%06x' % (int(splits[1])+0x1000000,)
+
+
+"""
+- add __default__ section
+- Remove Tilename. prefix from every row
+- Convert Rough Land to Arid Land
+- Convert Other Land to Flat Land
+- Remove Other Land from mountain-type tiles
+- Add Flat Land to some desert tiles
+- Add Mountains and Hills to some
+- remove elevation
+- remove isdrawborder
+- use isfeature/isfill/isuseicon to determine what "fill=" should be set to
+"""
