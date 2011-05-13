@@ -48,7 +48,7 @@ SIN60 = Math.sin(60 * Math.PI / 180);
 Y_UNIT = MULT * SIN60;
 X_UNIT = MULT * 0.5;
 DEFAULT_FILL = 'Grassland';
-DEFAULT_TILESET = 'rkterrain-finalopt';
+DEFAULT_TILESET = 'rk-calligraphy';
 KEEP_LAYER = '~';
 
 // It's a shame there is no $.support for svg features.  who knows

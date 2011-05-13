@@ -1,4 +1,4 @@
-SAMPLE_1 = {"name":"Sample 1 (rkterrain)", "id":1, "modified":false, "defaultFill": "Grassland",
+SAMPLE_1 = {"name":"Sample 1 (rk-calligraphy)", "id":1, "modified":false, "defaultFill": "Grassland",
 "hexes":[["M0M0~~", "H0H0~~", "H0H0~~", "M0M0~~", "H0H0~~", "M0M0~~", "M0M0~~", "M0M0~~"],
          ["M0M0~~", "M0M0~~", "H0H0~~", "M0M0~~", "M0M0~~", "M0M0~~", "H0H0~~", "H0H0~~"],
          ["M0M0~~", "H0H0~~", "H0H0~~", "M0M0~~", "M0M0~~", "M0M0~~", "H0H0~~", "H0H0~~"],
@@ -27,7 +27,7 @@ SAMPLE_1 = {"name":"Sample 1 (rkterrain)", "id":1, "modified":false, "defaultFil
           "E2":"Evergreen_Mountains",
           "D0":"Dead_Forest_Hills",
           "J0":"Jungle"},
-"tileset":"rkterrain-finalopt"
+"tileset":"rk-calligraphy"
 }
 
 
