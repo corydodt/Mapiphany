@@ -428,31 +428,33 @@ var MapView = PageArea.extend({
     },
 
     render: function ($mapTemplate) { // turn on svg mode for the div
+        var $t, $mapNode, cats, _d, $mapEditNodes, $node, me, $toolbar;
+
         log("render MapView to " + $mapTemplate.selector);
 
         $('head').append($('#tileset-css').tmpl(this.map));
 
         this.tileset = gTilesetCatalog.get(this.map.tileset);
-        var cats = sortObject(gTilesetCatalog.getCategories(this.map.tileset),
+        cats = sortObject(gTilesetCatalog.getCategories(this.map.tileset),
                 CATEGORY_ORDER);
-        var _d = {categories: cats, tileset: this.tileset};
+        _d = {categories: cats, tileset: this.tileset};
 
-        var $mapEditNodes = $mapTemplate.tmpl(_d);
+        $mapEditNodes = $mapTemplate.tmpl(_d);
 
-        this.$node = $mapEditNodes.filter('#map-whole-workspace');
-        var me = this;
-        this.$node.find('.brushes-tile').click(function () { 
+        $node = this.$node = $mapEditNodes.filter('#map-whole-workspace');
+        me = this;
+        $node.find('.brushes-tile').click(function () { 
             return me.pen.setCurrent($(this).data('tile'));
         });
 
-        var $toolbar = (new Toolbar(this.appState)).render($('#toolbar-tmpl'));
-        this.$node.find('#toolbar').replaceWith($toolbar);
+        $toolbar = (new Toolbar(this.appState)).render($('#toolbar-tmpl'));
+        $node.find('#toolbar').replaceWith($toolbar);
 
         // this must happen after templates have finished rendering so the
         // node really exists. svg events can't trigger unless the node is
         // visible in the DOM.
         $(document).bind(EVENT_TEMPLATE_DONE, function (ev) {
-            var $mapNode = me.$node.find('#map');
+            $mapNode = me.$node.find('#map');
             $mapNode.svg({
                 onLoad: function (svg) { 
                     svg.configure({width: $mapNode.width(), height: $mapNode.height()});
@@ -484,7 +486,7 @@ var MapView = PageArea.extend({
         });
         $(document).bind(EVENT_MAP_EXPORT, function (ev) {
             $('#export-dialog-content').remove();
-            var $t = $('#export-dialog-tmpl').tmpl({mapData: $.toJSON(me.map.save())});
+            $t = $('#export-dialog-tmpl').tmpl({mapData: $.toJSON(me.map.save())});
             $('body').append($t);
             $('#export-dialog-content').dialog({
                 width: 'auto',
