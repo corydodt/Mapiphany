@@ -4,7 +4,7 @@
 // logs the stack, along with the error.
 //
 
-$.require('jquery-svg/jquery.svg.js');
+$.require('static/support/jquery-svg/jquery.svg.js');
 
 $.require('logging.js');
 

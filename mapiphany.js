@@ -4,15 +4,15 @@
 
 $.require('base.js');
 
-$.require('jquery-ui/js/jquery-ui-1.8.7.custom.min.js');
+$.require('static/support/jquery-ui/js/jquery-ui-1.8.7.custom.min.js');
 
-$.require('jquery.tmpl.js');
+$.require('static/support/jquery.tmpl.js');
 
-$.require('jquery.json-2.2.js');
+$.require('static/support/jquery.json-2.2.js');
 
-$.require('jquery-svg/jquery.svg.js');
-$.require('jquery-svg/jquery.svgdom.js');
-$.require('jquery-svg/jquery.svganim.js');
+$.require('static/support/jquery-svg/jquery.svg.js');
+$.require('static/support/jquery-svg/jquery.svgdom.js');
+$.require('static/support/jquery-svg/jquery.svganim.js');
 
 $.require('tilesets.js');
 $.require('generated-tilesets.js');

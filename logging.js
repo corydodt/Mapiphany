@@ -3,7 +3,7 @@
 // unavailable
 //
 
-$.require('stacktrace.js');
+$.require('static/support/stacktrace.js');
 
 // wrap console.dir so we don't error out when it's missing
 function dir(o) {
