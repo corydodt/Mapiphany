@@ -280,7 +280,8 @@ var MapList = PageArea.extend({
         $ret.find('input[name=new-button]').click(function (ev) {
             $('.ui-dialog').remove();
             var $t = $('#new-dialog-tmpl').tmpl({
-                tilesets: gTilesetCatalog.getNames(),
+                // TODO - this should dynamically update based on value of
+                // selected tileset
                 tiles: ['Grassland', 'Sandy_Desert']
             });
             $('body').append($t);
