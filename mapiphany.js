@@ -304,24 +304,6 @@ var MapList = PageArea.extend({
             });
         });
 
-        $ret.find('input[name=remove-button]').click(function (ev) {
-            var $t, $anyChecked;
-            $('.ui-dialog').remove();
-
-            $anyChecked = $('.indicators input:checked');
-            var $t = $('#remove-dialog-tmpl').tmpl({
-                checked: $anyChecked,
-                maps: me.appState.maps});
-
-            $('body').append($t);
-            $('#remove-dialog-content').dialog({
-                width: 'auto',
-                height: 'auto',
-                modal: true,
-                buttons: {'remove': function () { me.onRemoveClicked(this); } }
-            });
-        });
-
         $ret.find('.indicators input[type=checkbox]').click(function (ev) {
             $(document).trigger(EVENT_MAPLIST_CHECKED, [ev.currentTarget]);
         });
@@ -329,21 +311,46 @@ var MapList = PageArea.extend({
         $(document).bind(EVENT_MAPLIST_CHECKED, function (ev, checkbox) {
             me.updateRemoveButton();
         });
+        this.updateRemoveButton();
 
         return $ret;
     },
 
     updateRemoveButton: function () { // set the enabled/disabled state of the remove button
-        var anyChecked;
+        var anyChecked, me;
+        me = this;
+
         anyChecked = $('.indicators input:checked');
         if (anyChecked.length > 0) {
             $('input[name=remove-button]').removeClass('ui-state-disabled');
+            this.$node.find('input[name=remove-button]').click(function () { me.onRemoveClicked(); });
         } else {
             $('input[name=remove-button]').addClass('ui-state-disabled');
+            this.$node.find('input[name=remove-button]').unbind('click');
         }
     },
 
-    onRemoveClicked: function (dlg) { // remove button in remove dialog in #my-maps was clicked
+    onRemoveClicked: function () {
+        var $t, $anyChecked, me;
+        me = this;
+
+        $('.ui-dialog').remove();
+
+        $anyChecked = $('.indicators input:checked');
+        var $t = $('#remove-dialog-tmpl').tmpl({
+            checked: $anyChecked,
+            maps: me.appState.maps});
+
+        $('body').append($t);
+        $('#remove-dialog-content').dialog({
+            width: 'auto',
+            height: 'auto',
+            modal: true,
+            buttons: {'remove': function () { me.onRemoveClicked(this); } }
+        });
+    },
+
+    onFinalRemoveClicked: function (dlg) { // remove button in remove dialog in #my-maps was clicked
         var $dlg = $(dlg), $anyChecked, id, me = this;
         $anyChecked = $('.indicators input:checked');
 
