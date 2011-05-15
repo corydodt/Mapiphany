@@ -1,3 +1,4 @@
+^tiles/[^/]*/tileset\.(js|css)$
 .*\.pyc
 ^.be/id-cache
 .*\.orig$
