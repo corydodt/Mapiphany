@@ -112,7 +112,7 @@ var Top = PageArea.extend({
             me.$node.find('[data-id=' + id + '] a').text(name);
         });
 
-        $ret.find('a[href$=#my-maps]').parents('.tab').click(function () {
+        $ret.find('a[href$=#' + VIEW_MY_MAPS + ']').parents('.tab').click(function () {
             me.appState.redirect(VIEW_MY_MAPS);
             return false;
         });
@@ -173,11 +173,11 @@ var Workspace = PageArea.extend({
         log("render Workspace");
         var $n;
         if (this.appState.visibleScreen[0] == VIEW_MAP_EDIT) {
-            $n = this.appState.currentMapView.render($('#map-edit'));
+            $n = this.appState.currentMapView.render($('#' + VIEW_MAP_EDIT));
         } else if (this.appState.visibleScreen[0] == VIEW_MY_MAPS) {
-            $n = this.appState.mapList.render($('#my-maps'));
+            $n = this.appState.mapList.render($('#' + VIEW_MY_MAPS));
         } else if (this.appState.visibleScreen[0] == VIEW_USER_EDIT) {
-            $n = this.appState.userEditor.render($('#user-edit'));
+            $n = this.appState.userEditor.render($('#' + VIEW_USER_EDIT));
         }
         return $n;
     }
@@ -428,9 +428,18 @@ var MapView = PageArea.extend({
     },
 
     render: function ($mapTemplate) { // turn on svg mode for the div
-        var $t, $mapNode, cats, _d, $mapEditNodes, $node, me, $toolbar;
+        var $ret, $t, $mapNode, cats, _d, $mapEditNodes, $node, me, $toolbar;
+        me = this;
 
         log("render MapView to " + $mapTemplate.selector);
+
+        if (this.map === undefined) {
+            $ret = $('#map-edit-unknown').tmpl();
+            $ret.find('a[href$=#' + VIEW_MY_MAPS + ']').click(function () {
+                me.appState.redirect(VIEW_MY_MAPS);
+            });
+            return $ret;
+        }
 
         $('head').append($('#tileset-css').tmpl(this.map));
 
@@ -442,7 +451,6 @@ var MapView = PageArea.extend({
         $mapEditNodes = $mapTemplate.tmpl(_d);
 
         $node = this.$node = $mapEditNodes.filter('#map-whole-workspace');
-        me = this;
         $node.find('.brushes-tile').click(function () { 
             return me.pen.setCurrent($(this).data('tile'));
         });
@@ -963,7 +971,11 @@ var AppState = Base.extend({
         // get the <title> content
         var vs = this.visibleScreen;
         if (vs[0] == VIEW_MAP_EDIT) {
-            return this.currentMap.name + ' (editing) - ' + APP_NAME;
+            if (this.currentMap !== undefined) {
+                return this.currentMap.name + ' (editing) - ' + APP_NAME;
+            } else {
+                return 'Unknown map - ' + APP_NAME;
+            }
         } else if (vs[0] == VIEW_USER_EDIT) {
             return "editing " + this.username + " - " + APP_NAME;
         } else if (vs[0] == VIEW_MY_MAPS) {
@@ -981,7 +993,7 @@ $(function () {
     if (window.location.href.search(/#clear$/) >= 0) {
         localStorage.clear();
         // redirect
-        window.location = window.location.href.replace(/#clear$/, '#my-maps');
+        window.location = window.location.href.replace(/#clear$/, '#' + VIEW_MY_MAPS);
     }
     window.appState = new AppState(); // make it a global for easier debugging
 
