@@ -5,7 +5,7 @@
 ^twistd.pid$
 ^twistd.log.*
 .*\.txt\.html$
-^jquery-ui/development-bundle/
-^jquery-ui/index.html$
+^static/support/jquery-ui/development-bundle/
+^static/support/jquery-ui/index.html$
 ^must_have_icon_set/
 ^generated-tilesets.js$
