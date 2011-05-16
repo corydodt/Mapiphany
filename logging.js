@@ -30,4 +30,10 @@ function err(e) {
     log(e);
 }
 
-
+// use console.log and throw an exception if expr is not true
+function assert(expr, m) {
+    if (! expr) {
+        log("Assert Failed: " + m);
+        throw m;
+    }
+}
