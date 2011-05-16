@@ -1,6 +1,7 @@
 //
 // Mapiphany main application - load and render the framework and web objects
 //
+"use strict";
 
 $.require('base.js');
 
@@ -23,40 +24,40 @@ $.require('sample.js');
 $.require('util.js');
 
 
-VIEW_MAP_EDIT = 'map-edit';
-VIEW_USER_EDIT = 'user-edit';
-VIEW_MY_MAPS = 'my-maps';
-VIEW_CLEAR = 'clear';
+var VIEW_MAP_EDIT = 'map-edit';
+var VIEW_USER_EDIT = 'user-edit';
+var VIEW_MY_MAPS = 'my-maps';
+var VIEW_CLEAR = 'clear';
 
-APP_NAME = 'Mapiphany';
+var APP_NAME = 'Mapiphany';
 
-EVENT_TEMPLATE_DONE = 'template-done';
+var EVENT_TEMPLATE_DONE = 'template-done';
 
-EVENT_MAP_ZOOM = 'map-zoom';
-EVENT_MAP_UNDO = 'map-undo';
-EVENT_MAP_REDO = 'map-redo';
-EVENT_MAP_SAVE = 'map-save';
-EVENT_MAP_RENAME = 'map-rename';
-EVENT_MAP_PRINT = 'map-print';
-EVENT_MAP_EXPORT = 'map-export';
-EVENT_MAPLIST_CHECKED = 'maplist-checked';
+var EVENT_MAP_ZOOM = 'map-zoom';
+var EVENT_MAP_UNDO = 'map-undo';
+var EVENT_MAP_REDO = 'map-redo';
+var EVENT_MAP_SAVE = 'map-save';
+var EVENT_MAP_RENAME = 'map-rename';
+var EVENT_MAP_PRINT = 'map-print';
+var EVENT_MAP_EXPORT = 'map-export';
+var EVENT_MAPLIST_CHECKED = 'maplist-checked';
 
-PEN_SMALL = 'small';
-PEN_LARGE = 'large';
-MULT = 25; // baseline multiplier to get a decent-sized hex
-SIN60 = Math.sin(60 * Math.PI / 180);
-Y_UNIT = MULT * SIN60;
-X_UNIT = MULT * 0.5;
-DEFAULT_FILL = 'Grassland';
-DEFAULT_TILESET = 'rk-calligraphy';
-KEEP_LAYER = '~';
+var PEN_SMALL = 'small';
+var PEN_LARGE = 'large';
+var MULT = 25; // baseline multiplier to get a decent-sized hex
+var SIN60 = Math.sin(60 * Math.PI / 180);
+var Y_UNIT = MULT * SIN60;
+var X_UNIT = MULT * 0.5;
+var DEFAULT_FILL = 'Grassland';
+var DEFAULT_TILESET = 'rk-calligraphy';
+var KEEP_LAYER = '~';
 
 // It's a shame there is no $.support for svg features.  who knows
 // what the current support grid is like for all these features?
 //
 // This is based on: http://www.codedread.com/svg-support-table.html
 //
-MAP_IMAGE_NODENAME = ($.browser.mozilla || $.browser.opera) ? 'use' : 'image';
+var MAP_IMAGE_NODENAME = ($.browser.mozilla || $.browser.opera) ? 'use' : 'image';
 
 
 function stripHash(uri) { // remove the hash (if any) from uri
@@ -403,8 +404,8 @@ var MapView = PageArea.extend({
     },
 
     _restoreGridArea: function () { // rebuild the map drawing from whatever we restored
-        var t1 = new Date();
-        var hexes = this.map.hexes;
+        var x, y, hexes, t1 = new Date();
+        hexes = this.map.hexes;
         for (x in hexes) {
             // when the saved map is larger than the displayed map, skip
             // over it. we'll be growing the grid if the screen is ever
@@ -753,7 +754,7 @@ var Map = Base.extend({
     },
 
     save: function () { // serialize this map instance to dict data
-        var fg, bg, fg2, ld, hexes, _r, cell, grid = [];
+        var x, y, fg, bg, fg2, ld, hexes, _r, cell, grid = [];
         hexes = this.hexes;
         ld = this.lookdown;
         for (x in hexes) {
@@ -814,8 +815,8 @@ var Map = Base.extend({
 {
     restore: function (data, appState) {
         // restore: return a new instance of Map from the given dict data
-        var cell, fg, bg, fg2;
-        var ret = new Map(appState, '#');
+        var ret, x, y, cell, fg, bg, fg2;
+        ret = new Map(appState, '#');
         ret.name = data.name;
         ret.id = data.id;
         ret.modified = data.modified;
