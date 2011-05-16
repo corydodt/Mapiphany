@@ -1,6 +1,7 @@
 //
 // Mapiphany main application - load and render the framework and web objects
 //
+
 "use strict";
 
 $.require('base.js');
@@ -404,7 +405,7 @@ var MapView = PageArea.extend({
     },
 
     _restoreGridArea: function () { // rebuild the map drawing from whatever we restored
-        var x, y, hexes, t1 = new Date();
+        var x, y, hex, hexes, t1 = new Date();
         hexes = this.map.hexes;
         for (x in hexes) {
             // when the saved map is larger than the displayed map, skip
@@ -623,7 +624,7 @@ var MapView = PageArea.extend({
         var defaultClass = 'hex ' + this.map.defaultFill;
 
         var xAbs, xx, x05, x15, x2, x3, x35;
-        var yAbs, yy, yS, yM, yT;
+        var yAbs, yy, yS, yM, yT, _p1ID, _p2ID;
         for (var xAbs = 0, xx = 0; xAbs < rw + _05; xAbs = xAbs + _3, xx = xx + 2) {
             x05 = xAbs + _05; x15 = xAbs + _15; x2 = xAbs + _2; x3 = xAbs + _3; x35 = xAbs + _35;
 
