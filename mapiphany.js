@@ -38,9 +38,10 @@ var EVENT_MAP_ZOOM = 'map-zoom';
 var EVENT_MAP_UNDO = 'map-undo';
 var EVENT_MAP_REDO = 'map-redo';
 var EVENT_MAP_SAVE = 'map-save';
-var EVENT_MAP_RENAME = 'map-rename';
+var EVENT_MAP_PROPERTIES_CHANGED = 'map-properties-changed';
 var EVENT_MAP_PRINT = 'map-print';
 var EVENT_MAP_EXPORT = 'map-export';
+var EVENT_MAP_PROPERTIES = 'map-properties';
 var EVENT_MAPLIST_CHECKED = 'maplist-checked';
 
 var PEN_SMALL = 'small';
@@ -110,8 +111,8 @@ var Top = PageArea.extend({
             return false;
         });
 
-        $(document).bind(EVENT_MAP_RENAME, function (ev, id, name) {
-            me.$node.find('[data-id=' + id + '] a').text(name);
+        $(document).bind(EVENT_MAP_PROPERTIES_CHANGED, function (ev, map) {
+            me.$node.find('[data-id=' + map.id + '] a').text(map.name);
         });
 
         $ret.find('a[href$=#' + VIEW_MY_MAPS + ']').parents('.tab').click(function () {
@@ -145,11 +146,8 @@ var Toolbar = PageArea.extend({
             $(document).trigger(EVENT_MAP_REDO, []);
         });
 
-        ret.find('input[name=mapName]').change(function () {
-            $(document).trigger(EVENT_MAP_RENAME, [
-                me.appState.currentMap.id, 
-                $(this).val()
-            ]);
+        ret.find('input[name="properties"]').click(function () {
+            $(document).trigger(EVENT_MAP_PROPERTIES);
         });
 
         ret.find('input[name="save"]').click(function () {
@@ -223,11 +221,11 @@ var Pen = Base.extend({
     // set the current pen and display the new setting
     setCurrent: function (newTile) {
         var oTile, $disp, $cloned;
-        oTile = this.mapView.tileset[newTile];
+        oTile = this.mapView.oTileset[newTile];
         $disp = $('#current .brushes-tile-x1');
         $cloned = $('#brushes-tile').tmpl({
             tile: newTile, 
-            tileset: this.mapView.tileset
+            oTileset: this.mapView.oTileset
         });
         $disp.replaceWith($cloned);
 
@@ -401,7 +399,7 @@ var MapView = PageArea.extend({
         this.pen = null;
         this.svg = null;
         this.history = new UndoHistory(this);
-        this.tileset = null;
+        this.oTileset = null;
     },
 
     _restoreGridArea: function () { // rebuild the map drawing from whatever we restored
@@ -453,10 +451,11 @@ var MapView = PageArea.extend({
 
         $('head').append($('#tileset-css').tmpl(this.map));
 
-        this.tileset = gTilesetCatalog.get(this.map.tileset);
+        this.oTileset = gTilesetCatalog.get(this.map.tileset);
+        assert(this.oTileset, "tileset is undefined, this.map.tileset=='" + this.map.tileset + "'");
         cats = sortObject(gTilesetCatalog.getCategories(this.map.tileset),
                 CATEGORY_ORDER);
-        _d = {categories: cats, tileset: this.tileset};
+        _d = {categories: cats, oTileset: this.oTileset};
 
         $mapEditNodes = $mapTemplate.tmpl(_d);
 
@@ -496,9 +495,6 @@ var MapView = PageArea.extend({
         $(document).bind(EVENT_MAP_ZOOM, function (ev, zoom) {
             me.zoom(zoom);
         });
-        $(document).bind(EVENT_MAP_RENAME, function (ev, id, name) {
-            me.map.name = name;
-        });
         $(document).bind(EVENT_MAP_PRINT, function (ev) {
             alert('not implemented');
         });
@@ -512,7 +508,52 @@ var MapView = PageArea.extend({
                 modal: true
             });
         });
+        $(document).bind(EVENT_MAP_PROPERTIES, function (ev) {
+            $('#properties-dialog-content').remove();
+            $t = $('#properties-dialog-tmpl').tmpl(me.map);
+            $('body').append($t);
+            $('#properties-dialog-content').dialog({
+                width: '400px',
+                height: 'auto',
+                modal: true,
+                buttons: {save: function () { me.onPropertySaveClicked(this); } }
+            });
+        });
         return $mapEditNodes;
+    },
+
+    onPropertySaveClicked: function (dlg) {
+        var $dlg = $(dlg);
+        $dlg.dialog("close");
+        this.map.name = $dlg.find('input[name="name"]').val();
+        this.map.defaultFill = $dlg.find('select[name="default-tile-select"]').val();
+        this.map.tileset = $dlg.find('select[name="tileset-select"]').val();
+        this.oTileset = gTilesetCatalog.get(this.map.tileset);
+
+        $('#tileset-css-link').remove();
+        $('head').append($('#tileset-css').tmpl(this.map));
+        this.replaceImageDefs();
+        // TODO this.map.units = $dlg.find('select[name="mapUnits"]').val();
+        $(document).trigger(EVENT_MAP_PROPERTIES_CHANGED, [this.map]);
+    },
+
+    replaceImageDefs: function () { // replace any images in <defs> with their images in the current tileset
+        var cats, $newBrushes, $images, me = this;
+        // replace svg defs
+        $images = $('defs image', me.svg.root());
+        $images.map(function () {
+            var tile, newHref, label, $img = $(this);
+            label = $img.attr('id').replace(/-icon$/, '');
+            tile = me.oTileset[label] || me.oTileset.UNKNOWN;
+            newHref = 'tiles/' + tile.set + '/' + tile.iconfilename;
+            $img.attr('href', newHref);
+        });
+        // re-render the brush palette from scratch
+        cats = sortObject(gTilesetCatalog.getCategories(this.map.tileset),
+                CATEGORY_ORDER);
+        $newBrushes = $('#brushes-tmpl').tmpl({oTileset: me.oTileset, categories:cats});
+        $('#brushes').replaceWith($newBrushes);
+        me.pen.setCurrent(me.map.defaultFill);
     },
 
     _iconAt: function (label, x, y, prefix) { // place an icon image for this Fill at the coordinates x,y
@@ -522,7 +563,7 @@ var MapView = PageArea.extend({
 
         var settings, $def, tile, sf, xFactor, yFactor, xOff, yOff, id, href, itm, _g;
 
-        tile = this.tileset[label];
+        tile = this.oTileset[label] || this.oTileset.UNKNOWN;
         if (! tile.iconfilename) { // tile is blank on one of the icon layers
             return;
         }

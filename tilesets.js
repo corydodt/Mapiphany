@@ -27,6 +27,12 @@ TOOLS = {
         categories: "Tools",
         iconfilename: "blankfg.png",
         set: "."
+    },
+    'UNKNOWN': {
+        categories: "Tools",
+        iconfilename: "unknown.png",
+        set: ".",
+        scalefactor: 1.0
     }
 };
 

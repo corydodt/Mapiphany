@@ -51,9 +51,9 @@
 <script type="text/x-jquery-tmpl" id=
     "brushes-tile"> <!-- [[[ -->
   <span class="brushes-tile-x1" title="${tile}" style=
-    "background-color:{{if tileset[tile].backgroundrgb=='None'}}#c0c0c0{{else}}${tileset[tile].backgroundrgb}{{/if}}">
-    {{if tileset[tile].iconfilename}}<img class="brushes-tile-img" src=
-      "tiles/${tileset[tile].set}/${tileset[tile].iconfilename}" />
+    "background-color:{{if oTileset[tile].backgroundrgb=='None'}}#c0c0c0{{else}}${oTileset[tile].backgroundrgb}{{/if}}">
+    {{if oTileset[tile].iconfilename}}<img class="brushes-tile-img" src=
+      "tiles/${oTileset[tile].set}/${oTileset[tile].iconfilename}" />
     {{/if}}</span>
 </script> <!-- ]]] -->
 
@@ -67,7 +67,8 @@
       "map properties" />
     <input class="toolbar-button" type="button" value="&nbsp;" name="undo" title="undo" />
     <input class="toolbar-button" type="button" value="&nbsp;" name="redo" title="redo" />
-    <span class="f0">Current:</span> <span id="current">{{tmpl({tile:map.defaultFill, tileset:tileset}) "#brushes-tile"}}</span>
+    <span class="f0">Current:</span> <span id=
+        "current">{{tmpl({tile:map.defaultFill, oTileset:oTileset}) "#brushes-tile"}}</span>
     <span>Zoom:</span> <select name="zoom">
       <option value="200">200%</option>
       <option selected="selected" value="100">100%</option>
@@ -76,6 +77,61 @@
     <input class="toolbar-button" type="button" value="&nbsp;" name="print" title="print view in a new window" />
     <input class="toolbar-button" type="button" value="&nbsp;" name="export" title="export to a window" />
   </div>
+</script> <!-- ]]] -->
+
+
+<script type="text/x-jquery-tmpl" id=
+    "properties-dialog-tmpl"> <!-- [[[ -->
+    <div id="properties-dialog-content" class=
+      "ui-dialog ui-widget ui-widget-content ui-corner-all" title=
+      "Properties of this map">
+
+      <div class="hbox form-row">
+        <div class="f0 form-column-1">Name:</div>
+        <div class="f1">&nbsp;</div>
+        <div class="f1 form-column-2"><input type="text" name=
+          "name" value="${name}" placeholder="Map Name" /></div>
+      </div>
+
+      <div class="hbox form-row">
+        <div class="f0 form-column-1">Tileset:</div>
+        <div class="f1">&nbsp;</div>
+        <div class="f8 form-column-2"><select name="tileset-select" id=
+            "tileset-select">
+            {{each gTilesetCatalog.getNames()}}
+            <option {{if $value == tileset}}selected="selected"{{/if}} value=
+              "${$value}">${gTilesetCatalog.get($value).__default__.description}</option>
+            {{/each}}
+          </select>
+        </div>
+      </div>
+
+      <div class="hbox form-row">
+        <div class="f0 form-column-1">Default Tile Fill:</div>
+        <div class="f1">&nbsp;</div>
+        <div class="f8 form-column-2"><select size="3" name="default-tile-select" id=
+          "default-tile-select">
+            {{each sortObject(gTilesetCatalog.get(tileset))}}
+            <option {{if $value[0] == defaultFill}}selected="selected"{{/if}} value=
+              "${$value[0]}">${$value[0]}</option>
+            {{/each}}
+          </select>
+        </div>
+      </div>
+
+      <div class="hbox form-row">
+        <div class="f0 form-column-1">Units:</div>
+        <div class="f1">&nbsp;</div>
+        <div class="f8 form-column-2"><select name="mapUnits" id=
+            "mapUnits">
+            <option value="10mi">10mi</option>
+            <option selected="selected" value="1mi">1 mile</option>
+            <option value="halfmi">1/2 mile</option>
+          </select>
+        </div>
+      </div>
+
+    </div>
 </script> <!-- ]]] -->
 
 
@@ -142,7 +198,6 @@
     <div id="remove-dialog-content" class=
       "ui-dialog ui-widget ui-widget-content ui-corner-all" title=
       "Really remove {{if checked.length > 1}}these maps{{else}}this map{{/if}}?">
-      {{if log(checked)}}{{/if}}
       <ul>{{each checked}}
         <li>- ${maps[$($value).parents(".snapshot").data("id")].name}</li>
         {{/each}}
@@ -157,6 +212,21 @@
     <h1>This map does not exist, bub.</h1>
     <a href="#my-maps">Return to My Maps</a>
   </div>
+</script> <!-- ]]] -->
+
+
+<script type="text/x-jquery-tmpl" id=
+    "brushes-tmpl"> <!-- [[[ -->
+    <div id="brushes" class="f0 vbox">
+      <div id="brushes-inner">
+        {{each($i, category) categories}}
+        <div class="brushes-category"><em>${category[0]}</em></div>
+        {{each($j, tile) category[1]}}<span class="brushes-tile" 
+          data-tile="${tile}">{{tmpl({tile:tile, oTileset:oTileset}) "#brushes-tile"}}</span>
+        {{/each}}
+        {{/each}}
+      </div>
+    </div>
 </script> <!-- ]]] -->
 
 
@@ -178,16 +248,7 @@
       <!-- this is the map --> <!-- this is the map -->
       <!-- this is the map --> <!-- this is the map --> 
 
-      <div id="brushes" class="f0 vbox">
-        <div id="brushes-inner">
-          {{each($i, category) categories}}
-          <div class="brushes-category"><em>${category[0]}</em></div>
-          {{each($j, tile) category[1]}}<span class="brushes-tile" 
-            data-tile="${tile}">{{tmpl({tile:tile, tileset:tileset}) "#brushes-tile"}}</span>
-          {{/each}}
-          {{/each}}
-        </div>
-      </div>
+      {{tmpl({oTileset:oTileset, categories:categories}) "#brushes-tmpl"}}
       
       
     </div>
