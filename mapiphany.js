@@ -129,17 +129,17 @@ var Toolbar = PageArea.extend({
         var ret = $template.tmpl(this.appState.currentMapView);
         var me = this;
 
-        ret.find('select[name=zoom]').change(function () {
+        ret.find('select[name="zoom"]').change(function () {
             var $me = $(this);
             $(document).trigger(EVENT_MAP_ZOOM, [$me.val()]);
             return false;
         });
 
-        ret.find('input[name=undo]').click(function () {
+        ret.find('input[name="undo"]').click(function () {
             $(document).trigger(EVENT_MAP_UNDO, []);
         });
 
-        ret.find('input[name=redo]').click(function () {
+        ret.find('input[name="redo"]').click(function () {
             $(document).trigger(EVENT_MAP_REDO, []);
         });
 
@@ -150,15 +150,15 @@ var Toolbar = PageArea.extend({
             ]);
         });
 
-        ret.find('input[name=save]').click(function () {
+        ret.find('input[name="save"]').click(function () {
             $(document).trigger(EVENT_MAP_SAVE, []);
         });
 
-        ret.find('input[name=print]').click(function () {
+        ret.find('input[name="print"]').click(function () {
             $(document).trigger(EVENT_MAP_PRINT, []);
         });
 
-        ret.find('input[name=export]').click(function () {
+        ret.find('input[name="export"]').click(function () {
             $(document).trigger(EVENT_MAP_EXPORT, []);
         });
 
@@ -277,7 +277,7 @@ var MapList = PageArea.extend({
             me.appState.redirect(VIEW_MAP_EDIT + '&' + $(this).parents('.snapshot').attr('data-id'));
         });
 
-        $ret.find('input[name=new-button]').click(function (ev) {
+        $ret.find('input[name="new-button"]').click(function (ev) {
             $('.ui-dialog').remove();
             var $t = $('#new-dialog-tmpl').tmpl({
                 // TODO - this should dynamically update based on value of
@@ -289,11 +289,11 @@ var MapList = PageArea.extend({
                 width: '400px',
                 height: 'auto',
                 modal: true,
-                buttons: {'new': function () { me.onNewClicked(this); } },
+                buttons: {'new': function () { me.onNewClicked(this); } }
             });
         });
 
-        $ret.find('input[name=import-button]').click(function (ev) {
+        $ret.find('input[name="import-button"]').click(function (ev) {
             $('.ui-dialog').remove();
             var $t = $('#import-dialog-tmpl').tmpl({});
             $('body').append($t);
@@ -301,7 +301,7 @@ var MapList = PageArea.extend({
                 width: 'auto',
                 height: 'auto',
                 modal: true,
-                buttons: {'import': function () { me.onImportClicked(this); } }
+                buttons: {import: function () { me.onImportClicked(this); } }
             });
         });
 
@@ -323,11 +323,11 @@ var MapList = PageArea.extend({
 
         anyChecked = $('.indicators input:checked');
         if (anyChecked.length > 0) {
-            $('input[name=remove-button]').removeClass('ui-state-disabled');
-            this.$node.find('input[name=remove-button]').click(function () { me.onRemoveClicked(); });
+            $('input[name="remove-button"]').removeClass('ui-state-disabled');
+            this.$node.find('input[name="remove-button"]').click(function () { me.onRemoveClicked(); });
         } else {
-            $('input[name=remove-button]').addClass('ui-state-disabled');
-            this.$node.find('input[name=remove-button]').unbind('click');
+            $('input[name="remove-button"]').addClass('ui-state-disabled');
+            this.$node.find('input[name="remove-button"]').unbind('click');
         }
     },
 

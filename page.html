@@ -43,7 +43,8 @@
 
 <script type="text/x-jquery-tmpl" id=
     "tileset-css"> <!-- [[[ -->
-  <link rel="stylesheet" type="text/css" href="tiles/${tileset}/tileset.css" />
+    <link rel="stylesheet" id="tileset-css-link" type="text/css" href=
+      "tiles/${tileset}/tileset.css" />
 </script> <!-- ]]] -->
 
 
@@ -66,18 +67,12 @@
       "map properties" />
     <input class="toolbar-button" type="button" value="&nbsp;" name="undo" title="undo" />
     <input class="toolbar-button" type="button" value="&nbsp;" name="redo" title="redo" />
-    <span class="f0">Name:</span> <input class="f1" type="text" name="mapName" value="${name}" />
     <span class="f0">Current:</span> <span id="current">{{tmpl({tile:map.defaultFill, tileset:tileset}) "#brushes-tile"}}</span>
     <span>Zoom:</span> <select name="zoom">
       <option value="200">200%</option>
       <option selected="selected" value="100">100%</option>
       <option value="50">50%</option>
     </select>
-    <span>Units:</span> <select name="mapUnits">
-        <option value="10mi">10mi</option>
-        <option selected="selected" value="1mi">1 mile</option>
-        <option value="halfmi">1/2 mile</option>
-      </select>
     <input class="toolbar-button" type="button" value="&nbsp;" name="print" title="print view in a new window" />
     <input class="toolbar-button" type="button" value="&nbsp;" name="export" title="export to a window" />
   </div>
