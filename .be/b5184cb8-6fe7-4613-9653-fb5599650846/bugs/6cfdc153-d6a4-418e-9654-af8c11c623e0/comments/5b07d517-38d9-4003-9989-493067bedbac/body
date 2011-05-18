@@ -1,0 +1,10 @@
+It's looking like I need to do this on the server. Canvg apparently cannot
+handle this svg (maybe it's a problem with <use>?).
+
+On the server, I tried rsvg-convert and batik's rasterizer command. Only
+rasterizer can render correctly, and it requires some modifications to the
+CSS and SVG and some CL options:
+
+- the SVG XML needs to contain a default xmlns="http://www.svg.org/2000/svg"
+- the CSS needs to be combined into one file
+- pass -cssUser $combinedFile.css
