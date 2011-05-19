@@ -39,7 +39,7 @@ history.redo();   // Nothing Happens.
 */
 //
 
-$.require('base.js');
+$.require('static/support/base.js');
 
 
 // implement command-based undo, managing the actions that can be applied to

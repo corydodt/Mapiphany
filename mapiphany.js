@@ -4,7 +4,7 @@
 
 "use strict";
 
-$.require('base.js');
+$.require('static/support/base.js');
 
 $.require('static/support/jquery-ui/js/jquery-ui-1.8.7.custom.min.js');
 
