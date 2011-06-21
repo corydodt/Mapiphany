@@ -347,7 +347,7 @@ var MapList = PageArea.extend({
             width: 'auto',
             height: 'auto',
             modal: true,
-            buttons: {'remove': function () { me.onRemoveClicked(this); } }
+            buttons: {'remove': function () { me.onFinalRemoveClicked(this); } }
         });
     },
 
