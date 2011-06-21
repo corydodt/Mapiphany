@@ -267,7 +267,7 @@ var UserEditor = PageArea.extend({
 
 
 var MapList = PageArea.extend({
-    render: function ($template) {
+    render: function render($template) {
         log("render MapList to " + $template.selector);
         var $ret = $template.tmpl(this.appState);
         var me = this;
@@ -317,7 +317,7 @@ var MapList = PageArea.extend({
         return $ret;
     },
 
-    updateRemoveButton: function () { // set the enabled/disabled state of the remove button
+    updateRemoveButton: function updateRemoveButton() { // set the enabled/disabled state of the remove button
         var anyChecked, me;
         me = this;
 
@@ -331,7 +331,7 @@ var MapList = PageArea.extend({
         }
     },
 
-    onRemoveClicked: function () {
+    onRemoveClicked: function onRemoveClicked() {
         var $t, $anyChecked, me;
         me = this;
 
@@ -351,7 +351,7 @@ var MapList = PageArea.extend({
         });
     },
 
-    onFinalRemoveClicked: function (dlg) { // remove button in remove dialog in #my-maps was clicked
+    onFinalRemoveClicked: function onFinalRemoveClicked(dlg) { // remove button in remove dialog in #my-maps was clicked
         var $dlg = $(dlg), $anyChecked, id, me = this;
         $anyChecked = $('.indicators input:checked');
 
@@ -365,7 +365,7 @@ var MapList = PageArea.extend({
         $dlg.dialog("close");
     },
 
-    onNewClicked: function (dlg) { // new button in new dialog in #my-maps was clicked
+    onNewClicked: function onNewClicked(dlg) { // new button in new dialog in #my-maps was clicked
         var data = {}, $dlg = $(dlg), newMap;
         data.name = $dlg.find('[name="name"]').val();
         data.tileset = $dlg.find('[name="tileset-select"]').val();
@@ -376,7 +376,7 @@ var MapList = PageArea.extend({
         $dlg.dialog("close");
     },
 
-    onImportClicked: function (dlg) { // import button in import dialog in #my-maps was clicked
+    onImportClicked: function onImportClicked(dlg) { // import button in import dialog in #my-maps was clicked
         var rawData, data, newMap;
         rawData = $(dlg).find('#import-dialog-content [name="pasted-map"]').val();
         data = $.evalJSON(rawData);
