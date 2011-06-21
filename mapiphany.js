@@ -378,7 +378,7 @@ var MapList = PageArea.extend({
 
     onImportClicked: function onImportClicked(dlg) { // import button in import dialog in #my-maps was clicked
         var rawData, data, newMap;
-        rawData = $(dlg).find('#import-dialog-content [name="pasted-map"]').val();
+        rawData = $(dlg).find('[name="pasted-map"]').val();
         data = $.evalJSON(rawData);
 
         newMap = this.appState.createMap(data);
