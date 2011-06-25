@@ -6,27 +6,6 @@
   <title>Mapiphany</title>
   <link rel="shortcut icon" href="static/images/hexes.ico" />
 
-  <script type='text/javascript' src=
-    'static/support/jquery-1.4.4.js'></script>
-
-  <script type="text/javascript"> 
-    // scriptPath is whatever directory this file is in
-    var _sxp = unescape(location.pathname);
-    _sxp = _sxp.substr(0, _sxp.lastIndexOf('/')) + '/';
-    $.scriptPath = _sxp;
-  </script>
-
-  <script type='text/javascript' src=
-    'static/support/jquery.require.js'></script>
-
-  <script type='text/javascript' src=
-    'mapiphany.js'></script>
-  <!-- FIXME - debugger statement is only recognized when $.require is not in
-  use -->
-  <!-- <script type='text/javascript'> $.require(
-    'mapiphany.js');
-  </script> -->
-
   <link rel="stylesheet" type="text/css" href=
     'reset.css' />
   <link rel="stylesheet" type="text/css" href=
@@ -386,6 +365,29 @@
     <h1>!?</h1>
   </div>
 </div>
+
+
+<script type='text/javascript' src=
+  'static/support/jquery-1.4.4.js'></script>
+
+<script type="text/javascript"> 
+  // scriptPath is whatever directory this file is in
+  var _sxp = unescape(location.pathname);
+  _sxp = _sxp.substr(0, _sxp.lastIndexOf('/')) + '/';
+  $.scriptPath = _sxp;
+</script>
+
+<script type='text/javascript' src=
+  'static/support/jquery.require.js'></script>
+
+<script type='text/javascript' src=
+  'mapiphany.js'></script>
+
+<!-- FIXME - debugger statement is only recognized when $.require is not in
+use -->
+<!-- <script type='text/javascript'> $.require(
+  'mapiphany.js');
+</script> -->
 
 
 </body>
