@@ -4,7 +4,8 @@
 
 "use strict";
 
-$.require('static/support/jquery-1.5.2.js');
+// $.require('static/support/jquery-1.5.2.js'); -- this causes "$.require is
+//                                                 not a function"
 $.require('static/support/base.js');
 
 $.require('static/support/jquery-ui/js/jquery-ui-1.8.7.custom.min.js');
