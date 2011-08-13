@@ -4,6 +4,7 @@
 
 "use strict";
 
+$.require('static/support/jquery-1.5.2.js');
 $.require('static/support/base.js');
 
 $.require('static/support/jquery-ui/js/jquery-ui-1.8.7.custom.min.js');
@@ -24,42 +25,43 @@ $.require('undo.js');
 $.require('sample.js');
 $.require('util.js');
 
+console.log('mapiphany.js');
 
-var VIEW_MAP_EDIT = 'map-edit';
-var VIEW_USER_EDIT = 'user-edit';
-var VIEW_MY_MAPS = 'my-maps';
-var VIEW_CLEAR = 'clear';
+window.VIEW_MAP_EDIT = 'map-edit';
+window.VIEW_USER_EDIT = 'user-edit';
+window.VIEW_MY_MAPS = 'my-maps';
+window.VIEW_CLEAR = 'clear';
 
-var APP_NAME = 'Mapiphany';
+window.APP_NAME = 'Mapiphany';
 
-var EVENT_TEMPLATE_DONE = 'template-done';
+window.EVENT_TEMPLATE_DONE = 'template-done';
 
-var EVENT_MAP_ZOOM = 'map-zoom';
-var EVENT_MAP_UNDO = 'map-undo';
-var EVENT_MAP_REDO = 'map-redo';
-var EVENT_MAP_SAVE = 'map-save';
-var EVENT_MAP_PROPERTIES_CHANGED = 'map-properties-changed';
-var EVENT_MAP_PRINT = 'map-print';
-var EVENT_MAP_EXPORT = 'map-export';
-var EVENT_MAP_PROPERTIES = 'map-properties';
-var EVENT_MAPLIST_CHECKED = 'maplist-checked';
+window.EVENT_MAP_ZOOM = 'map-zoom';
+window.EVENT_MAP_UNDO = 'map-undo';
+window.EVENT_MAP_REDO = 'map-redo';
+window.EVENT_MAP_SAVE = 'map-save';
+window.EVENT_MAP_PROPERTIES_CHANGED = 'map-properties-changed';
+window.EVENT_MAP_PRINT = 'map-print';
+window.EVENT_MAP_EXPORT = 'map-export';
+window.EVENT_MAP_PROPERTIES = 'map-properties';
+window.EVENT_MAPLIST_CHECKED = 'maplist-checked';
 
-var PEN_SMALL = 'small';
-var PEN_LARGE = 'large';
-var MULT = 25; // baseline multiplier to get a decent-sized hex
-var SIN60 = Math.sin(60 * Math.PI / 180);
-var Y_UNIT = MULT * SIN60;
-var X_UNIT = MULT * 0.5;
-var DEFAULT_FILL = 'Grassland';
-var DEFAULT_TILESET = 'rk-calligraphy';
-var KEEP_LAYER = '~';
+window.PEN_SMALL = 'small';
+window.PEN_LARGE = 'large';
+window.MULT = 25; // baseline multiplier to get a decent-sized hex
+window.SIN60 = Math.sin(60 * Math.PI / 180);
+window.Y_UNIT = MULT * SIN60;
+window.X_UNIT = MULT * 0.5;
+window.DEFAULT_FILL = 'Grassland';
+window.DEFAULT_TILESET = 'rk-calligraphy';
+window.KEEP_LAYER = '~';
 
 // It's a shame there is no $.support for svg features.  who knows
 // what the current support grid is like for all these features?
 //
 // This is based on: http://www.codedread.com/svg-support-table.html
 //
-var MAP_IMAGE_NODENAME = ($.browser.mozilla || $.browser.opera) ? 'use' : 'image';
+window.MAP_IMAGE_NODENAME = ($.browser.mozilla || $.browser.opera) ? 'use' : 'image';
 
 
 function stripHash(uri) { // remove the hash (if any) from uri
@@ -68,7 +70,7 @@ function stripHash(uri) { // remove the hash (if any) from uri
 }
 
 // any defined region of the page space that requires rendering with a template
-var PageArea = Base.extend({
+window.PageArea = Base.extend({
     constructor: function (appState) {
         this.appState = appState;
     },
@@ -81,7 +83,7 @@ var PageArea = Base.extend({
 
 
 // the navigation and controls at the top of the page
-var Top = PageArea.extend({
+window.Top = PageArea.extend({
     render: function ($template) {
         log("render Top to " + $template.selector);
         var $ret = $template.tmpl(this.appState);
@@ -126,7 +128,7 @@ var Top = PageArea.extend({
 
 
 // the controls at the top of the map-edit area
-var Toolbar = PageArea.extend({
+window.Toolbar = PageArea.extend({
     render: function ($template) {
         log("render Toolbar to " + $template.selector);
         var ret = $template.tmpl(this.appState.currentMapView);
@@ -168,7 +170,7 @@ var Toolbar = PageArea.extend({
 
 
 // the main workspace below the Top, which may contain different sub-apps
-var Workspace = PageArea.extend({
+window.Workspace = PageArea.extend({
     render: function () {
         log("render Workspace");
         var $n;
@@ -185,7 +187,7 @@ var Workspace = PageArea.extend({
 
 
 // the layout of the top and bottom of the page
-var Framework = Base.extend({
+window.Framework = Base.extend({
     constructor: function(appState) {
         this.appState = appState;
     },
@@ -205,7 +207,7 @@ var Framework = Base.extend({
 
 
 // the current drawing settings
-var Pen = Base.extend({
+window.Pen = Base.extend({
     constructor: function ($node, mapView) {
         this.$node = $node;
         this.fg = null;
@@ -262,11 +264,11 @@ var Pen = Base.extend({
 });
 
 
-var UserEditor = PageArea.extend({
+window.UserEditor = PageArea.extend({
 });
 
 
-var MapList = PageArea.extend({
+window.MapList = PageArea.extend({
     render: function render($template) {
         log("render MapList to " + $template.selector);
         var $ret = $template.tmpl(this.appState);
@@ -389,7 +391,7 @@ var MapList = PageArea.extend({
 
 
 // the drawable map grid inside the workspace
-var MapView = PageArea.extend({
+window.MapView = PageArea.extend({
     constructor: function (appState, map) {
         // FIXME - use regex split, and unescape ## into # 
         this.appState = appState;
@@ -772,7 +774,7 @@ var MapView = PageArea.extend({
 
 
 // the map model
-var Map = Base.extend({
+window.Map = Base.extend({
     constructor: function (appState, name) {
         var _split = name.split('#');
         this.name = _split[0];
@@ -902,7 +904,7 @@ var Map = Base.extend({
 
 // I remember what you were looking at in the app and I am responsible for all
 // localStorage interaction
-var AppState = Base.extend({
+window.AppState = Base.extend({
     constructor: function () {
         var me = this;
         me.maps = {};
@@ -1054,3 +1056,4 @@ $(function () {
     $(document).trigger(EVENT_TEMPLATE_DONE);
 });
 
+console.log('/mapiphany.js');

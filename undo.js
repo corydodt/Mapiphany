@@ -39,12 +39,15 @@ history.redo();   // Nothing Happens.
 */
 //
 
+"use strict";
+
 $.require('static/support/base.js');
 
+console.log('undo.js');
 
 // implement command-based undo, managing the actions that can be applied to
 // the object
-var UndoHistory = Base.extend({
+window.UndoHistory = Base.extend({
     constructor: function (managedObject) {
         this.managedObject = managedObject;
         this.history = [];
@@ -79,4 +82,4 @@ var UndoHistory = Base.extend({
     }
 });
 
-
+console.log('/undo.js');

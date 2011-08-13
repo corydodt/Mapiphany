@@ -1,18 +1,21 @@
 // Catalog that tracks all the global tilesets
 //
 
+"use strict";
+
 $.require('static/support/base.js');
 
 $.require('util.js');
 
+console.log('tilesets.js');
 
-CATEGORY_ORDER = ['Tools', 'Flat Land', 'Forests', 'Mountains and Hills', 'Arid Land', 'Water', 'Settlement', 'Symbol', 'Hex Background'];
+var CATEGORY_ORDER = ['Tools', 'Flat Land', 'Forests', 'Mountains and Hills', 'Arid Land', 'Water', 'Settlement', 'Symbol', 'Hex Background'];
 
-TOOLS_CATEGORY = {'Tools': 
+var TOOLS_CATEGORY = {'Tools': 
     ['Blank_FG', 'Blank_BG', 'Blank_Both']
 };
 
-TOOLS = {
+var TOOLS = {
     'Blank_Both': {
         categories: "Tools",
         iconfilename: "blankboth.png",
@@ -37,7 +40,7 @@ TOOLS = {
 };
 
 
-var TilesetCatalog = Base.extend({
+window.TilesetCatalog = Base.extend({
     constructor: function () {
         this._catalog = {};
         this._categoryCache = {};
@@ -62,7 +65,7 @@ var TilesetCatalog = Base.extend({
         }
         var cats = {}, ts, _thisCats;
         ts = this.get(name);
-        for (tileName in ts) {
+        for (var tileName in ts) {
             if (tileName == '__default__') {
                 continue;
             }
@@ -90,5 +93,6 @@ var TilesetCatalog = Base.extend({
 });
 
 
-gTilesetCatalog = new TilesetCatalog();
+window.gTilesetCatalog = new TilesetCatalog();
 
+console.log('/tilesets.js');
