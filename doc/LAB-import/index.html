@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>testing with $LAB</title>
+  </head>
+  <body>
+
+    <ul><li>hi</li>
+    <li>hi</li>
+  </ul>
+
+<script src="static/support/LAB.src.js"></script>
+<script>
+// $LAB.setGlobalDefaults({Debug:true});
+
+
+
+// list which scripts you want loaded into the page
+load_scripts(["thing.js"],function(){
+   console.log("all my scripts are done loading now!");
+});
+
+
+</script>
+
+  </body>
+</html>
