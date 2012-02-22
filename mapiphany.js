@@ -4,29 +4,28 @@
 
 "use strict";
 
-// $.require('static/support/jquery-1.5.2.js'); -- this causes "$.require is
-//                                                 not a function"
-$.require('static/support/base.js');
+console.log(["mapiphany.js"]);
 
-$.require('static/support/jquery-ui/js/jquery-ui-1.8.7.custom.min.js');
 
-$.require('static/support/jquery.tmpl.js');
+loadScript('static/support/base.js');
 
-$.require('static/support/jquery.json-2.2.js');
+loadScript('static/support/jquery-ui/js/jquery-ui-1.8.7.custom.min.js');
 
-$.require('static/support/jquery-svg/jquery.svg.js');
-$.require('static/support/jquery-svg/jquery.svgdom.js');
-$.require('static/support/jquery-svg/jquery.svganim.js');
+loadScript('static/support/jquery.tmpl.js');
 
-$.require('tilesets.js');
-$.require('generated-tilesets.js');
-$.require('logging.js');
-$.require('patchsvg.js');
-$.require('undo.js');
-$.require('sample.js');
-$.require('util.js');
+loadScript('static/support/jquery.json-2.2.js');
 
-console.log('mapiphany.js');
+loadScript('static/support/jquery-svg/jquery.svg.js');
+loadScript('static/support/jquery-svg/jquery.svgdom.js');
+loadScript('static/support/jquery-svg/jquery.svganim.js');
+
+loadScript('tilesets.js');
+loadScript('logging.js');
+loadScript('patchsvg.js');
+loadScript('undo.js');
+loadScript('sample.js');
+loadScript('util.js');
+loadScript('generated-tilesets.js');
 
 window.VIEW_MAP_EDIT = 'map-edit';
 window.VIEW_USER_EDIT = 'user-edit';
@@ -249,7 +248,7 @@ window.Pen = Base.extend({
             this.fg2 = null;
 
         } else {
-            var fill = function (c) { return oTile.fill.substr(c, 1) };
+            var fill = function (c) { return oTile.fill.substr(c, 1); };
             if (fill(0) == 'f') {
                 this.fg = newTile;
             }
@@ -1057,4 +1056,3 @@ $(function () {
     $(document).trigger(EVENT_TEMPLATE_DONE);
 });
 
-console.log('/mapiphany.js');

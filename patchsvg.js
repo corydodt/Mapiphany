@@ -4,11 +4,13 @@
 // logs the stack, along with the error.
 //
 
-$.require('static/support/jquery-svg/jquery.svg.js');
+"use strict";
 
-$.require('logging.js');
+console.log(["patchsvg.js"]);
 
-console.log('patchsvg.js');
+loadScript('static/support/jquery-svg/jquery.svg.js');
+
+loadScript('logging.js');
 
 var PROP_NAME = 'svgwrapper';
 
@@ -36,4 +38,3 @@ function _afterLoad(container, svg, settings) {
 
 $.extend($.svg.__proto__, { _afterLoad: _afterLoad });
 
-console.log('/patchsvg.js');

@@ -41,9 +41,9 @@ history.redo();   // Nothing Happens.
 
 "use strict";
 
-$.require('static/support/base.js');
+console.log(["undo.js"]);
 
-console.log('undo.js');
+loadScript('static/support/base.js');
 
 // implement command-based undo, managing the actions that can be applied to
 // the object
@@ -82,4 +82,3 @@ window.UndoHistory = Base.extend({
     }
 });
 
-console.log('/undo.js');
