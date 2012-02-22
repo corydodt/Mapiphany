@@ -95,7 +95,6 @@ window.TilesetCatalog = Base.extend({
         $.extend(tileset, TOOLS);
         var categories = window.gTilesetCatalog.getCategories(name);
         $.extend(categories, TOOLS_CATEGORY);
-        console.dir(_catalog);
         return _catalog;
     }
 
