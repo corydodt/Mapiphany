@@ -5,10 +5,10 @@
 
 "use strict";
 
-$.require('static/support/stacktrace.js');
-console.log('logging.js');
+console.dir(["logging.js"]);
 
-// wrap console.dir so we don't error out when it's missing
+
+// wrap console.log so we don't error out when it's missing
 window.dir = function dir(o) {
     try {
         return console.dir(o);
@@ -26,9 +26,9 @@ window.log = function log(m) {
 
 // use console.log to display error message and traceback
 window.err = function err(e) {
-    var frames = printStackTrace(e);
-    for (n=frames.length-1; n>=0; n--) {
-        log(frames[n]);
+    try {
+        console.trace();
+    } catch (e) {
     }
     log(e);
 }
@@ -41,4 +41,3 @@ window.assert = function assert(expr, m) {
     }
 }
 
-console.log('/logging.js');
