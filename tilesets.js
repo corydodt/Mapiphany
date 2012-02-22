@@ -3,11 +3,12 @@
 
 "use strict";
 
-$.require('static/support/base.js');
+console.log(["tilesets.js"]);
 
-$.require('util.js');
 
-console.log('tilesets.js');
+loadScript('static/support/base.js');
+
+loadScript('util.js');
 
 var CATEGORY_ORDER = ['Tools', 'Flat Land', 'Forests', 'Mountains and Hills', 'Arid Land', 'Water', 'Settlement', 'Symbol', 'Hex Background'];
 
@@ -46,15 +47,6 @@ window.TilesetCatalog = Base.extend({
         this._categoryCache = {};
     },
 
-    register: function (name, description, tileset) { // put a tileset into the catalog
-        this._catalog[name] = tileset;
-        $.extend(tileset, {__default__: {description: description}});
-        $.extend(tileset, TOOLS);
-        var categories = this.getCategories(name);
-        $.extend(categories, TOOLS_CATEGORY);
-        return this;
-    },
-
     get: function (name) { // the tileset that goes by this name
         return this._catalog[name];
     },
@@ -90,9 +82,23 @@ window.TilesetCatalog = Base.extend({
     getNames: function () { // names of the tilesets in this catalog
         return sortedKeys(this._catalog);
     }
+}, { // classmethods
+
+    register: function (name, description, tileset) { // put a tileset into the catalog
+        if (!window.gTilesetCatalog) {
+            window.gTilesetCatalog = new TilesetCatalog();
+        }
+        var _catalog = window.gTilesetCatalog._catalog;
+
+        _catalog[name] = tileset;
+        $.extend(tileset, {__default__: {description: description}});
+        $.extend(tileset, TOOLS);
+        var categories = _catalog.getCategories(name);
+        $.extend(categories, TOOLS_CATEGORY);
+        console.dir(_catalog);
+        return _catalog;
+    }
+
 });
 
 
-window.gTilesetCatalog = new TilesetCatalog();
-
-console.log('/tilesets.js');
