@@ -5,7 +5,7 @@
 
 "use strict";
 
-console.dir(["logging.js"]);
+console.log(["logging.js"]);
 
 
 // wrap console.log so we don't error out when it's missing
