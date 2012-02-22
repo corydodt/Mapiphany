@@ -93,7 +93,7 @@ window.TilesetCatalog = Base.extend({
         _catalog[name] = tileset;
         $.extend(tileset, {__default__: {description: description}});
         $.extend(tileset, TOOLS);
-        var categories = _catalog.getCategories(name);
+        var categories = window.gTilesetCatalog.getCategories(name);
         $.extend(categories, TOOLS_CATEGORY);
         console.dir(_catalog);
         return _catalog;
